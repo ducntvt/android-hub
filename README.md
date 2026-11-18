@@ -32,7 +32,7 @@ device; they are not included in this repository.
 
 | Purpose | Requirements |
 | --- | --- |
-| Build Hub | macOS on Apple Silicon, Xcode Command Line Tools, Rust/Cargo with rustfmt and Clippy, Python 3.9+ |
+| Build Hub | macOS on Apple Silicon, Xcode Command Line Tools, Rust/Cargo with rustfmt and Clippy, Python 3.11+ |
 | Run Android | Android SDK with Emulator, Platform-Tools, Command-line Tools and Google Play ARM64 API 36 image |
 | Create devices | Java 17+ ARM64; Android Studio's bundled JBR is the default |
 | Disk space | At least 12 GiB free before creating a device; games and backups require additional space |
@@ -53,7 +53,6 @@ if needed (`xcode-select --install`), then:
 git clone https://github.com/ducntvt/android-hub.git
 cd android-hub
 rustup toolchain install 1.96.1 --profile minimal --component rustfmt --component clippy
-rustup override set 1.96.1
 bash scripts/check.sh
 bash scripts/build-android-hub.sh
 open 'Android Hub.app'
@@ -103,6 +102,13 @@ or build problems. Deleting a device requires confirmation and is permanent;
   current restore UI targets a device that is still registered.
 - A single APK is supported; XAPK/split APK and an app-update workflow are not.
 - Long two-game benchmarks and native accessibility coverage remain incomplete.
+
+## CI and source releases
+
+PRs and pushes to `main`/`develop` run the shared checks and app packaging on
+macOS ARM64. Rust is pinned in `rust-toolchain.toml`. Pushing a prepared `v*` tag
+validates its version, main ancestry and changelog, reruns CI, then publishes a
+source-only release. See [release preparation](docs/RELEASING.md) before tagging.
 
 ## Documentation
 

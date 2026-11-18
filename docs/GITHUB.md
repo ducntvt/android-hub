@@ -80,7 +80,8 @@ No release tag is created during bootstrap. Make the first release separately us
 - Prefer checks before merging and block force-push/delete for shared branches.
 - Protect published `v*` tags against rewriting/deletion where supported.
 - Do not require another reviewer's approval for a solo-maintained repository.
-- CI is not installed yet; don't configure a required check name that never runs.
+- CI is defined in `.github/workflows/ci.yml`; enable required status checks only
+  after the first successful run, selecting the check actually shown on the PR.
 - Do not create signing secrets or binary-release workflows for this source-only setup.
 
 Branch/tag ruleset availability depends on repository visibility and the account's
