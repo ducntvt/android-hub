@@ -656,7 +656,7 @@ fn sdk_setup_ui_requires_consent_and_handles_retry_and_completion_without_select
     let _ = hub.update(Message::SdkSetupFinished(Err("canceled fixture".into())));
     assert!(!hub.busy);
     assert!(hub.sdk_setup.is_none());
-    assert_eq!(hub.accepted_licenses.len(), 2); // retry same reviewed plan
+    assert_eq!(hub.accepted_licenses.len(), 1); // shared tools use one reviewed license
     let _ = hub.update(Message::StartSdkSetup);
     assert!(hub.busy);
     let _ = hub.update(Message::SdkSetupFinished(Ok(
@@ -700,6 +700,61 @@ fn sdk_cache_reset_requires_confirmation_and_does_not_start_download() {
     );
     assert!(hub.accepted_licenses.is_empty());
     assert!(hub.sdk_setup.is_none());
+}
+
+#[test]
+fn image_review_requires_its_own_consent_and_completion_keeps_the_selected_sdk() {
+    use android_hub_domain::{AndroidVersion, ImageIdentity};
+    let (mut hub, _) = Hub::new();
+    hub.busy = false;
+    hub.sdk_open = true;
+    let sdk = hub.backend.sdk.clone();
+    let _ = hub.update(Message::OpenImageReview(AndroidVersion::Android13));
+    assert_eq!(
+        hub.sdk_plan.as_ref().unwrap().image_version(),
+        Some(AndroidVersion::Android13)
+    );
+    assert!(hub.accepted_licenses.is_empty());
+    let _ = hub.update(Message::StartSdkSetup);
+    assert!(!hub.busy);
+    let _ = hub.update(Message::AcceptLicense(0, true));
+    // Installing an image uses the selected engine; it does not execute Java bootstrap.
+    hub.java_draft.clear();
+    let _ = hub.update(Message::StartSdkSetup); // Task intentionally dropped; no download.
+    assert!(hub.busy && hub.sdk_setup.is_some());
+    let _ = hub.update(Message::CancelSdkSetup);
+    let _ = hub.update(Message::ImageSetupFinished(
+        hub.command_epoch,
+        Err("fixture cancel".into()),
+    ));
+    assert!(!hub.busy && hub.sdk_setup.is_none());
+    assert_eq!(hub.accepted_licenses.len(), 1);
+    let _ = hub.update(Message::ImagesLoaded(hub.images_epoch, Ok(vec![])));
+    let _ = hub.update(Message::StartSdkSetup);
+    assert!(hub.busy);
+    let _ = hub.update(Message::ImageSetupFinished(
+        hub.command_epoch,
+        Ok(android_hub_infrastructure::ImageInstallResult {
+            identity: ImageIdentity {
+                version: AndroidVersion::Android13,
+                revision: [9, 0, 0],
+                fingerprint: "a".repeat(64),
+            },
+            reused: false,
+        }),
+    ));
+    assert_eq!(hub.backend.sdk, sdk);
+    assert!(hub.accepted_licenses.is_empty());
+    assert!(!hub.sdk_review_open);
+    assert!(hub.images_loading);
+    let old_epoch = hub.images_epoch;
+    let _ = hub.update(Message::ImagesLoaded(
+        old_epoch.wrapping_sub(1),
+        Err("stale SDK".into()),
+    ));
+    assert!(hub.images.is_ok());
+    let _ = hub.update(Message::OpenImageReview(AndroidVersion::Android12));
+    assert!(hub.accepted_licenses.is_empty());
 }
 #[test]
 fn stale_or_dismissed_history_cannot_replace_newer_results() {
@@ -1101,4 +1156,48 @@ fn data_catalog_failures_are_not_successful_empty_lists_and_retries_clear_errors
     assert_eq!(hub.storage_error.as_deref(), Some("scan incomplete"));
     let _ = hub.update(Message::MeasureStorage);
     assert!(hub.storage_loading && hub.storage_error.is_none() && hub.storage.is_none());
+}
+
+#[test]
+fn image_removal_requires_explicit_confirmation_and_discards_duplicate_results() {
+    use android_hub_domain::AndroidVersion;
+    use iced::keyboard::key::Named;
+    let (mut hub, _) = Hub::new();
+    let _ = hub.update(Message::Loaded(Ok(stopped_snapshot("A")), Work::Initialize));
+    hub.sdk_open = true;
+    let _ = hub.update(Message::AskImageRemoval(AndroidVersion::Android13));
+    let epoch = hub.command_epoch;
+    assert!(hub.busy && hub.image_removal.is_none());
+    let plan =
+        serde_json::from_value::<android_hub_infrastructure::ImageRemovalPlan>(serde_json::json!({
+            "identity":{"version":"13","revision":[9,0,0],"fingerprint":"a".repeat(64)},
+            "allocated_bytes":1024,"sdk":"/tmp/fixture","device":1,"inode":2
+        }))
+        .unwrap();
+    let _ = hub.update(Message::ImageRemovalPrepared(
+        epoch.wrapping_sub(1),
+        Ok(plan.clone()),
+    ));
+    assert!(hub.busy && hub.image_removal.is_none());
+    let _ = hub.update(Message::ImageRemovalPrepared(epoch, Ok(plan.clone())));
+    assert!(!hub.busy && hub.modal_open());
+    assert_eq!(hub.modal_focus, 0);
+    let _ = hub.update(Message::ModalKey(Named::Escape));
+    let _ = hub.update(Message::ImageRemovalPrepared(epoch, Ok(plan.clone())));
+    assert!(hub.image_removal.is_none());
+    let _ = hub.update(Message::AskImageRemoval(AndroidVersion::Android13));
+    let epoch = hub.command_epoch;
+    let _ = hub.update(Message::ImageRemovalPrepared(epoch, Ok(plan)));
+    let _ = hub.update(Message::ConfirmImageRemoval);
+    assert!(hub.busy && hub.image_removal.is_none());
+    let submitted = hub.command_epoch;
+    let _ = hub.update(Message::ConfirmImageRemoval);
+    assert_eq!(hub.command_epoch, submitted);
+    let _ = hub.update(Message::ImageRemovalFinished(
+        submitted,
+        Err("retry explicitly".into()),
+    ));
+    assert!(!hub.busy && hub.images_loading);
+    let _ = hub.update(Message::ImageRemovalFinished(submitted, Ok(())));
+    assert!(hub.feedback.toast.is_none());
 }

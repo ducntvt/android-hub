@@ -88,9 +88,7 @@ impl Backend {
         let (_lock, cache) = self.lock_existing_sdk_cache()?;
         self.recover_sdk_cache_reset_locked(&cache)
     }
-    fn lock_existing_sdk_cache(
-        &self,
-    ) -> Result<(super::cache_lock::SdkCacheLock, PathBuf), String> {
+    fn lock_existing_sdk_cache(&self) -> Result<(crate::file_lock::FileLock, PathBuf), String> {
         let cache = self.runtime().join("sdk-downloads");
         real_directory(&cache)?;
         let path = cache.join("download.lock");
@@ -103,7 +101,7 @@ impl Backend {
             .mode(0o600)
             .open(path)
             .map_err(err)?;
-        let lock = super::cache_lock::SdkCacheLock::acquire(
+        let lock = crate::file_lock::FileLock::acquire(
             lock,
             "SDK cache đang được tải hoặc sử dụng; thử lại sau",
         )?;

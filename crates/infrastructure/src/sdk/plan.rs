@@ -1,5 +1,6 @@
 //! Bundled, pinned install plan. Loading/reviewing it performs no I/O or acceptance.
 use crate::{SdkArchive, SdkInstallPackage, SdkPackage, err, sdk::package::revision};
+use android_hub_domain::AndroidVersion;
 use sha2::{Digest, Sha256};
 use std::collections::{BTreeMap, BTreeSet};
 const BUNDLED: &str = include_str!("../../resources/sdk-install-plan.json");
@@ -44,6 +45,54 @@ impl SdkPlan {
     pub fn bundled() -> Result<Self, String> {
         Self::parse(BUNDLED)
     }
+    pub fn common_tools() -> Result<Self, String> {
+        let mut value: serde_json::Value = serde_json::from_str(BUNDLED).map_err(err)?;
+        value["packages"]
+            .as_array_mut()
+            .ok_or("Thiếu packages")?
+            .retain(|p| {
+                !p["package"]
+                    .as_str()
+                    .is_some_and(|id| id.starts_with("system-images;"))
+            });
+        Self::selected(value)
+    }
+    pub fn for_image(version: AndroidVersion) -> Result<Self, String> {
+        let catalog: serde_json::Value =
+            serde_json::from_str(include_str!("../../resources/android-images.json"))
+                .map_err(err)?;
+        // Validate the reviewed catalog as well as the selected install graph.
+        crate::android_image_catalog()?;
+        let package = catalog["packages"]
+            .as_array()
+            .and_then(|items| items.iter().find(|p| p["package"] == version.package()))
+            .ok_or("Không có image trong catalog")?;
+        Self::selected(
+            serde_json::json!({"schema":1,"platform":"macos-arm64","status":"review_required","packages":[package]}),
+        )
+    }
+    fn selected(mut value: serde_json::Value) -> Result<Self, String> {
+        value["download_bytes"] = serde_json::json!(
+            value["packages"]
+                .as_array()
+                .ok_or("Thiếu packages")?
+                .iter()
+                .map(|p| p["archive_bytes"].as_u64().unwrap_or(0))
+                .sum::<u64>()
+        );
+        Self::parse(&value.to_string())
+    }
+    pub fn image_version(&self) -> Option<AndroidVersion> {
+        match self.packages.as_slice() {
+            [
+                SdkInstallPackage {
+                    kind: SdkPackage::PlayImage(version),
+                    ..
+                },
+            ] => Some(*version),
+            _ => None,
+        }
+    }
     fn parse(text: &str) -> Result<Self, String> {
         if text.len() > 512 * 1024 {
             return Err("Install plan quá lớn".into());
@@ -57,8 +106,8 @@ impl SdkPlan {
         }
         let values = plan["packages"]
             .as_array()
-            .filter(|v| v.len() == 4)
-            .ok_or("Install plan cần bốn package")?;
+            .filter(|v| !v.is_empty() && v.len() <= 8)
+            .ok_or("Install plan cần 1–8 package")?;
         let mut packages = Vec::new();
         let mut summaries = Vec::new();
         let mut licenses: BTreeMap<String, SdkLicense> = BTreeMap::new();
@@ -72,10 +121,10 @@ impl SdkPlan {
                 "cmdline-tools;23.0" => SdkPackage::CommandLineTools,
                 "platform-tools" => SdkPackage::PlatformTools,
                 "emulator" => SdkPackage::Emulator,
-                "system-images;android-36;google_apis_playstore;arm64-v8a" => {
-                    SdkPackage::PlayImage36
-                }
-                _ => return Err("Package chưa được hỗ trợ trong installer".into()),
+                _ => SdkPackage::PlayImage(
+                    AndroidVersion::from_package(name)
+                        .ok_or("Package chưa được hỗ trợ trong installer")?,
+                ),
             };
             if !kinds.insert(kind) || value["destination"] != kind.destination() {
                 return Err("Package trùng hoặc destination sai".into());
@@ -91,17 +140,19 @@ impl SdkPlan {
             let dependencies = value["dependencies"]
                 .as_array()
                 .ok_or("Thiếu danh sách dependencies")?;
-            if kind == SdkPackage::PlayImage36 {
+            if matches!(kind, SdkPackage::PlayImage(_)) {
                 if dependencies.len() != 1 || dependencies[0]["package"] != "emulator" {
                     return Err("Image dependency không hỗ trợ".into());
                 }
                 let minimum = &dependencies[0]["minimum_revision"];
-                required_emulator = Some(revision(&format!(
+                let required = revision(&format!(
                     "{}.{}.{}",
                     field(minimum, "major")?,
                     field(minimum, "minor")?,
                     field(minimum, "micro")?
-                ))?);
+                ))?;
+                required_emulator =
+                    Some(required_emulator.map_or(required, |old: [u32; 3]| old.max(required)));
             } else if !dependencies.is_empty() {
                 return Err("Package dependency chưa được hỗ trợ".into());
             }
@@ -163,7 +214,23 @@ impl SdkPlan {
                 accepted_license_sha256: String::new(),
             });
         }
-        if emulator_revision < required_emulator || required_emulator.is_none() {
+        let common = [
+            SdkPackage::CommandLineTools,
+            SdkPackage::PlatformTools,
+            SdkPackage::Emulator,
+        ]
+        .iter()
+        .all(|p| kinds.contains(p));
+        if !(common || packages.len() == 1 && matches!(packages[0].kind, SdkPackage::PlayImage(_)))
+        {
+            return Err(
+                "Install plan thiếu công cụ chung hoặc không phải một image độc lập".into(),
+            );
+        }
+        if emulator_revision
+            .zip(required_emulator)
+            .is_some_and(|(engine, minimum)| engine < minimum)
+        {
             return Err("Emulator không đáp ứng dependency image".into());
         }
         if plan["download_bytes"].as_u64() != Some(download_bytes) {
@@ -204,6 +271,24 @@ impl SdkPlan {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn plans_separate_common_tools_and_one_selected_image() {
+        let common = SdkPlan::common_tools().unwrap();
+        assert_eq!(common.summaries().len(), 3);
+        assert_eq!(common.image_version(), None);
+        for version in AndroidVersion::ALL {
+            let image = SdkPlan::for_image(version).unwrap();
+            assert_eq!(image.summaries().len(), 1);
+            assert_eq!(image.image_version(), Some(version));
+            assert_eq!(image.summaries()[0].name, version.package());
+            assert!(image.approved_packages(&BTreeSet::new()).is_err());
+            let accepted = image.licenses().iter().map(|l| l.sha256.clone()).collect();
+            assert_eq!(
+                image.approved_packages(&accepted).unwrap()[0].kind,
+                SdkPackage::PlayImage(version)
+            );
+        }
+    }
     #[test]
     fn bundled_plan_pins_four_packages_and_requires_exact_license_consent() {
         let plan = SdkPlan::bundled().unwrap();

@@ -108,3 +108,18 @@ Use `ANDROID_HUB_JAVA_HOME` for an explicit Java path. The legacy `P0_JAVA_HOME`
 The retired VM path migration script and P0 setup/boot/launcher/probe scripts were
 removed with the experimental runtime. Historical reports retain their original
 commands; they are not current setup instructions. Use the app to create devices.
+
+## Android helper compatibility checks
+
+CI's separate `Android helper reproducibility` job rebuilds both embedded DEX files
+with min API 31, runs the connectivity Java fixture tests, checks for DEX drift and
+builds the offline input APK. It uses the Ubuntu 24.04 runner's preinstalled Android
+35 platform/build-tools 35.0.1 and JDK 25; it does not download system images, accept
+licenses or boot guests. Runner inventory is maintained by
+[actions/runner-images](https://github.com/actions/runner-images/blob/main/images/ubuntu/Ubuntu2404-Readme.md).
+A missing pinned tool should fail visibly, not silently select another compiler.
+
+Run the helper scripts locally with `ANDROID_SDK_ROOT` and
+`ANDROID_HUB_JAVA_HOME` set to compatible installed tools. Rust-only builds still
+use the checked-in DEX. Guest qualification is a deliberate separate workflow;
+see [input fixture](../tests/android-input/README.md) and [E01](stories/epics/E01-multiple-android-versions/README.md).

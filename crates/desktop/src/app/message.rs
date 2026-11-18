@@ -61,6 +61,23 @@ pub(super) enum Message {
     SaveJava,
     JavaSaved(Result<PathBuf, String>),
     OpenSdkReview,
+    OpenImageReview(android_hub_domain::AndroidVersion),
+    RefreshImages,
+    AskImageRemoval(android_hub_domain::AndroidVersion),
+    ImageRemovalPrepared(
+        u64,
+        Result<android_hub_infrastructure::ImageRemovalPlan, String>,
+    ),
+    ConfirmImageRemoval,
+    ImageRemovalFinished(u64, Result<(), String>),
+    ImagesLoaded(
+        u64,
+        Result<Vec<android_hub_infrastructure::ImageAvailability>, String>,
+    ),
+    ImageSetupFinished(
+        u64,
+        Result<android_hub_infrastructure::ImageInstallResult, String>,
+    ),
     StartSdkSetup,
     AskSdkCacheReset(usize),
     CancelSdkCacheReset,

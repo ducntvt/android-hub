@@ -78,6 +78,7 @@ pub(super) fn android_image_version(config: &str) -> Option<String> {
         .trim();
     let api: u32 = target.strip_prefix("android-")?.parse().ok()?;
     let release = match api {
+        31 => Some("12"),
         33 => Some("13"),
         34 => Some("14"),
         35 => Some("15"),

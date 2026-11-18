@@ -67,8 +67,8 @@ fn entry(path: &Path, id: &str) -> Result<ManagedSdkEntry, String> {
     }
     let packages = receipt["packages"]
         .as_array()
-        .filter(|v| v.len() == 4)
-        .ok_or("SDK receipt cần đủ bốn package")?;
+        .filter(|v| (3..=8).contains(&v.len()))
+        .ok_or("SDK receipt thiếu package hoặc quá giới hạn")?;
     let mut verified = Vec::new();
     let mut emulator_revision = String::new();
     for package in packages {
@@ -76,9 +76,13 @@ fn entry(path: &Path, id: &str) -> Result<ManagedSdkEntry, String> {
             SdkPackage::CommandLineTools,
             SdkPackage::PlatformTools,
             SdkPackage::Emulator,
-            SdkPackage::PlayImage36,
         ]
         .into_iter()
+        .chain(
+            android_hub_domain::AndroidVersion::ALL
+                .into_iter()
+                .map(SdkPackage::PlayImage),
+        )
         .find(|kind| Some(kind.destination()) == package["destination"].as_str())
         .ok_or("SDK destination không hỗ trợ")?;
         let license = string(package, "license_sha256")?;
@@ -92,6 +96,13 @@ fn entry(path: &Path, id: &str) -> Result<ManagedSdkEntry, String> {
             license_sha256: license.into(),
         };
         archive.validate(license)?;
+        // Optional images can be explicitly removed after this SDK was published.
+        if matches!(kind, SdkPackage::PlayImage(_))
+            && fs::symlink_metadata(path.join(kind.destination()))
+                .is_err_and(|e| e.kind() == std::io::ErrorKind::NotFound)
+        {
+            continue;
+        }
         let mut root = path.to_path_buf();
         for component in kind.destination().split('/') {
             root.push(component);

@@ -1,6 +1,8 @@
 package local.androidhub.inputqa;
 
 import android.app.Activity;
+import android.content.ClipboardManager;
+import android.content.ClipData;
 import android.os.Bundle;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -22,12 +24,22 @@ public final class InputActivity extends Activity {
         int touches = 0, releases = 0, cancellations = 0, moves = 0;
         int keyDowns = 0, keyUps = 0;
         boolean held = false;
+        String clipboard = "pending";
         String touchEvent = "NONE";
         Surface() {
             super(InputActivity.this);
             setBackgroundColor(Color.WHITE);
             setFocusableInTouchMode(true);
             requestFocus();
+            refreshState();
+        }
+        void refreshState() {
+            setContentDescription(String.format(java.util.Locale.ROOT,
+                "HubInputQA Down=%d Up=%d Moves=%d Held=%s H=%.2f V=%.2f Clipboard=%s",
+                touches, releases, moves, held,
+                horizontal[0] + horizontal[1] + horizontal[2],
+                vertical[0] + vertical[1] + vertical[2], clipboard));
+            invalidate();
         }
         void label(Canvas canvas, String value, float x, float y, int size) {
             paint.setColor(Color.BLACK); paint.setTextSize(size); canvas.drawText(value, x, y, paint);
@@ -58,7 +70,7 @@ public final class InputActivity extends Activity {
             int zone = (int)((e.getY() - 140) / ((getHeight() - 140f) / 3));
             event = String.format(java.util.Locale.ROOT, "x %.0f y %.0f H %.2f V %.2f", e.getX(), e.getY(), h, v);
             if (e.getY() >= 140 && zone >= 0 && zone < 3) { horizontal[zone] += h; vertical[zone] += v; }
-            invalidate(); return true;
+            refreshState(); return true;
         }
         @Override public boolean onTouchEvent(MotionEvent e) {
             switch (e.getActionMasked()) {
@@ -74,21 +86,31 @@ public final class InputActivity extends Activity {
                 default:
                     break;
             }
-            invalidate();
+            refreshState();
             return true;
         }
         @Override public boolean onKeyDown(int code, KeyEvent e) {
+            if (code == KeyEvent.KEYCODE_PASTE) {
+                ClipboardManager manager = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+                ClipData clip = manager.getPrimaryClip();
+                clipboard = clip != null && clip.getItemCount() > 0
+                    && "Hub QA tiếng Việt".contentEquals(clip.getItemAt(0).coerceToText(InputActivity.this))
+                    ? "matched" : "mismatch";
+                event = "Clipboard " + clipboard;
+                refreshState();
+                return true;
+            }
             if (code < KeyEvent.KEYCODE_A || code > KeyEvent.KEYCODE_Z) return super.onKeyDown(code, e);
             keyDowns++;
             event = "Key " + KeyEvent.keyCodeToString(code) + " Down " + keyDowns + " Up " + keyUps;
-            invalidate();
+            refreshState();
             return true;
         }
         @Override public boolean onKeyUp(int code, KeyEvent e) {
             if (code < KeyEvent.KEYCODE_A || code > KeyEvent.KEYCODE_Z) return super.onKeyUp(code, e);
             keyUps++;
             event = "Key " + KeyEvent.keyCodeToString(code) + " Down " + keyDowns + " Up " + keyUps;
-            invalidate();
+            refreshState();
             return true;
         }
     }

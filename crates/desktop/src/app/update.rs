@@ -78,6 +78,9 @@ impl Hub {
                             | Message::BackupFinished(..)
                             | Message::RestoreFinished(..)
                             | Message::SdkSetupFinished(..)
+                            | Message::ImageSetupFinished(..)
+                            | Message::ImageRemovalPrepared(..)
+                            | Message::ImageRemovalFinished(..)
                             | Message::SdkCacheResetFinished(..)
                             | Message::ManagedSdkSaved(..)
                             | Message::JavaSaved(..)
@@ -87,7 +90,19 @@ impl Hub {
                     return Task::none();
                 }
                 let was_modal = self.modal_open();
-                if was_modal && !Self::modal_allows(&message) {
+                let creation_sdk_action = self.creation_image_review()
+                    && matches!(
+                        message,
+                        Message::StartSdkSetup
+                            | Message::CancelSdkSetup
+                            | Message::CloseSdkReview
+                            | Message::ReviewLicense(_)
+                            | Message::AcceptLicense(..)
+                            | Message::AskSdkCacheReset(_)
+                            | Message::CancelSdkCacheReset
+                            | Message::ConfirmSdkCacheReset
+                    );
+                if was_modal && !Self::modal_allows(&message) && !creation_sdk_action {
                     return Task::none();
                 }
                 let previous_toast = self.feedback.toast.as_ref().map(|n| n.id);
@@ -585,7 +600,15 @@ impl Hub {
             | Message::SdkCacheResetFinished(..)
             | Message::CancelSdkSetup
             | Message::SdkSetupFinished(..)
+            | Message::ImageSetupFinished(..)
             | Message::OpenSdkReview
+            | Message::OpenImageReview(..)
+            | Message::AskImageRemoval(..)
+            | Message::ImageRemovalPrepared(..)
+            | Message::ConfirmImageRemoval
+            | Message::ImageRemovalFinished(..)
+            | Message::RefreshImages
+            | Message::ImagesLoaded(..)
             | Message::CloseSdkReview
             | Message::ReviewLicense(..)
             | Message::AcceptLicense(..)
@@ -1002,7 +1025,14 @@ impl Hub {
             }
             Message::EditCreation(edit) if !self.busy => {
                 if let Some(editor) = &mut self.creation {
+                    if editor.image_review {
+                        return Task::none();
+                    }
+                    let version_changed = matches!(edit, creation::Edit::Version(_));
                     editor.edit(edit);
+                    if version_changed {
+                        return self.probe_creation();
+                    }
                 }
             }
             Message::ConfirmCreate => return self.submit_creation(),

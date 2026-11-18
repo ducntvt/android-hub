@@ -21,6 +21,22 @@ def select(data):
 
 
 class ManifestTests(unittest.TestCase):
+    def test_image_catalog_contains_exactly_the_five_requested_packages(self):
+        root = module.parse_xml(xml())
+        root.remove(root.find('remotePackage'))
+        for api in (31, 33, 34, 35, 36):
+            name = f'system-images;android-{api};google_apis_playstore;arm64-v8a'
+            root.append(module.parse_xml(xml(name=name)).find('remotePackage'))
+        raw = module.ET.tostring(root)
+        plan = module.prepare_images(raw)
+        self.assertEqual(len(plan['packages']), 5)
+        self.assertEqual([p['package'].split(';')[1] for p in plan['packages']],
+                         ['android-31', 'android-33', 'android-34', 'android-35', 'android-36'])
+        self.assertTrue(all(not p['license']['accepted'] for p in plan['packages']))
+        root.remove(root.findall('remotePackage')[0])
+        with self.assertRaises(ValueError):
+            module.prepare_images(module.ET.tostring(root))
+
     def test_pins_stable_arm64_and_preserves_checksum_algorithm_and_license(self):
         package = select(xml())
         self.assertEqual(package['revision'], '37.2.13')

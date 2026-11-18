@@ -5,6 +5,153 @@ use feedback::Kind;
 impl Hub {
     pub(super) fn update_sdk(&mut self, message: Message) -> Task<Message> {
         match message {
+            Message::AskImageRemoval(version)
+                if !self.busy && self.sdk_open && !self.images_loading =>
+            {
+                self.busy = true;
+                self.command_epoch = self.command_epoch.wrapping_add(1);
+                let epoch = self.command_epoch;
+                let backend = self.backend.clone();
+                self.notice = "Đang kiểm tra image trước khi gỡ…".into();
+                return Task::perform(
+                    async move {
+                        tokio::task::spawn_blocking(move || backend.prepare_image_removal(version))
+                            .await
+                            .unwrap_or_else(|e| Err(e.to_string()))
+                    },
+                    move |result| Message::ImageRemovalPrepared(epoch, result),
+                );
+            }
+            Message::ImageRemovalPrepared(epoch, result)
+                if epoch == self.command_epoch && self.busy =>
+            {
+                self.busy = false;
+                self.notice = "Sẵn sàng".into();
+                if !self.quit_requested {
+                    match result {
+                        Ok(plan) => self.image_removal = Some(plan),
+                        Err(error) => self.error("Không thể gỡ image Android", error),
+                    }
+                }
+            }
+            Message::ConfirmImageRemoval if !self.busy && !self.stale => {
+                let Some(plan) = self.image_removal.take() else {
+                    return Task::none();
+                };
+                self.busy = true;
+                self.command_epoch = self.command_epoch.wrapping_add(1);
+                let epoch = self.command_epoch;
+                let backend = self.backend.clone();
+                self.notice = "Đang gỡ image Android…".into();
+                return Task::perform(
+                    async move {
+                        tokio::task::spawn_blocking(move || backend.remove_android_image(&plan))
+                            .await
+                            .unwrap_or_else(|e| Err(e.to_string()))
+                    },
+                    move |result| Message::ImageRemovalFinished(epoch, result),
+                );
+            }
+            Message::ImageRemovalFinished(epoch, result)
+                if epoch == self.command_epoch && self.busy =>
+            {
+                self.busy = false;
+                self.notice = "Sẵn sàng".into();
+                match result {
+                    Ok(()) => self.notify(Kind::Success, "Đã gỡ image Android", None),
+                    Err(error) => self.error("Gỡ image chưa hoàn tất", error),
+                }
+                return self.update(Message::RefreshImages);
+            }
+
+            Message::RefreshImages if !self.busy && !self.images_loading => {
+                self.images_loading = true;
+                self.images_epoch = self.images_epoch.wrapping_add(1);
+                let epoch = self.images_epoch;
+                let backend = self.backend.clone();
+                return Task::perform(
+                    async move {
+                        tokio::task::spawn_blocking(move || backend.android_images())
+                            .await
+                            .unwrap_or_else(|e| Err(e.to_string()))
+                    },
+                    move |result| Message::ImagesLoaded(epoch, result),
+                );
+            }
+            Message::ImagesLoaded(epoch, result) if epoch == self.images_epoch => {
+                self.images_loading = false;
+                self.images = result;
+            }
+            Message::OpenImageReview(version)
+                if !self.busy && (self.sdk_open || self.creation_image_review()) =>
+            {
+                self.sdk_review_open = true;
+                self.sdk_setup_result = None;
+                self.sdk_cache_reset = None;
+                self.review_license = 0;
+                self.accepted_licenses.clear();
+                match android_hub_infrastructure::SdkPlan::for_image(version) {
+                    Ok(plan) => {
+                        self.sdk_plan = Some(plan);
+                        self.sdk_plan_error = None;
+                    }
+                    Err(error) => {
+                        self.sdk_plan = None;
+                        self.sdk_plan_error = Some(error);
+                    }
+                }
+            }
+            Message::ImageSetupFinished(epoch, result)
+                if epoch == self.command_epoch && self.sdk_setup.is_some() =>
+            {
+                self.sdk_setup = None;
+                self.busy = false;
+                match result {
+                    Ok(installed) => {
+                        if self.creation_image_review() {
+                            let editor = self.creation.as_mut().unwrap();
+                            let create = editor.create_after_image && !self.quit_requested;
+                            editor.image_review = false;
+                            editor.create_after_image = false;
+                            self.sdk_review_open = false;
+                            self.accepted_licenses.clear();
+                            self.sdk_setup_result = None;
+                            if create {
+                                if editor.request.android_version != installed.identity.version {
+                                    editor.error =
+                                        Some("Image trả về không khớp phiên bản đã chọn".into());
+                                    return self.probe_creation();
+                                }
+                                return self.launch_creation(Some(installed.identity));
+                            }
+                            self.notify(
+                                Kind::Info,
+                                "Image đã cài; chưa tạo máy. Có thể dùng lại khi tạo máy mới.",
+                                None,
+                            );
+                            return self.probe_creation();
+                        }
+                        self.accepted_licenses.clear();
+                        self.sdk_review_open = false;
+                        let title = if installed.reused {
+                            "Image đã sẵn sàng"
+                        } else {
+                            "Đã cài image Android"
+                        };
+                        self.sdk_setup_result = Some(format!(
+                            "{}: {}",
+                            self.language.tr(title),
+                            installed.identity.version
+                        ));
+                        self.notify(Kind::Success, title, None);
+                    }
+                    Err(error) => {
+                        self.error("Không cài được image Android", error.clone());
+                        self.sdk_setup_result = Some(error);
+                    }
+                }
+                return self.update(Message::RefreshImages);
+            }
             Message::OpenSdk if !self.busy => {
                 self.preferences_open = false;
                 self.history_open = false;
@@ -25,11 +172,14 @@ impl Hub {
                 self.pending_stop = None;
                 self.clear_backup_selection();
                 self.managed_loading = false;
-                return self.update(Message::RefreshManagedSdks);
+                return Task::batch([
+                    self.update(Message::RefreshManagedSdks),
+                    self.update(Message::RefreshImages),
+                ]);
             }
             Message::StartSdkSetup
                 if !self.busy
-                    && self.sdk_open
+                    && (self.sdk_open || self.creation_image_review())
                     && self.sdk_review_open
                     && self.sdk_cache_reset.is_none() =>
             {
@@ -41,7 +191,7 @@ impl Hub {
                     return Task::none();
                 }
                 let java = PathBuf::from(self.java_draft.trim());
-                if !java.is_absolute() {
+                if plan.image_version().is_none() && !java.is_absolute() {
                     self.sdk_setup_result =
                         Some("Nhập Java home tuyệt đối trước khi bắt đầu".into());
                     return Task::none();
@@ -52,8 +202,34 @@ impl Hub {
                 self.sdk_setup_result = None;
                 self.busy = true;
                 self.command_epoch = self.command_epoch.wrapping_add(1);
-                self.notice = "Đang chuẩn bị SDK mới…".into();
+                self.notice = if plan.image_version().is_some() {
+                    "Đang cài image Android…"
+                } else {
+                    "Đang chuẩn bị SDK mới…"
+                }
+                .into();
                 let backend = self.backend.clone();
+                if plan.image_version().is_some() {
+                    if let Some(editor) = self.creation.as_mut().filter(|e| e.image_review) {
+                        if Some(editor.request.android_version) != plan.image_version() {
+                            self.busy = false;
+                            self.sdk_setup = None;
+                            return Task::none();
+                        }
+                        editor.create_after_image = true;
+                    }
+                    let epoch = self.command_epoch;
+                    return Task::perform(
+                        async move {
+                            tokio::task::spawn_blocking(move || {
+                                backend.prepare_android_image(&plan, &accepted, &control)
+                            })
+                            .await
+                            .unwrap_or_else(|e| Err(e.to_string()))
+                        },
+                        move |result| Message::ImageSetupFinished(epoch, result),
+                    );
+                }
                 return Task::perform(
                     async move {
                         tokio::task::spawn_blocking(move || {
@@ -66,7 +242,9 @@ impl Hub {
                 );
             }
             Message::AskSdkCacheReset(index)
-                if !self.busy && self.sdk_open && self.sdk_review_open =>
+                if !self.busy
+                    && (self.sdk_open || self.creation_image_review())
+                    && self.sdk_review_open =>
             {
                 if self
                     .sdk_plan
@@ -78,7 +256,9 @@ impl Hub {
             }
             Message::CancelSdkCacheReset if !self.busy => self.sdk_cache_reset = None,
             Message::ConfirmSdkCacheReset
-                if !self.busy && self.sdk_open && self.sdk_review_open =>
+                if !self.busy
+                    && (self.sdk_open || self.creation_image_review())
+                    && self.sdk_review_open =>
             {
                 if let Some(archive) = self
                     .sdk_cache_reset
@@ -118,6 +298,9 @@ impl Hub {
                 self.sdk_setup_result = Some(message);
             }
             Message::CancelSdkSetup => {
+                if let Some(editor) = &mut self.creation {
+                    editor.create_after_image = false;
+                }
                 if let Some(control) = &self.sdk_setup {
                     control.cancel();
                     self.sdk_setup_result =
@@ -151,7 +334,7 @@ impl Hub {
                 self.sdk_cache_reset = None;
                 self.review_license = 0;
                 self.accepted_licenses.clear();
-                match android_hub_infrastructure::SdkPlan::bundled() {
+                match android_hub_infrastructure::SdkPlan::common_tools() {
                     Ok(plan) => {
                         self.sdk_plan = Some(plan);
                         self.sdk_plan_error = None;
@@ -163,12 +346,23 @@ impl Hub {
                 }
             }
             Message::CloseSdkReview if !self.busy => {
+                if let Some(editor) = self.creation.as_mut().filter(|e| e.image_review) {
+                    editor.image_review = false;
+                    editor.create_after_image = false;
+                    self.sdk_review_open = false;
+                    self.sdk_cache_reset = None;
+                    self.accepted_licenses.clear();
+                    self.sdk_setup_result = None;
+                    return self.probe_creation();
+                }
                 self.sdk_review_open = false;
                 self.sdk_cache_reset = None;
                 self.accepted_licenses.clear();
             }
             Message::ReviewLicense(index)
-                if !self.busy && self.sdk_open && self.sdk_review_open =>
+                if !self.busy
+                    && (self.sdk_open || self.creation_image_review())
+                    && self.sdk_review_open =>
             {
                 if self
                     .sdk_plan
@@ -180,7 +374,7 @@ impl Hub {
             }
             Message::AcceptLicense(index, accepted)
                 if !self.busy
-                    && self.sdk_open
+                    && (self.sdk_open || self.creation_image_review())
                     && self.sdk_review_open
                     && index == self.review_license =>
             {
@@ -259,8 +453,14 @@ impl Hub {
                         self.java_draft = java.to_string_lossy().into_owned();
                         self.location_notice =
                             Some("Đã chọn SDK và Java; lựa chọn được lưu cho lần mở sau.".into());
+                        self.images_loading = false;
+                        self.images = Ok(vec![]);
+                        let images = self.update(Message::RefreshImages);
                         self.busy = true;
-                        return Self::task(self.backend.clone(), Work::Initialize);
+                        return Task::batch([
+                            images,
+                            Self::task(self.backend.clone(), Work::Initialize),
+                        ]);
                     }
                     Err(error) => self.error("Thao tác chưa hoàn tất", error),
                 }
@@ -324,8 +524,14 @@ impl Hub {
                             "Đã lưu SDK; lựa chọn này áp dụng cho những lần mở Hub tiếp theo."
                                 .into(),
                         );
+                        self.images_loading = false;
+                        self.images = Ok(vec![]);
+                        let images = self.update(Message::RefreshImages);
                         self.busy = true;
-                        return Self::task(self.backend.clone(), Work::Initialize);
+                        return Task::batch([
+                            images,
+                            Self::task(self.backend.clone(), Work::Initialize),
+                        ]);
                     }
                     Err(error) => self.error("Thao tác chưa hoàn tất", error),
                 }

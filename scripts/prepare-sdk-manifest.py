@@ -123,20 +123,38 @@ def read_metadata(path):
         return handle.read(8 * 1024 * 1024 + 1)
 
 
+def prepare_images(image):
+    root = parse_xml(image)
+    packages = [select(root, 'image',
+                       f'system-images;android-{api};google_apis_playstore;arm64-v8a',
+                       f'system-images/android-{api}/google_apis_playstore/arm64-v8a', False)
+                for api in (31, 33, 34, 35, 36)]
+    return {'schema': 1, 'platform': 'macos-arm64',
+            'source': SOURCES['image'] + 'sys-img2-3.xml',
+            'metadata_sha256': hashlib.sha256(image).hexdigest(),
+            'packages': packages}
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--repository', type=Path, required=True)
+    parser.add_argument('--repository', type=Path)
+    parser.add_argument('--images-only', action='store_true',
+                        help='Prepare the Android 12–16 image catalog without common tools')
     parser.add_argument('--image', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
     args = parser.parse_args()
     try:
-        plan = prepare(read_metadata(args.repository), read_metadata(args.image))
+        if not args.images_only and args.repository is None:
+            raise ValueError('--repository is required unless --images-only is selected')
+        plan = (prepare_images(read_metadata(args.image)) if args.images_only else
+                prepare(read_metadata(args.repository), read_metadata(args.image)))
         with args.output.open('x') as handle:
             json.dump(plan, handle, indent=2, ensure_ascii=False)
             handle.write('\n')
     except (OSError, ValueError, ET.ParseError) as error:
         parser.exit(1, f'SDK plan rejected: {error}\n')
-    print(f"Prepared {len(plan['packages'])} packages; {plan['download_bytes']} compressed bytes. Review required; nothing installed.")
+    total = sum(package['archive_bytes'] for package in plan['packages'])
+    print(f"Prepared {len(plan['packages'])} packages; {total} compressed bytes. Review required; nothing installed.")
 
 
 if __name__ == '__main__':

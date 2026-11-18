@@ -4,7 +4,7 @@ Theo [ADR 0051](decisions/0051-data-catalog-and-usage-presentation.md), catalog 
 
 ## Stack hiện tại
 
-Rust workspace với Iced 0.13.1 (wgpu/Metal) cho Android Hub trên macOS Apple Silicon. Android Emulator Google Play ARM64 API 36 là engine hiện tại đã chạy được game; không có dependency hoặc checkout AVO trong source đang dùng. Nghiên cứu engine trước đây chỉ còn trong báo cáo lịch sử. Không có HTTP backend riêng.
+Rust workspace với Iced 0.13.1 (wgpu/Metal) cho Android Hub trên macOS Apple Silicon. Android Emulator dùng chung cho Google Play ARM64 Android 12–16 (API 31/33/34/35/36); game trước đây đã chạy trên Android 16; không có dependency hoặc checkout AVO trong source đang dùng. Nghiên cứu engine trước đây chỉ còn trong báo cáo lịch sử. Không có HTTP backend riêng.
 
 ## Ranh giới
 
@@ -17,9 +17,20 @@ Rust workspace với Iced 0.13.1 (wgpu/Metal) cho Android Hub trên macOS Apple 
 
 ## Dữ liệu và vòng đời
 
-Registry `~/Library/Application Support/Android Hub/hub-profiles.json` lưu cấu hình mong muốn, kiểm tra ID/port duy nhất và ghi qua rename. `hub.lock` khóa các thao tác thay đổi giữa những process Hub. Mỗi AVD có dữ liệu riêng trong `emulator-avds`; không sao chép tài khoản.
+Registry `~/Library/Application Support/Android Hub/hub-profiles.json` lưu cấu hình mong muốn, kiểm tra ID/port duy nhất và ghi qua rename. Schema 1 bọc `profiles` và lưu image identity bất biến theo [ADR 0056](decisions/0056-immutable-android-image-per-device.md). Registry array cũ được sao lưu trước migration metadata; máy chưa xác định được image giữ trạng thái chưa xác định, không tự gán Android 16. `hub.lock` khóa các thao tác thay đổi giữa những process Hub. Mỗi AVD có dữ liệu riêng trong `emulator-avds`; không sao chép tài khoản.
 
 Chỉ sửa cấu hình khi engine dừng và port rảnh. Mở máy truyền RAM/CPU/FPS và kích thước framebuffer qua các flags SDK rồi spawn engine headless làm process con; không đọc/ghi lại config.ini của máy cũ. Tạo máy mới vẫn chuẩn hóa config.ini với đọc có timeout. Dừng máy kiểm tra tên AVD từ ADB và PID lần nữa trước `emu kill`; không cưỡng bức kill. Theo ADR 0039, đóng cửa sổ hoặc Quit dừng các engine đã đăng ký rồi mới thoát; chờ tác vụ ghi hiện tại và giữ UI mở nếu dừng thất bại. Desktop chặn AppKit terminate: để Cmd+Q/menu/Dock đi qua cùng luồng async; không thay delegate Winit. Force Quit/crash nằm ngoài bảo đảm này.
+
+## Image Android theo phiên bản
+
+Theo [ADR 0056](decisions/0056-immutable-android-image-per-device.md), catalog cố định
+Android 12–16 và mỗi máy giữ package/revision/fingerprint đã xác minh. Tải image
+là plan riêng trên SDK dùng chung; consent gắn với nội dung license của plan.
+Creation recheck identity dưới lock trước khi tạo AVD. Không nâng/hạ image tại chỗ.
+Gỡ image chỉ dành cho SDK do Hub quản lý, kiểm tra registry/AVD/backup/archive và
+journal; SDK bên ngoài chỉ đọc. Lock theo thứ tự SDK-image rồi Hub, publish/remove
+có journal và kiểm tra lại identity. Bảng kết quả từng phiên bản và giới hạn xem
+[báo cáo nghiệm thu](reports/android-versions-qualification-20261118.md).
 
 ## Quan sát và giới hạn
 
@@ -85,7 +96,7 @@ giữ navigation intent có kiểu và chỉ tiếp tục sau save thành công.
 `save_if_unchanged` so profile gốc dưới Hub lock trước các stopped/write guard.
 
 Theo [ADR 0047](decisions/0047-create-request-and-registered-result.md), tạo máy
-nhận CreateRequest chỉ có tên/thông số, backend tự cấp ID/port dưới lock.
+nhận CreateRequest có tên/thông số và phiên bản Android, backend tự cấp ID/port dưới lock.
 CreatedDevice giữ profile đã đăng ký độc lập lỗi snapshot/biên nhận; desktop
 chỉ khởi động đúng ID trả về khi người dùng chọn trước. Preview môi trường
 chỉ đọc thành phần SDK/Java và filesystem; không tạo journal hay tải phần mềm.

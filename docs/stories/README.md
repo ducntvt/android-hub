@@ -142,3 +142,14 @@ If you want automation, a 10-line bash script can parse and run them — but the
 - [US-046 — Private source repository documentation](US-046-private-repository-documentation.md) — implemented
 
 - [US-047 — CI and source releases](US-047-ci-and-source-releases.md) — implemented
+
+## Android 12–16 — planned
+
+[Epic E01: phạm vi, luồng sử dụng và thứ tự triển khai](epics/E01-multiple-android-versions/README.md).
+
+- [US-048 — Kiểm chứng Android 12 và 16 trên cùng engine](epics/E01-multiple-android-versions/US-048-android-version-compatibility-spike.md) — implemented
+- [US-049 — Lưu cố định image Android theo từng máy](epics/E01-multiple-android-versions/US-049-immutable-device-image-identity.md) — implemented
+- [US-050 — Cài image Android theo nhu cầu](epics/E01-multiple-android-versions/US-050-on-demand-android-image-installation.md) — implemented
+- [US-051 — Chọn phiên bản Android khi tạo máy mới](epics/E01-multiple-android-versions/US-051-choose-android-version-at-creation.md) — implemented
+- [US-052 — Quản lý các phiên bản Android đã cài](epics/E01-multiple-android-versions/US-052-manage-installed-android-images.md) — implemented
+- [US-053 — Hoàn thiện tương thích và nghiệm thu Android 12–16](epics/E01-multiple-android-versions/US-053-qualify-five-android-versions.md) — implemented

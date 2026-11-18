@@ -165,9 +165,13 @@ pub fn view(hub: &Hub) -> Element<'_, Message> {
                     device_icon,
                     column![
                         text(&p.name).size(16).wrapping(text::Wrapping::WordOrGlyph),
-                        text(hub.device_phase(&p.id))
-                            .size(CAPTION)
-                            .style(secondary_text)
+                        text(format!(
+                            "{} · {}",
+                            compact_device_version(hub, Some(&p.id)),
+                            hub.device_phase(&p.id)
+                        ))
+                        .size(CAPTION)
+                        .style(secondary_text)
                     ]
                     .spacing(5)
                     .width(Length::Fill)
@@ -415,6 +419,24 @@ pub fn view(hub: &Hub) -> Element<'_, Message> {
 }
 
 fn device_version(hub: &Hub, id: Option<&str>) -> String {
+    if let Some(profile) =
+        id.and_then(|id| hub.state.as_ref()?.profiles.iter().find(|p| p.id == id))
+    {
+        if let Some(image) = &profile.image {
+            return format!(
+                "{} · API {} · r{}.{}.{}",
+                image.version,
+                image.version.api(),
+                image.revision[0],
+                image.revision[1],
+                image.revision[2]
+            );
+        }
+        return hub
+            .language
+            .tr("Chưa xác định image máy cũ. Kiểm tra SDK và mở lại Hub.")
+            .into();
+    }
     match id.and_then(|id| {
         hub.state
             .as_ref()?

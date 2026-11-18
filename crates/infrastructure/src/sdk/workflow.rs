@@ -11,7 +11,7 @@ use std::{
     },
 };
 
-// Admission policy, based on ~3.95 GB logical payload in the installed four packages.
+// Conservative common-tool setup headroom; optional images have separate admission.
 // Each extraction additionally checks its actual ZIP budget; this is not reserved disk.
 const EXTRACT_HEADROOM: u64 = 6 * 1024 * 1024 * 1024;
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -30,7 +30,7 @@ pub struct SdkSetupControl {
     started: Arc<AtomicBool>,
     canceled: Arc<AtomicBool>,
     stage: Arc<AtomicUsize>,
-    downloads: [SdkDownloadControl; 4],
+    downloads: [SdkDownloadControl; 8],
     assembly: SdkInstallControl,
 }
 impl Default for SdkSetupControl {
@@ -57,10 +57,10 @@ impl SdkSetupControl {
             0 => SdkSetupStage::Ready,
             1 => SdkSetupStage::CheckingJava,
             2 => SdkSetupStage::CheckingSpace,
-            n @ 3..=6 => SdkSetupStage::Downloading(n - 2),
-            7 => SdkSetupStage::Assembling,
-            8 => SdkSetupStage::Complete,
-            10 => SdkSetupStage::Canceled,
+            n @ 3..=10 => SdkSetupStage::Downloading(n - 2),
+            11 => SdkSetupStage::Assembling,
+            12 => SdkSetupStage::Complete,
+            14 => SdkSetupStage::Canceled,
             _ => SdkSetupStage::Failed,
         }
     }
@@ -82,6 +82,68 @@ impl SdkSetupControl {
     }
 }
 impl Backend {
+    /// Explicit per-image consent; uses the same downloader, extraction checks and cancellation controls.
+    pub fn prepare_android_image(
+        &self,
+        plan: &SdkPlan,
+        accepted: &BTreeSet<String>,
+        control: &SdkSetupControl,
+    ) -> Result<super::ImageInstallResult, String> {
+        let version = plan
+            .image_version()
+            .ok_or("Plan không phải một image Android")?;
+        let packages = plan.approved_packages(accepted)?;
+        debug_assert_eq!(packages[0].kind, super::SdkPackage::PlayImage(version));
+        self.run_image_package(&packages[0], control)
+    }
+    pub(super) fn run_image_package(
+        &self,
+        package: &SdkInstallPackage,
+        control: &SdkSetupControl,
+    ) -> Result<super::ImageInstallResult, String> {
+        let super::SdkPackage::PlayImage(version) = package.kind else {
+            return Err("Plan không phải image Android".into());
+        };
+        if control.started.swap(true, Ordering::AcqRel) {
+            return Err("Mỗi control chỉ dùng cho một lượt cài image".into());
+        }
+        let result = (|| {
+            control.check()?;
+            package.archive.validate(&package.accepted_license_sha256)?;
+            // SDK-scoped lock coordinates different Hub data roots without blocking guest input/stop.
+            let _image_lock = super::image_install::image_lock(&self.sdk)?;
+            self.ensure_sdk(false)?;
+            if let Some(existing) = self.existing_install_image(version)? {
+                return Ok(existing);
+            }
+            control.stage.store(2, Ordering::Release);
+            {
+                let _guard = self.lock()?;
+                self.admit_image_install(package)?;
+            }
+            control.check()?;
+            control.stage.store(3, Ordering::Release);
+            self.download_sdk_archive_controlled(
+                &package.archive,
+                &package.accepted_license_sha256,
+                &control.downloads[0],
+            )?;
+            control.check()?;
+            control.stage.store(11, Ordering::Release);
+            self.install_image_archive(package, &control.assembly)
+        })();
+        control.stage.store(
+            if result.is_ok() {
+                12
+            } else if control.canceled.load(Ordering::Acquire) {
+                14
+            } else {
+                13
+            },
+            Ordering::Release,
+        );
+        result
+    }
     fn sdk_setup_budget(&self, packages: &[SdkInstallPackage]) -> Result<u64, String> {
         let cache = self.runtime().join("sdk-downloads");
         match std::fs::symlink_metadata(&cache) {
@@ -132,8 +194,8 @@ impl Backend {
         }
         let result: Result<ManagedSdk, String> = (|| {
             control.check()?;
-            if packages.len() != 4 {
-                return Err("Cần bốn package SDK".into());
+            if !(3..=8).contains(&packages.len()) {
+                return Err("Cần công cụ SDK chung và các image tùy chọn".into());
             }
             for package in packages {
                 package.archive.validate(&package.accepted_license_sha256)?;
@@ -162,17 +224,17 @@ impl Backend {
                 )?;
             }
             control.check()?;
-            control.stage.store(7, Ordering::Release);
+            control.stage.store(11, Ordering::Release);
             self.assemble_sdk(packages, &java, &control.assembly)
         })();
         // Successful publication wins over a cancellation arriving after its commit point.
         control.stage.store(
             if result.is_ok() {
-                8
+                12
             } else if control.canceled.load(Ordering::Acquire) {
-                10
+                14
             } else {
-                9
+                13
             },
             Ordering::Release,
         );

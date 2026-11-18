@@ -1,5 +1,5 @@
-//! User choices only: identity, ports, paths and image selection belong to the backend.
-use crate::{DEFAULT_FPS, Profile};
+//! User choices only: device IDs, ports, paths and verified image bindings belong to the backend.
+use crate::{AndroidVersion, DEFAULT_FPS, Profile};
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct CreateRequest {
@@ -9,6 +9,7 @@ pub struct CreateRequest {
     pub width: u32,
     pub height: u32,
     pub fps: u32,
+    pub android_version: AndroidVersion,
 }
 
 impl CreateRequest {
@@ -28,6 +29,7 @@ impl CreateRequest {
             width: 720,
             height: 1280,
             fps: DEFAULT_FPS,
+            android_version: AndroidVersion::default(),
         }
     }
 
@@ -47,6 +49,7 @@ impl CreateRequest {
             width: self.width,
             height: self.height,
             fps: self.fps,
+            image: None,
         };
         profile.validate()?;
         profile.name = profile.name.trim().to_owned();

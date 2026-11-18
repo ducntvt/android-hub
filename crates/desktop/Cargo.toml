@@ -16,3 +16,6 @@ rfd.workspace = true
 objc2.workspace = true
 objc2-foundation.workspace = true
 objc2-app-kit.workspace = true
+
+[dev-dependencies]
+serde_json.workspace = true

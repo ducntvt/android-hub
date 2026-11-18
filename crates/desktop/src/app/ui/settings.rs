@@ -23,6 +23,9 @@ pub(super) fn view(hub: &Hub) -> Element<'_, Message> {
         text(device_version(hub, Some(&p.id)))
             .size(CAPTION)
             .style(secondary_text),
+        muted(
+            lang.tr("Phiên bản Android cố định sau khi tạo. Muốn dùng bản khác, hãy tạo máy mới.")
+        ),
         text(lang.tr("Thiết bị")).size(BODY),
         muted(lang.tr("Tên thiết bị")),
         text_input(lang.tr("Tên máy"), &p.name)

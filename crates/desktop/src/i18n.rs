@@ -30,6 +30,106 @@ impl Language {
             return value;
         }
         match value {
+            "Image đã cài tách biệt với cache tải. Hub không tự gỡ image khi xóa máy." => {
+                "Installed images are separate from download cache. Deleting a device does not remove its image."
+            }
+            "Phiên bản Android" => "Android versions",
+            "Transaction có image chưa xác định; không gỡ" => {
+                "Transaction image is unresolved; removal blocked"
+            }
+            "Gỡ image" => "Remove image",
+            "Tiếp tục gỡ image" => "Continue image removal",
+            "Đã gỡ image Android" => "Android image removed",
+            "Gỡ image chưa hoàn tất" => "Image removal is incomplete",
+            "Không thể gỡ image Android" => "Cannot remove Android image",
+            "Đang kiểm tra image trước khi gỡ…" => "Checking image before removal…",
+            "Đang gỡ image Android…" => "Removing Android image…",
+            "Gỡ image không dùng khỏi SDK do Hub quản lý. Muốn tạo máy sau này cần tải lại image." => {
+                "Removes an unused image from the Hub-managed SDK. Creating another device later requires downloading the image again."
+            }
+            "Đang được tham chiếu bởi:" => "Referenced by:",
+            "Chưa xác định dung lượng" => "Size unknown",
+            "SDK bên ngoài Hub: chỉ xem, không gỡ image" => {
+                "External SDK: view only; image removal is unavailable"
+            }
+            "Image đang được sử dụng" => "Image is in use",
+            "Không đọc được dung lượng hoặc đường dẫn image" => {
+                "Cannot read image size or location"
+            }
+            "Gỡ image chưa hoàn tất; mở Thiết lập SDK để tiếp tục" => {
+                "Image removal is incomplete; open SDK setup to continue"
+            }
+            "Image không có biên nhận do Hub quản lý" => {
+                "This image has no Hub ownership receipt"
+            }
+            "Biên nhận không khớp image hiện tại; không gỡ" => {
+                "Receipt does not match the current image; removal blocked"
+            }
+            "Dữ liệu image thay đổi sau xác nhận; không gỡ" => {
+                "Image data changed after confirmation; removal blocked"
+            }
+            "Image thay đổi sau xác nhận" => "Image changed after confirmation",
+            "SDK thay đổi sau xác nhận" => "SDK changed after confirmation",
+            "Biên nhận image không hợp lệ" => "Invalid image receipt",
+            "Biên nhận gỡ image không hợp lệ" => "Invalid image removal receipt",
+            "Biên nhận gỡ image không khớp SDK" => {
+                "Image removal receipt does not match the SDK"
+            }
+            "Biên nhận SDK không hợp lệ" => "Invalid SDK receipt",
+            "Thiếu biên nhận SDK" => "SDK receipt is missing",
+            "Tên SDK không hợp lệ" => "Invalid SDK name",
+            "Đường dẫn image không thuộc thư mục SDK thật" => {
+                "Image path is not a real SDK directory"
+            }
+            "Image có symlink hoặc file đặc biệt; không gỡ" => {
+                "Image contains a symlink or special file; removal blocked"
+            }
+            "Image có quá nhiều file" => "Image contains too many files",
+            "Dung lượng image vượt giới hạn" => "Image size exceeds the limit",
+            "Đường dẫn gỡ image đã thay đổi" => "Image removal path changed",
+            "Lượt gỡ image đã thay đổi" => "Image removal operation changed",
+            "Không quét tham chiếu image qua symlink/file" => {
+                "Cannot scan image references through a symlink or file"
+            }
+            "Quá nhiều tham chiếu image để quét an toàn" => {
+                "Too many image references to scan safely"
+            }
+            "Metadata tham chiếu image không hợp lệ" => "Invalid image reference metadata",
+            "Dữ liệu AVD không phải thư mục thật" => "AVD data is not a real directory",
+            "Backup có image chưa xác định; không gỡ" => {
+                "Backup image is unresolved; removal blocked"
+            }
+            "Tải và tạo máy" => "Download and create",
+            "Đang cài image Android…" => "Installing Android image…",
+            "Phiên bản Android cố định sau khi tạo. Muốn dùng bản khác, hãy tạo máy mới." => {
+                "Android version is fixed after creation. Create a new device to use another version."
+            }
+            "Image đã cài; chưa tạo máy. Có thể dùng lại khi tạo máy mới." => {
+                "Image installed; no device created. You can reuse it when creating a new device."
+            }
+            "Image trả về không khớp phiên bản đã chọn" => {
+                "The installed image does not match the selected Android version"
+            }
+            "Image đã thay đổi sau khi tải. Kiểm tra lại trước khi tạo máy." => {
+                "The image changed after installation. Check again before creating the device."
+            }
+            "Cài image Android" => "Install Android image",
+            "Image đã sẵn sàng" => "Image ready",
+            "Đã cài image Android" => "Android image installed",
+            "Không cài được image Android" => "Android image installation failed",
+            "Tải và cài image" => "Download and install image",
+            "Công cụ SDK dùng chung · macOS Apple Silicon" => {
+                "Shared SDK tools · macOS Apple Silicon"
+            }
+            "Cài vào SDK hiện tại. Ước tính thêm 6 GiB staging và 12 GiB cho máy mới, ngoài archive. Hub kiểm tra dung lượng trước tải và trước giải nén; không cập nhật engine hoặc thay image đã có." => {
+                "Installs into the current SDK. Allow an estimated 6 GiB for staging and 12 GiB for a new device, plus the archive. Hub checks space before download and extraction; existing images and the engine are not updated."
+            }
+            "Cần Emulator, Platform-Tools, Command-line Tools và Java. Cài riêng image Google Play ARM64 cho phiên bản Android muốn dùng." => {
+                "Requires Emulator, Platform-Tools, Command-line Tools and Java. Install the Google Play ARM64 image separately for the Android version you want."
+            }
+            "Chưa xác định image máy cũ. Kiểm tra SDK và mở lại Hub." => {
+                "Legacy device image is unresolved. Check the SDK and reopen Hub."
+            }
             "Phiên input đã thay đổi; hãy thao tác lại" => {
                 "Input session changed; try the action again"
             }

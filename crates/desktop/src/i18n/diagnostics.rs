@@ -3,6 +3,22 @@ use super::Language;
 use std::borrow::Cow;
 
 impl Language {
+    pub fn image_reference(self, value: &str) -> String {
+        if self == Self::Vi {
+            for (prefix, translated) in [
+                ("Device: ", "Máy: "),
+                ("Backup: ", "Bản sao: "),
+                ("Archive: ", "Lưu trữ: "),
+                ("AVD: ", "Dữ liệu máy: "),
+            ] {
+                if let Some(name) = value.strip_prefix(prefix) {
+                    return format!("{translated}{name}");
+                }
+            }
+        }
+        value.to_owned()
+    }
+
     pub fn diagnostic<'a>(self, value: &'a str) -> Cow<'a, str> {
         if self == Self::Vi {
             return Cow::Borrowed(value);
@@ -12,6 +28,12 @@ impl Language {
             return Cow::Borrowed(translated);
         }
         for (prefix, suffix, english_prefix, english_suffix) in [
+            (
+                "Image vẫn đang được tham chiếu: ",
+                "",
+                "Image is still referenced: ",
+                "",
+            ),
             ("Không mở được APK: ", "", "Could not open APK: ", ""),
             ("Không đọc được APK: ", "", "Could not read APK: ", ""),
             ("Backup thất bại: ", "", "Backup failed: ", ""),

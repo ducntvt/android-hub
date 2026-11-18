@@ -18,6 +18,8 @@ DOCS = [
     ROOT / 'docs/stories/US-046-private-repository-documentation.md',
     ROOT / 'docs/stories/US-047-ci-and-source-releases.md',
     ROOT / 'docs/decisions/0055-source-release-automation.md',
+    ROOT / 'docs/decisions/0056-immutable-android-image-per-device.md',
+    *ROOT.joinpath('docs/stories/epics').rglob('*.md'),
     ROOT / 'tools/metrics/README.md',
     ROOT / 'crates/desktop/assets/README.md',
     ROOT / 'crates/infrastructure/resources/README.md',

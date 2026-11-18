@@ -15,7 +15,8 @@ there are no prebuilt app downloads. Contributors and invited users build locall
 
 ## What it does
 
-- Create, rename, configure, start, stop and delete Android devices.
+- Create Android 12–16 devices with a fixed version, then rename, configure, start, stop or delete them.
+- Download selected images and remove unused Hub-managed images with reference checks.
 - Control one or two embedded Android screens, with fit/zoom and device selection.
 - Use touch/drag, scrolling, keyboard input, Android navigation and rotation.
 - Send the macOS clipboard to a selected device and install a single APK.
@@ -33,7 +34,7 @@ device; they are not included in this repository.
 | Purpose | Requirements |
 | --- | --- |
 | Build Hub | macOS on Apple Silicon, Xcode Command Line Tools, Rust/Cargo with rustfmt and Clippy, Python 3.11+ |
-| Run Android | Android SDK with Emulator, Platform-Tools, Command-line Tools and Google Play ARM64 API 36 image |
+| Run Android | Android SDK with Emulator, Platform-Tools, Command-line Tools and a selected Google Play ARM64 Android 12–16 image |
 | Create devices | Java 17+ ARM64; Android Studio's bundled JBR is the default |
 | Disk space | At least 12 GiB free before creating a device; games and backups require additional space |
 
@@ -71,7 +72,9 @@ after packaging; keep the generated app if you use it.
 
 1. Prepare the SDK components listed in [Setup](docs/SETUP.md).
 2. In Hub settings, open **SDK setup** and verify your SDK/Java paths.
-3. Use **+** to create a device, then start it.
+3. Use **+**, choose Android 12–16 (default 16), then create and start the device.
+   If the image is missing, review **Download and create**, its size and license first.
+   A device keeps its Android version; create another device to use a different version.
 4. Sign in to Google Play directly inside Android when needed.
 5. Create a second device and select **2 devices** for concurrent use.
 

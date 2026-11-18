@@ -14,7 +14,7 @@ On an Apple Silicon Mac, use Android Studio's SDK Manager to install:
 | Android Emulator | `emulator/emulator` |
 | Platform-Tools | `platform-tools/adb` |
 | Command-line Tools (latest) | `cmdline-tools/latest/bin/avdmanager` |
-| Google Play ARM64 API 36 image | `system-images;android-36;google_apis_playstore;arm64-v8a` |
+| Selected Google Play ARM64 image | Android 12/13/14/15/16 → API 31/33/34/35/36; `system-images;android-<API>;google_apis_playstore;arm64-v8a` |
 | Java 17+ ARM64 | A Java home containing `bin/java`; Android Studio's bundled JBR is the default |
 
 Default SDK: `~/Library/Android/sdk`. Default Java home:
@@ -51,8 +51,9 @@ startup-file exports. Prefer the settings UI for everyday use.
 
 ## 3. Create and use devices
 
-1. Choose **+**, enter a name and review configuration.
-2. Save/create, select the device, then start it.
+1. Choose **+**, enter a name, select Android 12–16 (default 16), and review configuration.
+2. Create directly if the image is ready; otherwise review **Download and create**,
+   size and license consent, then download. Select the device and start it.
 3. Sign in to Google Play directly in Android if needed.
 4. Create another device and select **2 devices** to control both in one window.
 
@@ -67,6 +68,38 @@ limit and increase only after checking host load and display refresh rate.
 Closing Hub normally stops registered engines; failed shutdown keeps Hub open for
 retry. Force Quit/crash cannot run that cleanup. Stop devices through Hub before
 changing data or SDK configuration.
+
+## Android versions and images
+
+Android 12/13/14/15/16 map to API 31/33/34/35/36. Android 12L, previews,
+x86 images and Android 17+ are outside this catalog. Install only the versions
+you need. Devices share tools and image files, while keeping separate writable disks.
+
+Version selection exists only in the creation form. Existing devices keep their
+version, revision and image fingerprint, including after restart and restore.
+To use another Android version, create a new device; there is no in-place upgrade
+or downgrade. Older registries receive a metadata-only migration with a saved
+original; unresolved images stay unresolved instead of being assigned Android 16.
+
+For a missing image, **Download and create** reviews a single image package and
+requires its license consent. Cancellation preserves the form/cache; retry does
+not create a second device. The image needs remaining download bytes plus 6 GiB
+extraction headroom, 12 GiB guest headroom and a 256 MiB reserve. Hub checks again
+before publishing and creating. It does not silently update a shared emulator or
+replace an existing image revision.
+
+**Hub settings → SDK setup → Android versions** shows installed images, allocated
+size and references. Removal is available only for verified Hub-managed images
+with no device, backup, archive or pending-operation reference. A stopped device
+still counts. External SDK images are read-only here. Removal keeps downloaded
+archives; it does not uninstall the shared tools or delete device data. An interrupted
+removal requires an explicit retry. Do not share Hub's private managed SDK between
+independent data roots or manage it manually with another tool.
+
+If an external SDK manager changes a bound image, Hub blocks operations that need
+that identity. Restore the original image/revision; changing the device's version
+field is not a recovery procedure. Play Store presence does not guarantee account,
+game or service compatibility on every Android version.
 
 ## Data, backups and removal
 

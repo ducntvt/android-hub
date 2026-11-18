@@ -227,6 +227,17 @@ impl Backend {
         accepted: &str,
         control: &SdkExtractionControl,
     ) -> Result<SdkExtraction, String> {
+        self.extract_sdk_archive_in(archive, accepted, control, None, 0)
+    }
+    /// Installer-only staging override keeps atomic image publication on the SDK filesystem.
+    pub(super) fn extract_sdk_archive_in(
+        &self,
+        archive: &SdkArchive,
+        accepted: &str,
+        control: &SdkExtractionControl,
+        destination: Option<&std::path::Path>,
+        reserve: u64,
+    ) -> Result<SdkExtraction, String> {
         if control.started.swap(true, Ordering::AcqRel) {
             return Err("Mỗi control chỉ dùng cho một lượt giải nén".into());
         }
@@ -243,7 +254,7 @@ impl Backend {
             .write(true)
             .open(lock_path)
             .map_err(err)?;
-        let _lock = super::cache_lock::SdkCacheLock::acquire(lock, "SDK cache đang được sử dụng")?;
+        let _lock = crate::file_lock::FileLock::acquire(lock, "SDK cache đang được sử dụng")?;
         self.recover_sdk_cache_reset_locked(&directory)?;
         let archive_path = directory.join(format!(
             "{}-{}.zip",
@@ -253,15 +264,21 @@ impl Backend {
         control.check()?;
         let mut zip = ZipArchive::new(File::open(archive_path).map_err(err)?).map_err(err)?;
         let entries = inspect(&mut zip, control)?;
-        let stats = fs2::statvfs(&directory).map_err(err)?;
-        let required = budget(&entries, stats.allocation_granularity())?;
+        let staging = destination.unwrap_or(&directory);
+        if !fs::symlink_metadata(staging).map_err(err)?.is_dir() {
+            return Err("Thư mục staging image không hợp lệ".into());
+        }
+        let stats = fs2::statvfs(staging).map_err(err)?;
+        let required = budget(&entries, stats.allocation_granularity())?
+            .checked_add(reserve)
+            .ok_or("SDK budget overflow")?;
         if stats.available_space() < required {
             return Err(format!(
                 "Không đủ chỗ giải nén SDK: cần {required} bytes, còn {} bytes",
                 stats.available_space()
             ));
         }
-        let stage = directory.join(format!(
+        let stage = staging.join(format!(
             "extract-{}-{}",
             std::process::id(),
             SEQUENCE.fetch_add(1, Ordering::Relaxed)
@@ -521,6 +538,7 @@ mod tests {
                 .unwrap_err()
                 .contains("đang được sử dụng")
         );
+        fs2::FileExt::unlock(&lock).unwrap();
         drop(lock);
         let result = backend
             .extract_sdk_archive(

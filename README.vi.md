@@ -16,7 +16,8 @@ không có bản app đóng gói sẵn. Người dùng được mời sẽ tự 
 
 ## Tính năng
 
-- Tạo, đổi tên, cấu hình, khởi động, dừng và xóa máy Android.
+- Tạo máy Android 12–16 với phiên bản cố định; đổi tên, cấu hình, khởi động, dừng và xóa máy.
+- Tải image theo nhu cầu, gỡ image do Hub quản lý khi không còn tham chiếu.
 - Điều khiển một hoặc hai màn hình Android nhúng, có vừa khung/zoom và chọn máy.
 - Chạm, kéo/vuốt, cuộn, bàn phím, navigation Android và xoay thiết bị.
 - Gửi clipboard macOS vào đúng máy và cài một file APK.
@@ -34,7 +35,7 @@ máy Android; chúng không nằm trong repository.
 | Mục đích | Thành phần |
 | --- | --- |
 | Build Hub | macOS Apple Silicon, Xcode Command Line Tools, Rust/Cargo với rustfmt và Clippy, Python 3.11+ |
-| Chạy Android | Android SDK gồm Emulator, Platform-Tools, Command-line Tools và image Google Play ARM64 API 36 |
+| Chạy Android | Android SDK gồm Emulator, Platform-Tools, Command-line Tools và image Google Play ARM64 Android 12–16 đã chọn |
 | Tạo máy | Java 17+ ARM64; mặc định dùng JBR đi kèm Android Studio |
 | Dung lượng | Ít nhất 12 GiB trống trước khi tạo máy; game và backup cần thêm dung lượng |
 
@@ -71,7 +72,9 @@ cài SDK. Sau khi đóng gói có thể dọn target; giữ app nếu đang sử
 
 1. Chuẩn bị SDK theo [hướng dẫn thiết lập](docs/SETUP.vi.md).
 2. Vào **Cài đặt Hub → Thiết lập SDK**, kiểm tra đường dẫn SDK/Java.
-3. Bấm **+** để tạo máy, rồi khởi động.
+3. Bấm **+**, chọn Android 12–16 (mặc định 16), tạo máy rồi khởi động.
+   Nếu thiếu image, xem **Tải và tạo máy**, dung lượng và điều khoản trước khi tải.
+   Phiên bản Android cố định theo máy; muốn dùng bản khác hãy tạo máy mới.
 4. Tự đăng nhập Google Play trong Android khi cần.
 5. Tạo máy thứ hai và chọn **2 máy** để sử dụng đồng thời.
 

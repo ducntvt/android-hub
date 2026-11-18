@@ -136,3 +136,5 @@ Skip an ADR for: bug fixes, refactors that preserve behavior, dependency bumps w
 - [0054 — App-owned data root after authorized reset](0054-app-owned-data-root.md) — Accepted
 
 - [0055 — Reuse macOS checks for source tag releases](0055-source-release-automation.md) — Accepted
+
+- [0056 — Immutable Android image per device](0056-immutable-android-image-per-device.md) — Accepted

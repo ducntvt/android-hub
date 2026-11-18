@@ -1,18 +1,24 @@
 //! Android engine, SDK and persisted-device operations behind a stable facade.
 mod sdk;
 pub use sdk::{
-    ManagedSdk, ManagedSdkCatalog, ManagedSdkEntry, SdkArchive, SdkDownloadControl, SdkExtraction,
-    SdkExtractionControl, SdkInstallControl, SdkInstallPackage, SdkLicense, SdkPackage,
-    SdkPackageSummary, SdkPlan, SdkSetupControl, SdkSetupStage, SdkToolProbe, VerifiedSdkPackage,
-    verify_sdk_package, verify_sdk_package_set,
+    ImageInstallResult, ImageInstallSpace, ManagedSdk, ManagedSdkCatalog, ManagedSdkEntry,
+    SdkArchive, SdkDownloadControl, SdkExtraction, SdkExtractionControl, SdkInstallControl,
+    SdkInstallPackage, SdkLicense, SdkPackage, SdkPackageSummary, SdkPlan, SdkSetupControl,
+    SdkSetupStage, SdkToolProbe, VerifiedSdkPackage, verify_sdk_package, verify_sdk_package_set,
 };
 mod apk;
 mod backup;
 mod catalog;
 mod connectivity;
 mod creation;
+mod file_lock;
+mod images;
+mod registry;
 pub use connectivity::{CONNECTIVITY_ENDPOINT, ConnectivityReport, ProbeResult};
 pub use creation::{CreatedDevice, CreationEnvironment, CreationFailure};
+pub use images::{
+    AndroidImage, ImageAvailability, ImageRemovalPlan, ImageUsage, android_image_catalog,
+};
 mod lifecycle;
 mod logs;
 pub use lifecycle::BootObservation;
@@ -37,11 +43,11 @@ pub use restore::RestoreOutcome;
 pub use usage::{DiskUsage, UsageCategory};
 pub mod display;
 use android_hub_domain::Profile;
-use fs2::FileExt;
+use file_lock::FileLock;
 use std::{
     collections::{BTreeMap, BTreeSet},
     fs::{self, File, OpenOptions},
-    io::{Read, Write},
+    io::Read,
     net::TcpListener,
     os::unix::fs::PermissionsExt,
     path::PathBuf,
@@ -92,14 +98,14 @@ impl Backend {
     fn registry(&self) -> PathBuf {
         self.runtime().join("hub-profiles.json")
     }
-    fn lock(&self) -> Result<File, String> {
+    fn lock(&self) -> Result<FileLock, String> {
         let guard = self.lock_raw()?;
         self.recover_removals_locked()?;
         self.recover_restores_locked()?;
         self.recover_creations_locked()?;
         Ok(guard)
     }
-    fn lock_raw(&self) -> Result<File, String> {
+    fn lock_raw(&self) -> Result<FileLock, String> {
         fs::create_dir_all(self.runtime()).map_err(err)?;
         let f = OpenOptions::new()
             .create(true)
@@ -108,9 +114,7 @@ impl Backend {
             .write(true)
             .open(self.runtime().join("hub.lock"))
             .map_err(err)?;
-        f.try_lock_exclusive()
-            .map_err(|_| "Một thao tác Hub khác đang thực hiện".to_string())?;
-        Ok(f)
+        FileLock::acquire(f, "Một thao tác Hub khác đang thực hiện")
     }
     fn command(&self, mut cmd: Command, timeout: u64) -> Result<String, String> {
         let seq = SEQUENCE.fetch_add(1, Ordering::Relaxed);
@@ -159,26 +163,12 @@ impl Backend {
         let _ = fs::remove_file(path);
         result
     }
-    fn read_profiles(&self) -> Result<Vec<Profile>, String> {
-        let profiles: Vec<Profile> =
-            serde_json::from_slice(&fs::read(self.registry()).map_err(err)?).map_err(err)?;
-        validate_registry(&profiles)?;
-        Ok(profiles)
-    }
-    fn write_profiles(&self, profiles: &[Profile]) -> Result<(), String> {
-        validate_registry(profiles)?;
-        let tmp = self.runtime().join("hub-profiles.json.new");
-        let mut file = File::create(&tmp).map_err(err)?;
-        file.write_all(&serde_json::to_vec_pretty(profiles).map_err(err)?)
-            .map_err(err)?;
-        file.sync_all().map_err(err)?;
-        fs::rename(tmp, self.registry()).map_err(err)
-    }
     fn initialize_registry(&self) -> Result<(), String> {
         let _guard = self.lock()?;
         if !self.registry().exists() {
             self.write_profiles(&[])?;
         }
+        self.migrate_profile_images()?;
         Ok(())
     }
     pub fn initialize(&self) -> Result<Snapshot, String> {
@@ -194,6 +184,12 @@ impl Backend {
         let android_versions = profiles
             .iter()
             .filter_map(|profile| {
+                if let Some(image) = &profile.image {
+                    return Some((
+                        profile.id.clone(),
+                        format!("{} · API {}", image.version, image.version.api()),
+                    ));
+                }
                 let config = std::fs::read_to_string(self.data(profile).join("config.ini")).ok()?;
                 Some((profile.id.clone(), android_image_version(&config)?))
             })
@@ -291,6 +287,9 @@ impl Backend {
         if old.port != profile.port {
             return Err("Không được đổi port".into());
         }
+        if old.image != profile.image {
+            return Err("Không được đổi image Android của máy đã tạo; hãy tạo máy mới".into());
+        }
         self.ensure_stopped(&old)?;
         // Registry is the desired configuration; start reapplies it before launch.
         let mut all = self.read_profiles()?;
@@ -347,7 +346,9 @@ impl Backend {
         );
         fs::write(contents.join("Info.plist"), info).map_err(err)?;
         let script = format!(
-            "#!/bin/bash\nexport ANDROID_AVD_HOME={}\nexport ANDROID_USER_HOME={}\nexec {} -avd {} -port {} -memory {} -cores {} -skin {}x{} -gpu host -no-window -grpc-use-token -grpc {} -no-snapshot -no-boot-anim -vsync-rate {} -camera-back none -camera-front none >> {} 2>&1\n",
+            "#!/bin/bash\nexport ANDROID_HOME={}\nexport ANDROID_SDK_ROOT={}\nexport ANDROID_AVD_HOME={}\nexport ANDROID_USER_HOME={}\nexec {} -avd {} -port {} -memory {} -cores {} -skin {}x{} -gpu host -no-window -grpc-use-token -grpc {} -no-snapshot -no-boot-anim -vsync-rate {} -camera-back none -camera-front none >> {} 2>&1\n",
+            quote(&self.sdk.to_string_lossy()),
+            quote(&self.sdk.to_string_lossy()),
             quote(&self.avds().to_string_lossy()),
             quote(&self.runtime().join("emulator-user").to_string_lossy()),
             quote(&self.sdk.join("emulator/emulator").to_string_lossy()),
@@ -376,6 +377,7 @@ impl Backend {
         let p = self.existing(id)?;
         self.ensure_stopped(&p)?;
         self.ensure_sdk(false)?;
+        self.verify_profile_image(&p)?;
         self.rotate_engine_log(&p)?;
         // Apply runtime settings using supported emulator flags. Existing AVD
         // configuration need not be opened or rewritten by the desktop app.

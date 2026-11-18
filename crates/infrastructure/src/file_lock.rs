@@ -2,26 +2,26 @@
 use fs2::FileExt;
 use std::{fs::File, ops::Deref};
 
-pub(super) struct SdkCacheLock(File);
-impl SdkCacheLock {
-    pub(super) fn acquire(file: File, busy: &str) -> Result<Self, String> {
+pub(crate) struct FileLock(File);
+impl FileLock {
+    pub(crate) fn acquire(file: File, busy: &str) -> Result<Self, String> {
         file.try_lock_exclusive().map_err(|e| {
             if e.kind() == std::io::ErrorKind::WouldBlock {
                 busy.to_owned()
             } else {
-                format!("Không khóa được SDK cache: {e}")
+                format!("Không khóa được file: {e}")
             }
         })?;
         Ok(Self(file))
     }
 }
-impl Deref for SdkCacheLock {
+impl Deref for FileLock {
     type Target = File;
     fn deref(&self) -> &File {
         &self.0
     }
 }
-impl Drop for SdkCacheLock {
+impl Drop for FileLock {
     fn drop(&mut self) {
         // The downloader must stop/reap its owned curl before this guard drops.
         // SIGKILL does not run Drop: curl's inherited fd still protects its writes.
@@ -61,16 +61,16 @@ mod tests {
         FileExt::unlock(&inherited).unwrap();
         drop(inherited);
 
-        let guard = SdkCacheLock::acquire(open(), "busy").unwrap();
+        let guard = FileLock::acquire(open(), "busy").unwrap();
         let inherited = guard.try_clone().unwrap();
-        assert!(SdkCacheLock::acquire(open(), "busy").is_err());
+        assert!(FileLock::acquire(open(), "busy").is_err());
         drop(guard);
-        let next = SdkCacheLock::acquire(open(), "busy").unwrap();
+        let next = FileLock::acquire(open(), "busy").unwrap();
         // Dropping the stale reference cannot release the new owner's lock.
         drop(inherited);
-        assert!(SdkCacheLock::acquire(open(), "busy").is_err());
+        assert!(FileLock::acquire(open(), "busy").is_err());
         drop(next);
-        SdkCacheLock::acquire(open(), "busy").unwrap();
+        FileLock::acquire(open(), "busy").unwrap();
         fs::remove_file(path).unwrap();
     }
 }
