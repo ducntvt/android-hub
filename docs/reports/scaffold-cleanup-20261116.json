@@ -1,0 +1,110 @@
+{
+  "protected_sha256": {
+    "/Users/ducnt/Desktop/Projects/VM/Android Hub.app/Contents/MacOS/android-hub": "20cf050f9381a159ac2316b113dc8f325ca1cf6bbeca8b1502b1af981d76c81c",
+    "/Users/ducnt/Desktop/Projects/VM/experiments/p0/runtime/hub-profiles.json": "094639c454e12aa1eeef2bcfc941819d7b862fc542596e6984661af6c2ef22b3",
+    "/private/tmp/android-hub-ui-qa-20261116/data/experiments/p0/runtime/hub-profiles.json": "624c447dfcf52f3b0fa341a1bf2a1de3abcc9c414c8db7fc0d1eb495bedd3d41"
+  },
+  "remove": [
+    {
+      "path": "/Users/ducnt/Desktop/Projects/VM/target",
+      "allocated_kib": 6153648,
+      "removed": true
+    },
+    {
+      "path": "/Users/ducnt/Desktop/Projects/VM/scripts/__pycache__",
+      "allocated_kib": 4,
+      "removed": true
+    },
+    {
+      "path": "/private/tmp/android-hub-before-scroll-1794816166868400000.app",
+      "allocated_kib": 18664,
+      "removed": true
+    },
+    {
+      "path": "/private/tmp/android-hub-clipboard-delay-20261116",
+      "allocated_kib": 19756,
+      "removed": true
+    },
+    {
+      "path": "/private/tmp/android-hub-hold-select-20261116",
+      "allocated_kib": 18864,
+      "removed": true
+    },
+    {
+      "path": "/private/tmp/android-hub-hold-split-20261116",
+      "allocated_kib": 19756,
+      "removed": true
+    },
+    {
+      "path": "/private/tmp/android-hub-queue-qa-20261116",
+      "allocated_kib": 19764,
+      "removed": true
+    },
+    {
+      "path": "/private/tmp/android-hub-reconnect-qa-20261116",
+      "allocated_kib": 19768,
+      "removed": true
+    },
+    {
+      "path": "/private/tmp/android-hub-standalone-20261116",
+      "allocated_kib": 19748,
+      "removed": true
+    },
+    {
+      "path": "/private/tmp/hub-apk-fixture-20261113",
+      "allocated_kib": 36,
+      "removed": true
+    },
+    {
+      "path": "/private/tmp/hub-apk-ui-qa-20261116",
+      "allocated_kib": 36,
+      "removed": true
+    },
+    {
+      "path": "/private/tmp/hub-cache-contention",
+      "allocated_kib": 24,
+      "removed": true
+    },
+    {
+      "path": "/private/tmp/hub-cache-contention-fixed",
+      "allocated_kib": 240,
+      "removed": true
+    },
+    {
+      "path": "/private/tmp/hub-input-qa-20261116",
+      "allocated_kib": 52,
+      "removed": true
+    },
+    {
+      "path": "/private/tmp/hub-input-release-qa-20261116",
+      "allocated_kib": 76,
+      "removed": true
+    },
+    {
+      "path": "/private/tmp/android-hub-apk-panel-20261116/checkout",
+      "allocated_kib": 892,
+      "removed": true
+    },
+    {
+      "path": "/private/tmp/android-hub-apk-panel-20261116/bundle/Android Hub QA.app",
+      "allocated_kib": 18864,
+      "removed": true
+    },
+    {
+      "path": "/private/tmp/android-hub-empty-native-20261116/Android Hub Empty QA.app",
+      "allocated_kib": 18884,
+      "removed": true
+    },
+    {
+      "path": "/private/tmp/android-hub-recovery-native-20261116/Android Hub Recovery QA.app",
+      "allocated_kib": 18860,
+      "removed": true
+    },
+    {
+      "path": "/private/tmp/android-hub-ui-qa-20261116/Android Hub QA.app",
+      "allocated_kib": 18860,
+      "removed": true
+    }
+  ],
+  "protected_hashes_unchanged": true
+}

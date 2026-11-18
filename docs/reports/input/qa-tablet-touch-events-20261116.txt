@@ -1,0 +1,13 @@
+add device 1: /dev/input/event0
+  name:     "gpio-keys"
+add device 2: /dev/input/event1
+  name:     "QEMU Virtio Tablet"
+add device 3: /dev/input/event2
+  name:     "qwerty2"
+add device 4: /dev/input/event3
+  name:     "virtio_input_multi_touch_1"
+[      92.871623] /dev/input/event1: EV_ABS       ABS_X                000024b2            
+[      92.871623] /dev/input/event1: EV_ABS       ABS_Y                00005898            
+[      92.871623] /dev/input/event1: EV_SYN       SYN_REPORT           00000000            
+[      92.871768] /dev/input/event1: EV_REL       REL_WHEEL            fffffff6            
+[      92.871768] /dev/input/event1: EV_SYN       SYN_REPORT           00000000            

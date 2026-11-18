@@ -1,0 +1,26 @@
+[vmm] preparing super.img
+[vmm] preparing userdata.img
+[vmm] preparing vbmeta.img
+[gpu] shader cache /Users/ducnt/Desktop/Projects/VM/experiments/p0/runtime/b/gpu-cache/emulator-37.2.12_moltenvk_apple-m2_macos-26a434 (0 MiB)
+[gpu] ASTC goes to Metal natively (no gfxstream decompression)
+[gpu] gfxstream from /Users/ducnt/Library/Android/sdk/emulator: Apple M2, flags 0x28, capsets 3,9, host-visible 8 GiB, hwc client
+[vmm] 2 vCPUs, 3072 MiB RAM, kernel 40.1 MiB, initrd 20.8 MiB, 46 PCI devices, GIC SPIs 32..1020
+[gpu] a device took Avo's VK_EXT_provoking_vertex (first in this engine; flat varyings come from the first vertex)
+[gpu] pipelines draw flat varyings from the first vertex (VK_EXT_provoking_vertex is Avo's layer's)
+[gpu] ctx=4 res=6 blobs=4 mapped=4MiB fences=0 oldest=0ms flush/s=0 readback avg/max=0.00/0.00ms rejected-maps=0 unknown=0 errors=0
+[gpu] ctx=7 res=17 blobs=12 mapped=16MiB fences=0 oldest=0ms flush/s=11 readback avg/max=1.07/25.36ms rejected-maps=0 unknown=0 errors=0
+[gpu] ctx=10 res=23 blobs=15 mapped=18MiB fences=0 oldest=0ms flush/s=12 readback avg/max=0.63/1.21ms rejected-maps=0 unknown=0 errors=0
+[gpu] ctx=14 res=49 blobs=25 mapped=22MiB fences=0 oldest=0ms flush/s=15 readback avg/max=0.78/1.63ms rejected-maps=0 unknown=0 errors=0
+[gpu] ctx=14 res=55 blobs=28 mapped=25MiB fences=0 oldest=0ms flush/s=2 readback avg/max=0.88/1.24ms rejected-maps=0 unknown=0 errors=0
+[gpu] ctx=14 res=55 blobs=28 mapped=25MiB fences=0 oldest=0ms flush/s=0 readback avg/max=33.21/33.21ms rejected-maps=0 unknown=0 errors=0
+[gpu] ctx=14 res=58 blobs=28 mapped=25MiB fences=0 oldest=0ms flush/s=3 readback avg/max=1.01/2.24ms rejected-maps=0 unknown=0 errors=0
+[gpu] ctx=14 res=55 blobs=28 mapped=25MiB fences=0 oldest=0ms flush/s=2 readback avg/max=1.31/7.74ms rejected-maps=0 unknown=0 errors=0
+[gpu] ctx=14 res=55 blobs=28 mapped=25MiB fences=0 oldest=0ms flush/s=0 readback avg/max=16.83/31.83ms rejected-maps=0 unknown=0 errors=0
+[gpu] ctx=14 res=54 blobs=27 mapped=24MiB fences=0 oldest=0ms flush/s=0 readback avg/max=0.00/0.00ms rejected-maps=0 unknown=0 errors=0
+[gpu] ctx=14 res=54 blobs=27 mapped=24MiB fences=0 oldest=0ms flush/s=0 readback avg/max=42.23/42.23ms rejected-maps=0 unknown=0 errors=0
+[gpu] ctx=14 res=53 blobs=26 mapped=23MiB fences=0 oldest=0ms flush/s=0 readback avg/max=0.00/0.00ms rejected-maps=0 unknown=0 errors=0
+[gpu] ctx=14 res=53 blobs=26 mapped=23MiB fences=0 oldest=0ms flush/s=0 readback avg/max=19.25/19.25ms rejected-maps=0 unknown=0 errors=0
+[gpu] ctx=14 res=53 blobs=26 mapped=23MiB fences=0 oldest=0ms flush/s=0 readback avg/max=54.47/54.47ms rejected-maps=0 unknown=0 errors=0
+[gpu] ctx=14 res=53 blobs=26 mapped=23MiB fences=0 oldest=0ms flush/s=0 readback avg/max=25.23/25.23ms rejected-maps=0 unknown=0 errors=0
+[vmm] stopped (PowerOff) after 288.6s, 613657 exits (mmio 613644, hvc 8, wfi 0, vtimer 0, sysreg 4, canceled 1)
+[vmm] PowerOff

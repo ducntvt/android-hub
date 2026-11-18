@@ -1,0 +1,566 @@
+[    0.000000][    T0] Booting Linux on physical CPU 0x0000000000 [0x610f0000]
+[    0.000000][    T0] Linux version 6.12.74-android16-6-g3ec022196c4e-ab15076761-4k (kleaf@build-host) (Android (14043575, +pgo, +bolt, +lto, +mlgo, based on r536225) clang version 19.0.1 (https://android.googlesource.com/toolchain/llvm-project b3a530ec6537146650e42be89f1089e9a3588460), LLD 19.0.1) #1 SMP PREEMPT Tue Mar 24 05:36:21 UTC 2026
+[    0.000000][    T0] KASLR enabled
+[    0.000000][    T0] random: crng init done
+[    0.000000][    T0] Machine model: linux,dummy-virt
+[    0.000000][    T0] KVM is not available. Ignoring kvm-arm.mode
+[    0.000000][    T0] earlycon: pl11 at MMIO32 0x0000000009000000 (options '')
+[    0.000000][    T0] printk: legacy bootconsole [pl11] enabled
+[    0.000000][    T0] efi: UEFI not found.
+[    0.000000][    T0] OF: reserved mem: Reserved memory: No reserved-memory node in the DT
+[    0.000000][    T0] Zone ranges:
+[    0.000000][    T0]   DMA32    [mem 0x0000000080000000-0x00000000ffffffff]
+[    0.000000][    T0]   Normal   [mem 0x0000000100000000-0x000000013fffffff]
+[    0.000000][    T0] Movable zone start for each node
+[    0.000000][    T0] Early memory node ranges
+[    0.000000][    T0]   node   0: [mem 0x0000000080000000-0x000000013fffffff]
+[    0.000000][    T0] Initmem setup node 0 [mem 0x0000000080000000-0x000000013fffffff]
+[    0.000000][    T0] psci: probing for conduit method from DT.
+[    0.000000][    T0] psci: PSCIv1.0 detected in firmware.
+[    0.000000][    T0] psci: Using standard PSCI v0.2 function IDs
+[    0.000000][    T0] psci: Trusted OS migration not required
+[    0.000000][    T0] psci: SMC Calling Convention v1.0
+[    0.000000][    T0] Load bootconfig: 2612 bytes 127 nodes
+[    0.000000][    T0] percpu: Embedded 81 pages/cpu s169432 r131072 d31272 u331776
+[    0.000000][    T0] Detected PIPT I-cache on CPU0
+[    0.000000][    T0] CPU features: detected: Address authentication (IMP DEF algorithm)
+[    0.000000][    T0] CPU features: detected: GIC system register CPU interface
+[    0.000000][    T0] CPU features: detected: Spectre-v4
+[    0.000000][    T0] CPU features: detected: Spectre-BHB
+[    0.000000][    T0] alternatives: applying boot alternatives
+[    0.000000][    T0] Kernel command line: vmw_vsock_virtio_transport_common.virtio_transport_max_vsock_pkt_buf_size=16384 console=ttynull stack_depot_disable=on cgroup_disable=pressure kasan.stacktrace=off kvm-arm.mode=protected bootconfig printk.devkmsg=on audit=1 panic=-1 8250.nr_uarts=1 binder.impl=rust cma=0 firmware_class.path=/vendor/etc/ loop.max_part=7 init=/init bootconfig earlycon=pl011,mmio32,0x9000000 console=hvc0
+[    0.000000][    T0] cgroup: Disabling pressure control group feature
+[    0.000000][    T0] audit: enabled (after initialization)
+[    0.000000][    T0] printk: log buffer data + meta data: 131072 + 458752 = 589824 bytes
+[    0.000000][    T0] Dentry cache hash table entries: 524288 (order: 10, 4194304 bytes, linear)
+[    0.000000][    T0] Inode-cache hash table entries: 262144 (order: 9, 2097152 bytes, linear)
+[    0.000000][    T0] Built 1 zonelists, mobility grouping on.  Total pages: 786432
+[    0.000000][    T0] mem auto-init: stack:all(zero), heap alloc:on, heap free:off
+[    0.000000][    T0] stackdepot: disabled
+[    0.000000][    T0] software IO TLB: area num 2.
+[    0.000000][    T0] software IO TLB: mapped [mem 0x00000000fbfff000-0x00000000fffff000] (64MB)
+[    0.000000][    T0] SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=2, Nodes=1
+[    0.000000][    T0] rcu: Preemptible hierarchical RCU implementation.
+[    0.000000][    T0] rcu: 	RCU event tracing is enabled.
+[    0.000000][    T0] rcu: 	RCU restricting CPUs from NR_CPUS=32 to nr_cpu_ids=2.
+[    0.000000][    T0] rcu: 	RCU priority boosting: priority 1 delay 500 ms.
+[    0.000000][    T0] 	Trampoline variant of Tasks RCU enabled.
+[    0.000000][    T0] 	Tracing variant of Tasks RCU enabled.
+[    0.000000][    T0] rcu: RCU calculated value of scheduler-enlistment delay is 25 jiffies.
+[    0.000000][    T0] rcu: Adjusting geometry for rcu_fanout_leaf=16, nr_cpu_ids=2
+[    0.000000][    T0] RCU Tasks: Setting shift to 1 and lim to 1 rcu_task_cb_adjust=1 rcu_task_cpu_ids=2.
+[    0.000000][    T0] RCU Tasks Trace: Setting shift to 1 and lim to 1 rcu_task_cb_adjust=1 rcu_task_cpu_ids=2.
+[    0.000000][    T0] NR_IRQS: 64, nr_irqs: 64, preallocated irqs: 0
+[    0.000000][    T0] GICv3: 988 SPIs implemented
+[    0.000000][    T0] GICv3: 0 Extended SPIs implemented
+[    0.000000][    T0] Root IRQ handler: gic_handle_irq
+[    0.000000][    T0] GICv3: GICv3 features: 16 PPIs, RSS
+[    0.000000][    T0] GICv3: GICD_CTRL.DS=1, SCR_EL3.FIQ=0
+[    0.000000][    T0] GICv3: CPU0: found redistributor 0 region 0:0x000000000a000000
+[    0.000000][    T0] rcu: 	Offload RCU callbacks from CPUs: 0-1.
+[    0.000000][    T0] rcu: srcu_init: Setting srcu_struct sizes based on contention.
+[    0.000000][    T0] arch_timer: cp15 timer(s) running at 24.00MHz (virt).
+[    0.000000][    T0] clocksource: arch_sys_counter: mask: 0xffffffffffffff max_cycles: 0x588fe9dc0, max_idle_ns: 440795202592 ns
+[    0.000000][    T0] sched_clock: 56 bits at 24MHz, resolution 41ns, wraps every 4398046511097ns
+[    0.000601][    T0] kfence: initialized - using 524288 bytes for 63 objects at 0x(____ptrval____)-0x(____ptrval____)
+[    0.001283][    T0] Calibrating delay loop (skipped), value calculated using timer frequency.. 48.00 BogoMIPS (lpj=96000)
+[    0.001957][    T0] pid_max: default: 32768 minimum: 301
+[    0.002297][    T0] LSM: initializing lsm=capability,landlock,safesetid,selinux,bpf
+[    0.002827][    T0] landlock: Up and running.
+[    0.003111][    T0] SELinux:  Initializing.
+[    0.003621][    T0] LSM support for eBPF active
+[    0.003949][    T0] Mount-cache hash table entries: 8192 (order: 4, 65536 bytes, linear)
+[    0.004502][    T0] Mountpoint-cache hash table entries: 8192 (order: 4, 65536 bytes, linear)
+[    0.005254][    T1] cacheinfo: Unable to detect cache hierarchy for CPU 0
+[    0.005822][    T1] rcu: Hierarchical SRCU implementation.
+[    0.006159][    T1] rcu: 	Max phase no-delay instances is 1000.
+[    0.006569][    T1] Timer migration: 1 hierarchy levels; 8 children per group; 1 crossnode level
+[    0.007220][    T1] dyndbg: Ignore empty _ddebug table in a CONFIG_DYNAMIC_DEBUG_CORE build
+[    0.007748][    T1] EFI services will not be available.
+[    0.008094][    T1] smp: Bringing up secondary CPUs ...
+[    0.008583][    T0] Detected PIPT I-cache on CPU1
+[    0.008605][    T0] GICv3: CPU1: found redistributor 1 region 0:0x000000000a020000
+[    0.008638][    T0] CPU1: Booted secondary processor 0x0000000001 [0x610f0000]
+[    0.008709][    T1] smp: Brought up 1 node, 2 CPUs
+[    0.010231][    T1] SMP: Total of 2 processors activated.
+[    0.010560][    T1] CPU: All CPU(s) started at EL1
+[    0.010854][    T1] CPU features: detected: Branch Target Identification
+[    0.011273][    T1] CPU features: detected: ARMv8.4 Translation Table Level
+[    0.011723][    T1] CPU features: detected: Data cache clean to the PoU not required for I/D coherence
+[    0.012289][    T1] CPU features: detected: Common not Private translations
+[    0.012713][    T1] CPU features: detected: CRC32 instructions
+[    0.013078][    T1] CPU features: detected: Data cache clean to Point of Deep Persistence
+[    0.013576][    T1] CPU features: detected: Data cache clean to Point of Persistence
+[    0.014055][    T1] CPU features: detected: Data independent timing control (DIT)
+[    0.014512][    T1] CPU features: detected: E0PD
+[    0.014794][    T1] CPU features: detected: Generic authentication (IMP DEF algorithm)
+[    0.015279][    T1] CPU features: detected: RCpc load-acquire (LDAPR)
+[    0.015671][    T1] CPU features: detected: LSE atomic instructions
+[    0.016065][    T1] CPU features: detected: Privileged Access Never
+[    0.016453][    T1] CPU features: detected: RAS Extension Support
+[    0.016823][    T1] CPU features: detected: Speculation barrier (SB)
+[    0.017209][    T1] CPU features: detected: TLB range maintenance instructions
+[    0.017691][    T1] alternatives: applying system-wide alternatives
+[    0.019446][    T1] Memory: 2949052K/3145728K available (19328K kernel code, 2390K rwdata, 14484K rodata, 4672K init, 657K bss, 192256K reserved, 0K cma-reserved)
+[    0.020710][    T1] setend instruction emulation is not supported on this system
+[    0.021209][    T1] clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 7645041785100000 ns
+[    0.021859][    T1] futex hash table entries: 512 (order: 3, 32768 bytes, linear)
+[    0.022326][    T1] 22320 pages in range for non-PLT usage
+[    0.022326][    T1] 513840 pages in range for PLT usage
+[    0.022683][    T1] pinctrl core: initialized pinctrl subsystem
+[    0.024090][    T1] NET: Registered PF_NETLINK/PF_ROUTE protocol family
+[    0.024656][    T1] DMA: preallocated 512 KiB GFP_KERNEL pool for atomic allocations
+[    0.025199][    T1] DMA: preallocated 512 KiB GFP_KERNEL|GFP_DMA32 pool for atomic allocations
+[    0.025730][    T1] audit: initializing netlink subsys (enabled)
+[    0.026147][   T35] audit: type=2000 audit(0.024:1): state=initialized audit_enabled=1 res=1
+[    0.026188][    T1] thermal_sys: Registered thermal governor 'bang_bang'
+[    0.026682][    T1] thermal_sys: Registered thermal governor 'step_wise'
+[    0.027094][    T1] thermal_sys: Registered thermal governor 'user_space'
+[    0.027507][    T1] thermal_sys: Registered thermal governor 'power_allocator'
+[    0.027965][    T1] cpuidle: using governor menu
+[    0.028777][    T1] hw-breakpoint: found 6 breakpoint and 4 watchpoint registers.
+[    0.029269][    T1] ASID allocator initialised with 256 entries
+[    0.029673][    T1] Serial: AMBA PL011 UART driver
+[    0.030079][    T1] 9000000.pl011: ttyAMA0 at MMIO 0x9000000 (irq = 13, base_baud = 0) is a PL011 rev3
+[    0.031074][    T1] iommu: Default domain type: Translated
+[    0.031426][    T1] iommu: DMA domain TLB invalidation policy: strict mode
+[    0.035581][    T1] SCSI subsystem initialized
+[    0.035872][    T1] usbcore: registered new interface driver usbfs
+[    0.036256][    T1] usbcore: registered new interface driver hub
+[    0.036627][    T1] usbcore: registered new device driver usb
+[    0.036996][    T1] mc: Linux media interface: v0.10
+[    0.037338][    T1] videodev: Linux video capture interface: v2.00
+[    0.037764][    T1] EDAC MC: Ver: 3.0.0
+[    0.038918][    T1] scmi_core: SCMI protocol bus registered
+[    0.039312][    T1] Advanced Linux Sound Architecture Driver Initialized.
+[    0.039876][    T1] clocksource: Switched to clocksource arch_sys_counter
+[    0.040383][    T1] VFS: Disk quotas dquot_6.6.0
+[    0.040687][    T1] VFS: Dquot-cache hash table entries: 512 (order 0, 4096 bytes)
+[    0.041403][    T1] NET: Registered PF_INET protocol family
+[    0.041883][    T1] IP idents hash table entries: 65536 (order: 7, 524288 bytes, linear)
+[    0.051238][    T1] tcp_listen_portaddr_hash hash table entries: 2048 (order: 3, 32768 bytes, linear)
+[    0.051830][    T1] Table-perturb hash table entries: 65536 (order: 6, 262144 bytes, linear)
+[    0.052354][    T1] TCP established hash table entries: 32768 (order: 6, 262144 bytes, linear)
+[    0.052970][    T1] TCP bind hash table entries: 32768 (order: 8, 1048576 bytes, linear)
+[    0.053494][    T1] TCP: Hash tables configured (established 32768 bind 32768)
+[    0.053993][    T1] UDP hash table entries: 2048 (order: 4, 65536 bytes, linear)
+[    0.054453][    T1] UDP-Lite hash table entries: 2048 (order: 4, 65536 bytes, linear)
+[    0.054954][    T1] NET: Registered PF_UNIX/PF_LOCAL protocol family
+[    0.055346][    T1] NET: Registered PF_XDP protocol family
+[    0.055694][    T1] PCI: CLS 0 bytes, default 64
+[    0.056044][    T1] kvm [1]: HYP mode not available
+[    0.056058][   T13] Trying to unpack rootfs image as initramfs...
+[    0.065998][    T1] Initialise system trusted keyrings
+[    0.066427][    T1] workingset: timestamp_bits=46 max_order=20 bucket_order=0
+[    0.067034][    T1] fuse: init (API version 7.41)
+[    0.072904][    T1] Key type asymmetric registered
+[    0.073244][    T1] Asymmetric key parser 'x509' registered
+[    0.073620][    T1] Block layer SCSI generic (bsg) driver version 0.4 loaded (major 241)
+[    0.074202][    T1] io scheduler mq-deadline registered
+[    0.074541][    T1] io scheduler kyber registered
+[    0.074869][    T1] io scheduler bfq registered
+[    0.075342][    T1] pci-host-generic 10000.pci: host bridge /pci@10000 ranges:
+[    0.075811][    T1] pci-host-generic 10000.pci:      MEM 0x0002000000..0x0003ffffff -> 0x0002000000
+[    0.076398][    T1] pci-host-generic 10000.pci:      MEM 0x0800000000..0x0fffffffff -> 0x0800000000
+[    0.076972][    T1] pci-host-generic 10000.pci: ECAM at [mem 0x00010000-0x0100ffff] for [bus 00]
+[    0.077540][    T1] pci-host-generic 10000.pci: PCI host bridge to bus 0000:00
+[    0.078000][    T1] pci_bus 0000:00: root bus resource [bus 00]
+[    0.078407][    T1] pci_bus 0000:00: root bus resource [mem 0x02000000-0x03ffffff]
+[    0.078913][    T1] pci_bus 0000:00: root bus resource [mem 0x800000000-0xfffffffff pref]
+[    0.079469][    T1] pci 0000:00:01.0: [1af4:1042] type 00 class 0x018000 conventional PCI endpoint
+[    0.080072][    T1] pci 0000:00:01.0: BAR 0 [mem 0x00000000-0x00003fff]
+[    0.080645][    T1] pci 0000:00:02.0: [1af4:1043] type 00 class 0x078000 conventional PCI endpoint
+[    0.081227][    T1] pci 0000:00:02.0: BAR 0 [mem 0x00000000-0x00003fff]
+[    0.081769][    T1] pci 0000:00:02.1: [1af4:1043] type 00 class 0x078000 conventional PCI endpoint
+[    0.082363][    T1] pci 0000:00:02.1: BAR 0 [mem 0x00000000-0x00003fff]
+[    0.082949][    T1] pci 0000:00:02.2: [1af4:1043] type 00 class 0x078000 conventional PCI endpoint
+[    0.083530][    T1] pci 0000:00:02.2: BAR 0 [mem 0x00000000-0x00003fff]
+[    0.083780][   T13] Freeing initrd memory: 21296K
+[    0.084091][    T1] pci 0000:00:02.3: [1af4:1043] type 00 class 0x078000 conventional PCI endpoint
+[    0.084879][    T1] pci 0000:00:02.3: BAR 0 [mem 0x00000000-0x00003fff]
+[    0.085523][    T1] pci 0000:00:02.4: [1af4:1043] type 00 class 0x078000 conventional PCI endpoint
+[    0.086105][    T1] pci 0000:00:02.4: BAR 0 [mem 0x00000000-0x00003fff]
+[    0.086647][    T1] pci 0000:00:02.5: [1af4:1043] type 00 class 0x078000 conventional PCI endpoint
+[    0.087277][    T1] pci 0000:00:02.5: BAR 0 [mem 0x00000000-0x00003fff]
+[    0.087813][    T1] pci 0000:00:02.6: [1af4:1043] type 00 class 0x078000 conventional PCI endpoint
+[    0.088409][    T1] pci 0000:00:02.6: BAR 0 [mem 0x00000000-0x00003fff]
+[    0.088931][    T1] pci 0000:00:02.7: [1af4:1043] type 00 class 0x078000 conventional PCI endpoint
+[    0.089495][    T1] pci 0000:00:02.7: BAR 0 [mem 0x00000000-0x00003fff]
+[    0.090019][    T1] pci 0000:00:03.0: [1af4:1043] type 00 class 0x078000 conventional PCI endpoint
+[    0.090587][    T1] pci 0000:00:03.0: BAR 0 [mem 0x00000000-0x00003fff]
+[    0.091104][    T1] pci 0000:00:03.1: [1af4:1043] type 00 class 0x078000 conventional PCI endpoint
+[    0.091664][    T1] pci 0000:00:03.1: BAR 0 [mem 0x00000000-0x00003fff]
+[    0.092200][    T1] pci 0000:00:03.2: [1af4:1043] type 00 class 0x078000 conventional PCI endpoint
+[    0.092763][    T1] pci 0000:00:03.2: BAR 0 [mem 0x00000000-0x00003fff]
+[    0.093292][    T1] pci 0000:00:03.3: [1af4:1043] type 00 class 0x078000 conventional PCI endpoint
+[    0.093880][    T1] pci 0000:00:03.3: BAR 0 [mem 0x00000000-0x00003fff]
+[    0.094459][    T1] pci 0000:00:03.4: [1af4:1043] type 00 class 0x078000 conventional PCI endpoint
+[    0.095049][    T1] pci 0000:00:03.4: BAR 0 [mem 0x00000000-0x00003fff]
+[    0.095567][    T1] pci 0000:00:03.5: [1af4:1043] type 00 class 0x078000 conventional PCI endpoint
+[    0.096138][    T1] pci 0000:00:03.5: BAR 0 [mem 0x00000000-0x00003fff]
+[    0.096658][    T1] pci 0000:00:03.6: [1af4:1043] type 00 class 0x078000 conventional PCI endpoint
+[    0.097217][    T1] pci 0000:00:03.6: BAR 0 [mem 0x00000000-0x00003fff]
+[    0.097746][    T1] pci 0000:00:03.7: [1af4:1043] type 00 class 0x078000 conventional PCI endpoint
+[    0.098328][    T1] pci 0000:00:03.7: BAR 0 [mem 0x00000000-0x00003fff]
+[    0.098844][    T1] pci 0000:00:04.0: [1af4:1043] type 00 class 0x078000 conventional PCI endpoint
+[    0.099425][    T1] pci 0000:00:04.0: BAR 0 [mem 0x00000000-0x00003fff]
+[    0.099954][    T1] pci 0000:00:04.1: [1af4:1043] type 00 class 0x078000 conventional PCI endpoint
+[    0.100516][    T1] pci 0000:00:04.1: BAR 0 [mem 0x00000000-0x00003fff]
+[    0.101044][    T1] pci 0000:00:04.2: [1af4:1043] type 00 class 0x078000 conventional PCI endpoint
+[    0.101606][    T1] pci 0000:00:04.2: BAR 0 [mem 0x00000000-0x00003fff]
+[    0.102126][    T1] pci 0000:00:04.3: [1af4:1043] type 00 class 0x078000 conventional PCI endpoint
+[    0.102684][    T1] pci 0000:00:04.3: BAR 0 [mem 0x00000000-0x00003fff]
+[    0.103208][    T1] pci 0000:00:05.0: [1af4:1044] type 00 class 0xff0000 conventional PCI endpoint
+[    0.103780][    T1] pci 0000:00:05.0: BAR 0 [mem 0x00000000-0x00003fff]
+[    0.104360][    T1] pci 0000:00:06.0: [1af4:1053] type 00 class 0xff0000 conventional PCI endpoint
+[    0.104933][    T1] pci 0000:00:06.0: BAR 0 [mem 0x00000000-0x00003fff]
+[    0.105456][    T1] pci 0000:00:07.0: [1af4:1050] type 00 class 0x038000 conventional PCI endpoint
+[    0.106016][    T1] pci 0000:00:07.0: BAR 0 [mem 0x00000000-0x00003fff]
+[    0.106433][    T1] pci 0000:00:07.0: BAR 2 [mem 0x00000000-0x1ffffffff 64bit pref]
+[    0.107015][    T1] pci 0000:00:08.0: [1af4:1052] type 00 class 0x098000 conventional PCI endpoint
+[    0.107580][    T1] pci 0000:00:08.0: BAR 0 [mem 0x00000000-0x00003fff]
+[    0.108102][    T1] pci 0000:00:08.1: [1af4:1052] type 00 class 0x098000 conventional PCI endpoint
+[    0.108680][    T1] pci 0000:00:08.1: BAR 0 [mem 0x00000000-0x00003fff]
+[    0.109206][    T1] pci 0000:00:08.2: [1af4:1052] type 00 class 0x098000 conventional PCI endpoint
+[    0.109767][    T1] pci 0000:00:08.2: BAR 0 [mem 0x00000000-0x00003fff]
+[    0.110302][    T1] pci 0000:00:08.3: [1af4:1052] type 00 class 0x098000 conventional PCI endpoint
+[    0.110859][    T1] pci 0000:00:08.3: BAR 0 [mem 0x00000000-0x00003fff]
+[    0.111376][    T1] pci 0000:00:08.4: [1af4:1052] type 00 class 0x098000 conventional PCI endpoint
+[    0.111936][    T1] pci 0000:00:08.4: BAR 0 [mem 0x00000000-0x00003fff]
+[    0.112453][    T1] pci 0000:00:08.5: [1af4:1052] type 00 class 0x098000 conventional PCI endpoint
+[    0.113012][    T1] pci 0000:00:08.5: BAR 0 [mem 0x00000000-0x00003fff]
+[    0.113529][    T1] pci 0000:00:08.6: [1af4:1052] type 00 class 0x098000 conventional PCI endpoint
+[    0.114092][    T1] pci 0000:00:08.6: BAR 0 [mem 0x00000000-0x00003fff]
+[    0.114607][    T1] pci 0000:00:08.7: [1af4:1052] type 00 class 0x098000 conventional PCI endpoint
+[    0.115165][    T1] pci 0000:00:08.7: BAR 0 [mem 0x00000000-0x00003fff]
+[    0.115688][    T1] pci 0000:00:09.0: [1af4:1052] type 00 class 0x098000 conventional PCI endpoint
+[    0.116275][    T1] pci 0000:00:09.0: BAR 0 [mem 0x00000000-0x00003fff]
+[    0.116791][    T1] pci 0000:00:09.1: [1af4:1052] type 00 class 0x098000 conventional PCI endpoint
+[    0.117358][    T1] pci 0000:00:09.1: BAR 0 [mem 0x00000000-0x00003fff]
+[    0.117874][    T1] pci 0000:00:09.2: [1af4:1052] type 00 class 0x098000 conventional PCI endpoint
+[    0.118433][    T1] pci 0000:00:09.2: BAR 0 [mem 0x00000000-0x00003fff]
+[    0.118956][    T1] pci 0000:00:09.3: [1af4:1052] type 00 class 0x098000 conventional PCI endpoint
+[    0.119517][    T1] pci 0000:00:09.3: BAR 0 [mem 0x00000000-0x00003fff]
+[    0.120047][    T1] pci 0000:00:09.4: [1af4:1052] type 00 class 0x098000 conventional PCI endpoint
+[    0.120639][    T1] pci 0000:00:09.4: BAR 0 [mem 0x00000000-0x00003fff]
+[    0.121159][    T1] pci 0000:00:09.5: [1af4:1052] type 00 class 0x098000 conventional PCI endpoint
+[    0.121729][    T1] pci 0000:00:09.5: BAR 0 [mem 0x00000000-0x00003fff]
+[    0.122245][    T1] pci 0000:00:09.6: [1af4:1052] type 00 class 0x098000 conventional PCI endpoint
+[    0.122803][    T1] pci 0000:00:09.6: BAR 0 [mem 0x00000000-0x00003fff]
+[    0.123324][    T1] pci 0000:00:09.7: [1af4:1052] type 00 class 0x098000 conventional PCI endpoint
+[    0.123887][    T1] pci 0000:00:09.7: BAR 0 [mem 0x00000000-0x00003fff]
+[    0.124407][    T1] pci 0000:00:0a.0: [1af4:1052] type 00 class 0x098000 conventional PCI endpoint
+[    0.124965][    T1] pci 0000:00:0a.0: BAR 0 [mem 0x00000000-0x00003fff]
+[    0.125489][    T1] pci 0000:00:0b.0: [1af4:1041] type 00 class 0x020000 conventional PCI endpoint
+[    0.126056][    T1] pci 0000:00:0b.0: BAR 0 [mem 0x00000000-0x00003fff]
+[    0.126571][    T1] pci 0000:00:0b.1: [1af4:1041] type 00 class 0x020000 conventional PCI endpoint
+[    0.127128][    T1] pci 0000:00:0b.1: BAR 0 [mem 0x00000000-0x00003fff]
+[    0.127648][    T1] pci 0000:00:0b.2: [1af4:1041] type 00 class 0x020000 conventional PCI endpoint
+[    0.128220][    T1] pci 0000:00:0b.2: BAR 0 [mem 0x00000000-0x00003fff]
+[    0.128745][    T1] pci 0000:00:0c.0: [1af4:1059] type 00 class 0x040100 conventional PCI endpoint
+[    0.129303][    T1] pci 0000:00:0c.0: BAR 0 [mem 0x00000000-0x00003fff]
+[    0.129828][    T1] pci 0000:00:0d.0: [1af4:1052] type 00 class 0x098000 conventional PCI endpoint
+[    0.130392][    T1] pci 0000:00:0d.0: BAR 0 [mem 0x00000000-0x00003fff]
+[    0.130940][    T1] pci 0000:00:07.0: BAR 2 [mem 0x800000000-0x9ffffffff 64bit pref]: assigned
+[    0.131477][    T1] pci 0000:00:01.0: BAR 0 [mem 0x02000000-0x02003fff]: assigned
+[    0.131944][    T1] pci 0000:00:02.0: BAR 0 [mem 0x02004000-0x02007fff]: assigned
+[    0.132402][    T1] pci 0000:00:02.1: BAR 0 [mem 0x02008000-0x0200bfff]: assigned
+[    0.132879][    T1] pci 0000:00:02.2: BAR 0 [mem 0x0200c000-0x0200ffff]: assigned
+[    0.133364][    T1] pci 0000:00:02.3: BAR 0 [mem 0x02010000-0x02013fff]: assigned
+[    0.133826][    T1] pci 0000:00:02.4: BAR 0 [mem 0x02014000-0x02017fff]: assigned
+[    0.134286][    T1] pci 0000:00:02.5: BAR 0 [mem 0x02018000-0x0201bfff]: assigned
+[    0.134747][    T1] pci 0000:00:02.6: BAR 0 [mem 0x0201c000-0x0201ffff]: assigned
+[    0.135207][    T1] pci 0000:00:02.7: BAR 0 [mem 0x02020000-0x02023fff]: assigned
+[    0.135670][    T1] pci 0000:00:03.0: BAR 0 [mem 0x02024000-0x02027fff]: assigned
+[    0.136132][    T1] pci 0000:00:03.1: BAR 0 [mem 0x02028000-0x0202bfff]: assigned
+[    0.136597][    T1] pci 0000:00:03.2: BAR 0 [mem 0x0202c000-0x0202ffff]: assigned
+[    0.137106][    T1] pci 0000:00:03.3: BAR 0 [mem 0x02030000-0x02033fff]: assigned
+[    0.137779][    T1] pci 0000:00:03.4: BAR 0 [mem 0x02034000-0x02037fff]: assigned
+[    0.138287][    T1] pci 0000:00:03.5: BAR 0 [mem 0x02038000-0x0203bfff]: assigned
+[    0.138773][    T1] pci 0000:00:03.6: BAR 0 [mem 0x0203c000-0x0203ffff]: assigned
+[    0.139231][    T1] pci 0000:00:03.7: BAR 0 [mem 0x02040000-0x02043fff]: assigned
+[    0.139708][    T1] pci 0000:00:04.0: BAR 0 [mem 0x02044000-0x02047fff]: assigned
+[    0.140178][    T1] pci 0000:00:04.1: BAR 0 [mem 0x02048000-0x0204bfff]: assigned
+[    0.140637][    T1] pci 0000:00:04.2: BAR 0 [mem 0x0204c000-0x0204ffff]: assigned
+[    0.141099][    T1] pci 0000:00:04.3: BAR 0 [mem 0x02050000-0x02053fff]: assigned
+[    0.141560][    T1] pci 0000:00:05.0: BAR 0 [mem 0x02054000-0x02057fff]: assigned
+[    0.142024][    T1] pci 0000:00:06.0: BAR 0 [mem 0x02058000-0x0205bfff]: assigned
+[    0.142493][    T1] pci 0000:00:07.0: BAR 0 [mem 0x0205c000-0x0205ffff]: assigned
+[    0.142954][    T1] pci 0000:00:08.0: BAR 0 [mem 0x02060000-0x02063fff]: assigned
+[    0.143423][    T1] pci 0000:00:08.1: BAR 0 [mem 0x02064000-0x02067fff]: assigned
+[    0.143884][    T1] pci 0000:00:08.2: BAR 0 [mem 0x02068000-0x0206bfff]: assigned
+[    0.144342][    T1] pci 0000:00:08.3: BAR 0 [mem 0x0206c000-0x0206ffff]: assigned
+[    0.144802][    T1] pci 0000:00:08.4: BAR 0 [mem 0x02070000-0x02073fff]: assigned
+[    0.145261][    T1] pci 0000:00:08.5: BAR 0 [mem 0x02074000-0x02077fff]: assigned
+[    0.145718][    T1] pci 0000:00:08.6: BAR 0 [mem 0x02078000-0x0207bfff]: assigned
+[    0.146178][    T1] pci 0000:00:08.7: BAR 0 [mem 0x0207c000-0x0207ffff]: assigned
+[    0.146645][    T1] pci 0000:00:09.0: BAR 0 [mem 0x02080000-0x02083fff]: assigned
+[    0.147106][    T1] pci 0000:00:09.1: BAR 0 [mem 0x02084000-0x02087fff]: assigned
+[    0.147576][    T1] pci 0000:00:09.2: BAR 0 [mem 0x02088000-0x0208bfff]: assigned
+[    0.148036][    T1] pci 0000:00:09.3: BAR 0 [mem 0x0208c000-0x0208ffff]: assigned
+[    0.148505][    T1] pci 0000:00:09.4: BAR 0 [mem 0x02090000-0x02093fff]: assigned
+[    0.148965][    T1] pci 0000:00:09.5: BAR 0 [mem 0x02094000-0x02097fff]: assigned
+[    0.149442][    T1] pci 0000:00:09.6: BAR 0 [mem 0x02098000-0x0209bfff]: assigned
+[    0.149899][    T1] pci 0000:00:09.7: BAR 0 [mem 0x0209c000-0x0209ffff]: assigned
+[    0.150356][    T1] pci 0000:00:0a.0: BAR 0 [mem 0x020a0000-0x020a3fff]: assigned
+[    0.150813][    T1] pci 0000:00:0b.0: BAR 0 [mem 0x020a4000-0x020a7fff]: assigned
+[    0.151273][    T1] pci 0000:00:0b.1: BAR 0 [mem 0x020a8000-0x020abfff]: assigned
+[    0.151732][    T1] pci 0000:00:0b.2: BAR 0 [mem 0x020ac000-0x020affff]: assigned
+[    0.152193][    T1] pci 0000:00:0c.0: BAR 0 [mem 0x020b0000-0x020b3fff]: assigned
+[    0.152651][    T1] pci 0000:00:0d.0: BAR 0 [mem 0x020b4000-0x020b7fff]: assigned
+[    0.153117][    T1] pci_bus 0000:00: resource 4 [mem 0x02000000-0x03ffffff]
+[    0.153541][    T1] pci_bus 0000:00: resource 5 [mem 0x800000000-0xfffffffff pref]
+[    0.155305][    T1] Serial: 8250/16550 driver, 1 ports, IRQ sharing disabled
+[    0.155841][    T1] printk: legacy console [ttynull0] enabled
+[    0.156718][    T1] brd: module loaded
+[    0.157864][    T1] loop: module loaded
+[    0.158361][    T1] wireguard: WireGuard 1.0.0 loaded. See www.wireguard.com for information.
+[    0.158890][    T1] wireguard: Copyright (C) 2015-2019 Jason A. Donenfeld <Jason@zx2c4.com>. All Rights Reserved.
+[    0.159607][    T1] tun: Universal TUN/TAP device driver, 1.6
+[    0.160033][    T1] VFIO - User Level meta-driver version: 0.3
+[    0.160467][    T1] usbcore: registered new interface driver uas
+[    0.160853][    T1] usbcore: registered new interface driver usb-storage
+[    0.161292][    T1] usbcore: registered new interface driver xpad
+[    0.161733][    T1] rtc-pl031 9010000.pl031: registered as rtc0
+[    0.162101][    T1] rtc-pl031 9010000.pl031: setting system clock to 2026-11-13T03:03:23 UTC (1794539003)
+[    0.162702][    T1] gspca_main: v2.14.0 registered
+[    0.162999][    T1] usbcore: registered new interface driver uvcvideo
+[    0.163403][    T1] device-mapper: uevent: version 1.0.3
+[    0.163739][    T1] device-mapper: ioctl: 4.48.0-ioctl (2023-03-01) initialised: dm-devel@lists.linux.dev
+[    0.164418][    T1] sdhci: Secure Digital Host Controller Interface driver
+[    0.164838][    T1] sdhci: Copyright(c) Pierre Ossman
+[    0.165150][    T1] sdhci-pltfm: SDHCI platform and OF driver helper
+[    0.165571][    T1] hid: raw HID events driver (C) Jiri Kosina
+[    0.166033][    T1] usbcore: registered new interface driver usbhid
+[    0.166430][    T1] usbhid: USB HID core driver
+[    0.166713][    T1] ashmem: Using Rust implementation.
+[    0.166742][   T47] watchdog: NMI not fully supported
+[    0.167420][   T47] watchdog: Hard watchdog permanently disabled
+[    0.167845][    T1] usbcore: registered new interface driver snd-usb-audio
+[    0.168316][    T1] GACT probability on
+[    0.168555][    T1] Mirror/redirect action on
+[    0.168825][    T1] netem: version 1.3
+[    0.169056][    T1] u32 classifier
+[    0.169264][    T1]     input device check on
+[    0.169532][    T1]     Actions configured
+[    0.169977][    T1] xt_time: kernel timezone is -0000
+[    0.170310][    T1] ipip: IPv4 and MPLS over IPv4 tunneling driver
+[    0.170787][    T1] gre: GRE over IPv4 demultiplexor driver
+[    0.171132][    T1] ip_gre: GRE over IPv4 tunneling driver
+[    0.171532][    T1] IPv4 over IPsec tunneling driver
+[    0.171892][    T1] Initializing XFRM netlink socket
+[    0.172204][    T1] IPsec XFRM device driver
+[    0.172483][    T1] NET: Registered PF_INET6 protocol family
+[    0.173074][    T1] Segment Routing with IPv6
+[    0.173350][    T1] In-situ OAM (IOAM) with IPv6
+[    0.173641][    T1] mip6: Mobile IPv6
+[    0.173924][    T1] sit: IPv6, IPv4 and MPLS over IPv4 tunneling driver
+[    0.174417][    T1] ip6_gre: GRE over IPv6 tunneling driver
+[    0.174797][    T1] NET: Registered PF_PACKET protocol family
+[    0.175160][    T1] NET: Registered PF_KEY protocol family
+[    0.175518][    T1] NET: Registered PF_VSOCK protocol family
+[    0.176645][    T1] registered taskstats version 1
+[    0.176988][    T1] Loading compiled-in X.509 certificates
+[    0.177685][    T1] Loaded X.509 cert 'Build time autogenerated kernel key: eb8f544ae1808a88ed2844ba9772e9caf881a105'
+[    0.179310][    T1] page_owner is disabled
+[    0.179574][    T1] Key type .fscrypt registered
+[    0.179858][    T1] Key type fscrypt-provisioning registered
+[    0.183441][    T1] clk: Disabling unused clocks
+[    0.183741][    T1] PM: genpd: Disabling unused power domains
+[    0.184106][    T1] ALSA device list:
+[    0.184344][    T1]   No soundcards found.
+[    0.185183][    T1] Freeing unused kernel memory: 4672K
+[    0.185526][    T1] Run /init as init process
+[    0.186463][    T1] init: init first stage started!
+[    0.186933][    T1] init: Loading module /lib/modules/failover.ko with args ''
+[    0.187656][    T1] init: Loaded kernel module /lib/modules/failover.ko
+[    0.188090][    T1] init: Loading module /lib/modules/nd_virtio.ko with args ''
+[    0.188698][    T1] init: Loaded kernel module /lib/modules/nd_virtio.ko
+[    0.189132][    T1] init: Loading module /lib/modules/net_failover.ko with args ''
+[    0.189793][    T1] init: Loaded kernel module /lib/modules/net_failover.ko
+[    0.190238][    T1] init: Loading module /lib/modules/virtio_dma_buf.ko with args ''
+[    0.190824][    T1] init: Loaded kernel module /lib/modules/virtio_dma_buf.ko
+[    0.191284][    T1] init: Loading module /lib/modules/virtio-gpu.ko with args ''
+[    0.192506][    T1] init: Loaded kernel module /lib/modules/virtio-gpu.ko
+[    0.192948][    T1] init: Loading module /lib/modules/virtio_input.ko with args ''
+[    0.193731][    T1] init: Loaded kernel module /lib/modules/virtio_input.ko
+[    0.194174][    T1] init: Loading module /lib/modules/virtio_net.ko with args ''
+[    0.195244][    T1] init: Loaded kernel module /lib/modules/virtio_net.ko
+[    0.195675][    T1] init: Loading module /lib/modules/virtio-rng.ko with args ''
+[    0.196274][    T1] init: Loaded kernel module /lib/modules/virtio-rng.ko
+[    0.196707][    T1] init: Loading module /lib/modules/libarc4.ko with args ''
+[    0.197615][    T1] init: Loaded kernel module /lib/modules/libarc4.ko
+[    0.198027][    T1] init: Loading module /lib/modules/rfkill.ko with args ''
+[    0.198946][    T1] init: Loaded kernel module /lib/modules/rfkill.ko
+[    0.199349][    T1] init: Loading module /lib/modules/cfg80211.ko with args ''
+[    0.202588][    T1] cfg80211: Loading compiled-in X.509 certificates for regulatory database
+[    0.203191][    T1] Loaded X.509 cert 'sforshee: 00b28ddf47aef9cea7'
+[    0.203654][    T1] Loaded X.509 cert 'wens: 61c038651aabdcf94bd0ac7ff06c7248db18c600'
+[    0.204367][   T10] platform regulatory.0: Direct firmware load for regulatory.db failed with error -2
+[    0.204940][   T10] cfg80211: failed to load regulatory.db
+[    0.205378][    T1] init: Loaded kernel module /lib/modules/cfg80211.ko
+[    0.205814][    T1] init: Loading module /lib/modules/mac80211.ko with args ''
+[    0.209753][    T1] init: Loaded kernel module /lib/modules/mac80211.ko
+[    0.210176][    T1] init: Loading module /lib/modules/mac80211_hwsim.ko with args 'radios=0'
+[    0.211271][    T1] mac80211_hwsim: initializing netlink
+[    0.211696][    T1] init: Loaded kernel module /lib/modules/mac80211_hwsim.ko
+[    0.212184][    T1] init: Loading module /lib/modules/virtio_blk.ko with args ''
+[    0.213202][    T1] init: Loaded kernel module /lib/modules/virtio_blk.ko
+[    0.213661][    T1] init: Loading module /lib/modules/virtio_console.ko with args ''
+[    0.214695][    T1] init: Loaded kernel module /lib/modules/virtio_console.ko
+[    0.215147][    T1] init: Loading module /lib/modules/virtio_pci_modern_dev.ko with args ''
+[    0.216065][    T1] init: Loaded kernel module /lib/modules/virtio_pci_modern_dev.ko
+[    0.216555][    T1] init: Loading module /lib/modules/virtio_pci_legacy_dev.ko with args ''
+[    0.217441][    T1] init: Loaded kernel module /lib/modules/virtio_pci_legacy_dev.ko
+[    0.217923][    T1] init: Loading module /lib/modules/virtio_pci.ko with args ''
+[    0.218916][    T1] virtio-pci 0000:00:01.0: enabling device (0000 -> 0002)
+[    0.219452][    T1] virtio_blk virtio0: 1/0/0 default/read/poll queues
+[    0.219955][    T1] virtio_blk virtio0: [vda] 34267136 512-byte logical blocks (17.5 GB/16.3 GiB)
+[    0.220963][    T1]  vda: vda1 vda2 vda3 vda4 vda5 vda6 vda7 vda8 vda9 vda10 vda11 vda12 vda13 vda14 vda15 vda16 vda17 vda18 vda19
+[    0.221859][    T1] virtio-pci 0000:00:02.0: enabling device (0000 -> 0002)
+[    0.223117][    T1] printk: legacy console [hvc0] enabled
+[    0.223452][    T1] printk: legacy bootconsole [pl11] disabled
+[    0.227918][    T1] virtio-pci 0000:00:02.1: enabling device (0000 -> 0002)
+[    0.228557][    T1] virtio-pci 0000:00:02.2: enabling device (0000 -> 0002)
+[    0.229198][    T1] virtio-pci 0000:00:02.3: enabling device (0000 -> 0002)
+[    0.229865][    T1] virtio-pci 0000:00:02.4: enabling device (0000 -> 0002)
+[    0.230511][    T1] virtio-pci 0000:00:02.5: enabling device (0000 -> 0002)
+[    0.231153][    T1] virtio-pci 0000:00:02.6: enabling device (0000 -> 0002)
+[    0.231796][    T1] virtio-pci 0000:00:02.7: enabling device (0000 -> 0002)
+[    0.232460][    T1] virtio-pci 0000:00:03.0: enabling device (0000 -> 0002)
+[    0.233094][    T1] virtio-pci 0000:00:03.1: enabling device (0000 -> 0002)
+[    0.233766][    T1] virtio-pci 0000:00:03.2: enabling device (0000 -> 0002)
+[    0.234421][    T1] virtio-pci 0000:00:03.3: enabling device (0000 -> 0002)
+[    0.235080][    T1] virtio-pci 0000:00:03.4: enabling device (0000 -> 0002)
+[    0.235713][    T1] virtio-pci 0000:00:03.5: enabling device (0000 -> 0002)
+[    0.236388][    T1] virtio-pci 0000:00:03.6: enabling device (0000 -> 0002)
+[    0.237045][    T1] virtio-pci 0000:00:03.7: enabling device (0000 -> 0002)
+[    0.237805][    T1] virtio-pci 0000:00:04.0: enabling device (0000 -> 0002)
+[    0.238472][    T1] virtio-pci 0000:00:04.1: enabling device (0000 -> 0002)
+[    0.239143][    T1] virtio-pci 0000:00:04.2: enabling device (0000 -> 0002)
+[    0.239807][    T1] virtio-pci 0000:00:04.3: enabling device (0000 -> 0002)
+[    0.240473][    T1] virtio-pci 0000:00:05.0: enabling device (0000 -> 0002)
+[    0.240727][    T1] virtio-pci 0000:00:06.0: enabling device (0000 -> 0002)
+[    0.240867][    T1] virtio-pci 0000:00:07.0: enabling device (0000 -> 0002)
+[    0.241021][    T1] [drm] pci: virtio-gpu-pci detected at 0000:00:07.0
+[    0.241094][    T1] [drm] Host memory window: 0x800000000 +0x200000000
+[    0.241124][    T1] [drm] features: +virgl +edid +resource_blob +host_visible
+[    0.241124][    T1] [drm] features: +context_init
+[    0.241255][    T1] [drm] number of scanouts: 16
+[    0.241279][    T1] [drm] number of cap sets: 2
+[    0.241393][    T1] [drm] cap set 0: id 3, max-version 0, max-size 112
+[    0.241448][    T1] [drm] cap set 1: id 9, max-version 0, max-size 16
+[    0.241673][    T1] [drm] Initialized virtio_gpu 0.1.0 for 0000:00:07.0 on minor 0
+[    0.241735][    T1] virtio-pci 0000:00:08.0: enabling device (0000 -> 0002)
+[    0.242160][    T1] input: Avo Touch Screen 0 as /devices/platform/10000.pci/pci0000:00/0000:00:08.0/virtio24/input/input0
+[    0.242251][    T1] virtio-pci 0000:00:08.1: enabling device (0000 -> 0002)
+[    0.242705][    T1] input: Avo Touch Screen 1 as /devices/platform/10000.pci/pci0000:00/0000:00:08.1/virtio25/input/input1
+[    0.242780][    T1] virtio-pci 0000:00:08.2: enabling device (0000 -> 0002)
+[    0.243219][    T1] input: Avo Touch Screen 2 as /devices/platform/10000.pci/pci0000:00/0000:00:08.2/virtio26/input/input2
+[    0.243291][    T1] virtio-pci 0000:00:08.3: enabling device (0000 -> 0002)
+[    0.243708][    T1] input: Avo Touch Screen 3 as /devices/platform/10000.pci/pci0000:00/0000:00:08.3/virtio27/input/input3
+[    0.243788][    T1] virtio-pci 0000:00:08.4: enabling device (0000 -> 0002)
+[    0.244219][    T1] input: Avo Touch Screen 4 as /devices/platform/10000.pci/pci0000:00/0000:00:08.4/virtio28/input/input4
+[    0.244290][    T1] virtio-pci 0000:00:08.5: enabling device (0000 -> 0002)
+[    0.244707][    T1] input: Avo Touch Screen 5 as /devices/platform/10000.pci/pci0000:00/0000:00:08.5/virtio29/input/input5
+[    0.244784][    T1] virtio-pci 0000:00:08.6: enabling device (0000 -> 0002)
+[    0.245195][    T1] input: Avo Touch Screen 6 as /devices/platform/10000.pci/pci0000:00/0000:00:08.6/virtio30/input/input6
+[    0.245265][    T1] virtio-pci 0000:00:08.7: enabling device (0000 -> 0002)
+[    0.245685][    T1] input: Avo Touch Screen 7 as /devices/platform/10000.pci/pci0000:00/0000:00:08.7/virtio31/input/input7
+[    0.245760][    T1] virtio-pci 0000:00:09.0: enabling device (0000 -> 0002)
+[    0.246173][    T1] input: Avo Touch Screen 8 as /devices/platform/10000.pci/pci0000:00/0000:00:09.0/virtio32/input/input8
+[    0.246244][    T1] virtio-pci 0000:00:09.1: enabling device (0000 -> 0002)
+[    0.246658][    T1] input: Avo Touch Screen 9 as /devices/platform/10000.pci/pci0000:00/0000:00:09.1/virtio33/input/input9
+[    0.246732][    T1] virtio-pci 0000:00:09.2: enabling device (0000 -> 0002)
+[    0.247150][    T1] input: Avo Touch Screen 10 as /devices/platform/10000.pci/pci0000:00/0000:00:09.2/virtio34/input/input10
+[    0.247231][    T1] virtio-pci 0000:00:09.3: enabling device (0000 -> 0002)
+[    0.247652][    T1] input: Avo Touch Screen 11 as /devices/platform/10000.pci/pci0000:00/0000:00:09.3/virtio35/input/input11
+[    0.247734][    T1] virtio-pci 0000:00:09.4: enabling device (0000 -> 0002)
+[    0.248178][    T1] input: Avo Touch Screen 12 as /devices/platform/10000.pci/pci0000:00/0000:00:09.4/virtio36/input/input12
+[    0.248264][    T1] virtio-pci 0000:00:09.5: enabling device (0000 -> 0002)
+[    0.248684][    T1] input: Avo Touch Screen 13 as /devices/platform/10000.pci/pci0000:00/0000:00:09.5/virtio37/input/input13
+[    0.248763][    T1] virtio-pci 0000:00:09.6: enabling device (0000 -> 0002)
+[    0.249205][    T1] input: Avo Touch Screen 14 as /devices/platform/10000.pci/pci0000:00/0000:00:09.6/virtio38/input/input14
+[    0.249290][    T1] virtio-pci 0000:00:09.7: enabling device (0000 -> 0002)
+[    0.249704][    T1] input: Avo Touch Screen 15 as /devices/platform/10000.pci/pci0000:00/0000:00:09.7/virtio39/input/input15
+[    0.249786][    T1] virtio-pci 0000:00:0a.0: enabling device (0000 -> 0002)
+[    0.250122][    T1] input: Avo Keyboard as /devices/platform/10000.pci/pci0000:00/0000:00:0a.0/virtio40/input/input16
+[    0.250197][    T1] virtio-pci 0000:00:0b.0: enabling device (0000 -> 0002)
+[    0.250527][    T1] virtio-pci 0000:00:0b.1: enabling device (0000 -> 0002)
+[    0.250797][    T1] virtio-pci 0000:00:0b.2: enabling device (0000 -> 0002)
+[    0.251061][    T1] virtio-pci 0000:00:0c.0: enabling device (0000 -> 0002)
+[    0.251207][    T1] virtio-pci 0000:00:0d.0: enabling device (0000 -> 0002)
+[    0.251665][    T1] input: Xbox Wireless Controller as /devices/platform/10000.pci/pci0000:00/0000:00:0d.0/virtio45/input/input17
+[    0.251790][    T1] init: Loaded kernel module /lib/modules/virtio_pci.ko
+[    0.251827][    T1] init: Loading module /lib/modules/vmw_vsock_virtio_transport.ko with args ''
+[    0.252616][    T1] init: Loaded kernel module /lib/modules/vmw_vsock_virtio_transport.ko
+[    0.252671][    T1] init: Loaded 19 modules from /lib/modules
+[    0.252710][    T1] init: Loaded 19 kernel modules took 65 ms
+[    0.252823][    T1] init: Copied ramdisk prop to /second_stage_resources/system/etc/ramdisk/build.prop
+[    0.252884][    T1] init: Using generic ramdisk copy of snapuserd /system/bin/snapuserd_ramdisk
+[    0.252945][    T1] init: hard linking /system/bin/snapuserd_ramdisk to /first_stage_ramdisk/system/bin/snapuserd succeeded
+[    0.253024][    T1] init: Switching root to '/first_stage_ramdisk'
+[    0.253097][    T1] init: [libfstab] Using Android DT directory /proc/device-tree/firmware/android/
+[    0.254566][    T1] init: [libfs_mgr] superblock s_max_mnt_count:65535,/dev/block/by-name/metadata
+[    0.254616][    T1] init: [libfs_mgr] Filesystem on /dev/block/by-name/metadata was not cleanly shutdown; state flags: 0x1, incompat feature flags: 0x46
+[    0.267522][    T1] EXT4-fs (vda6): recovery complete
+[    0.271784][    T1] EXT4-fs (vda6): mounted filesystem 07b30b34-c1e1-4d17-94ae-11157b8d9c76 r/w with ordered data mode. Quota mode: none.
+[    0.271864][    T1] init: [libfs_mgr] check_fs(): mount(/dev/block/by-name/metadata,/metadata,ext4)=0: Success
+[    0.274499][    T1] EXT4-fs (vda6): unmounting filesystem 07b30b34-c1e1-4d17-94ae-11157b8d9c76.
+[    0.278857][    T1] init: [libfs_mgr] umount_retry(): unmount(/metadata) succeeded
+[    0.278914][    T1] init: [libfs_mgr] Not running /system/bin/e2fsck on /dev/block/vda6 (executable not in system image)
+[    0.278985][    T1] init: [libfs_mgr] fsck on /metadata took 24ms
+[    0.290471][    T1] EXT4-fs (vda6): mounted filesystem 07b30b34-c1e1-4d17-94ae-11157b8d9c76 r/w with ordered data mode. Quota mode: none.
+[    0.290560][    T1] init: [libfs_mgr] __mount(source=/dev/block/by-name/metadata,target=/metadata,type=ext4)=0: Success
+[    0.290688][    T1] init: Failed to copy /avb into /metadata/gsi/dsu/avb/: No such file or directory
+[    0.291214][    T1] init: [libfs_mgr] Created logical partition product_a on device /dev/block/dm-0
+[    0.291263][    T1] init: [libfs_mgr] Skipping zero-length logical partition: product_b
+[    0.291403][    T1] init: [libfs_mgr] Created logical partition system_a on device /dev/block/dm-1
+[    0.291527][    T1] init: [libfs_mgr] Created logical partition system_b on device /dev/block/dm-2
+[    0.291641][    T1] init: [libfs_mgr] Created logical partition system_ext_a on device /dev/block/dm-3
+[    0.291681][    T1] init: [libfs_mgr] Skipping zero-length logical partition: system_ext_b
+[    0.291789][    T1] init: [libfs_mgr] Created logical partition system_dlkm_a on device /dev/block/dm-4
+[    0.291827][    T1] init: [libfs_mgr] Skipping zero-length logical partition: system_dlkm_b
+[    0.291938][    T1] init: [libfs_mgr] Created logical partition odm_a on device /dev/block/dm-5
+[    0.291976][    T1] init: [libfs_mgr] Skipping zero-length logical partition: odm_b
+[    0.292077][    T1] init: [libfs_mgr] Created logical partition vendor_a on device /dev/block/dm-6
+[    0.292113][    T1] init: [libfs_mgr] Skipping zero-length logical partition: vendor_b
+[    0.292215][    T1] init: [libfs_mgr] Created logical partition vendor_dlkm_a on device /dev/block/dm-7
+[    0.292256][    T1] init: [libfs_mgr] Skipping zero-length logical partition: vendor_dlkm_b
+[    0.292355][    T1] init: [libfs_mgr] Created logical partition odm_dlkm_a on device /dev/block/dm-8
+[    0.292390][    T1] init: [libfs_mgr] Skipping zero-length logical partition: odm_dlkm_b
+[    0.292467][    T1] init: DSU not detected, proceeding with normal boot
+[    0.295424][    T1] init: [libfs_avb] Returning avb_handle with status: HashtreeDisabled
+[    0.295462][    T1] init: Top-level vbmeta is disabled, skip Hashtree setup for /system
+[    0.295598][    T1] erofs: (device dm-1): initialized per-cpu workers successfully.
+[    0.295641][    T1] erofs: (device dm-1): mounted with root inode @ nid 55.
+[    0.295678][    T1] init: [libfs_mgr] __mount(source=/dev/block/dm-1,target=/system,type=erofs)=0: Success
+[    0.295755][    T1] init: Switching root to '/system'
+[    0.295948][    T1] init: [libfs_avb] AVB HASHTREE disabled on: /odm
+[    0.296016][    T1] erofs: (device dm-5): mounted with root inode @ nid 38.
+[    0.296046][    T1] init: [libfs_mgr] __mount(source=/dev/block/dm-5,target=/odm,type=erofs)=0: Success
+[    0.296172][    T1] init: [libfs_avb] AVB HASHTREE disabled on: /product
+[    0.296245][    T1] erofs: (device dm-0): mounted with root inode @ nid 40.
+[    0.296279][    T1] init: [libfs_mgr] __mount(source=/dev/block/dm-0,target=/product,type=erofs)=0: Success
+[    0.296354][    T1] init: [libfs_avb] AVB HASHTREE disabled on: /system_ext
+[    0.296416][    T1] erofs: (device dm-3): mounted with root inode @ nid 39.
+[    0.296448][    T1] init: [libfs_mgr] __mount(source=/dev/block/dm-3,target=/system_ext,type=erofs)=0: Success
+[    0.296520][    T1] init: [libfs_avb] AVB HASHTREE disabled on: /vendor
+[    0.296588][    T1] erofs: (device dm-6): mounted with root inode @ nid 48.
+[    0.296620][    T1] init: [libfs_mgr] __mount(source=/dev/block/dm-6,target=/vendor,type=erofs)=0: Success
+[    0.296688][    T1] init: [libfs_avb] AVB HASHTREE disabled on: /vendor_dlkm
+[    0.296756][    T1] erofs: (device dm-7): mounted with root inode @ nid 39.
+[    0.296787][    T1] init: [libfs_mgr] __mount(source=/dev/block/dm-7,target=/vendor_dlkm,type=erofs)=0: Success
+[    0.296860][    T1] init: [libfs_avb] AVB HASHTREE disabled on: /odm_dlkm
+[    0.296915][    T1] erofs: (device dm-8): mounted with root inode @ nid 38.
+[    0.296946][    T1] init: [libfs_mgr] __mount(source=/dev/block/dm-8,target=/odm_dlkm,type=erofs)=0: Success
+[    0.297031][    T1] init: Top-level vbmeta is disabled, skip Hashtree setup for /system_dlkm
+[    0.297107][    T1] erofs: (device dm-4): mounted with root inode @ nid 38.
+[    0.297139][    T1] init: [libfs_mgr] __mount(source=/dev/block/dm-4,target=/system_dlkm,type=erofs)=0: Success
+[    0.298179][    T1] init: [libfs_mgr] Created logical partition scratch on device /dev/block/dm-9
+[    0.311710][    T1] F2FS-fs (dm-9): recover fsync data on readonly fs
+[    0.311810][    T1] F2FS-fs (dm-9): Mounted with checkpoint version = 6370937c
+[    0.311869][    T1] init: [libfs_mgr] __mount(source=/dev/block/dm-9,target=/mnt/scratch,type=f2fs)=0: Success
+[    0.317183][    T1] F2FS-fs (dm-9): Mounted with checkpoint version = 6370937c
+[    0.317368][    T1] init: [libfs_mgr] __mount(source=/dev/block/dm-9,target=/mnt/scratch,type=f2fs)=0: Success
+[    0.390719][    T1] init: [libfs_mgr] __mount(source=overlay,target=/system,type=overlay,upperdir=/mnt/scratch/overlay/system/upper)=0

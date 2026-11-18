@@ -1,0 +1,19 @@
+   Compiling hub-infrastructure v0.1.0 (/Users/ducnt/Desktop/Projects/VM/crates/infrastructure)
+    Finished `test` profile [optimized + debuginfo] target(s) in 4.29s
+     Running unittests src/lib.rs (target/debug/deps/hub_infrastructure-01bf75d34b8d84a2)
+
+running 1 test
+
+thread 'sdk_probe::tests::installed_sdk_tools_probe_in_isolated_home' (28410643) panicked at crates/infrastructure/src/sdk_probe.rs:264:14:
+called `Result::unwrap()` on an `Err` value: "Emulator probe: Lệnh thất bại: ; thư mục kiểm tra giữ tại /var/folders/wy/jv7506_12wvfkfmthtbgpy8c0000gn/T/hub-probe-fixture-30670-0/experiments/p0/runtime/sdk-probe-30670-1"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test sdk_probe::tests::installed_sdk_tools_probe_in_isolated_home ... FAILED
+
+failures:
+
+failures:
+    sdk_probe::tests::installed_sdk_tools_probe_in_isolated_home
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 71 filtered out; finished in 0.39s
+
+error: test failed, to rerun pass `-p hub-infrastructure --lib`

@@ -1,0 +1,12 @@
+fixture_root=/var/folders/wy/jv7506_12wvfkfmthtbgpy8c0000gn/T/hub-registration-5smksv77
+returncode=1
+Loading local repository...                                                     
+[=========                              ] 25% Loading local repository...       
+Auto-selecting single ABI arm64-v8a
+Error: "emulator" package must be installed!
+null
+
+avd_config_exists=False
+generated_package_xml=["platform-tools/package.xml", "system-images/android-36/google_apis_playstore/arm64-v8a/package.xml"]
+source_metadata_unchanged=True
+failed_fixture_retained=True

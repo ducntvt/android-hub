@@ -1,0 +1,50 @@
+{
+  "scenario": "Hub open at stopped-device screen; no Android engine; no deliberate UI interaction during collection",
+  "executable": "/Users/ducnt/Desktop/Projects/VM/Android Hub.app/Contents/MacOS/android-hub",
+  "pid": 65453,
+  "samples": [
+    {
+      "monotonic": 2737434.434485833,
+      "unix": 1794798486.380076,
+      "process_start": "Mon Nov 16 00:21:19 2026",
+      "cpu_seconds": 266.16,
+      "rss_kib": 46528,
+      "raw": "Mon Nov 16 00:21:19 2026       4:26.16  46528"
+    },
+    {
+      "monotonic": 2737449.493418125,
+      "unix": 1794798501.4390981,
+      "process_start": "Mon Nov 16 00:21:19 2026",
+      "cpu_seconds": 266.27,
+      "rss_kib": 46448,
+      "raw": "Mon Nov 16 00:21:19 2026       4:26.27  46448"
+    },
+    {
+      "monotonic": 2737464.557423583,
+      "unix": 1794798516.503194,
+      "process_start": "Mon Nov 16 00:21:19 2026",
+      "cpu_seconds": 266.37,
+      "rss_kib": 43760,
+      "raw": "Mon Nov 16 00:21:19 2026       4:26.37  43760"
+    },
+    {
+      "monotonic": 2737479.621964125,
+      "unix": 1794798531.567826,
+      "process_start": "Mon Nov 16 00:21:19 2026",
+      "cpu_seconds": 266.46,
+      "rss_kib": 42640,
+      "raw": "Mon Nov 16 00:21:19 2026       4:26.46  42640"
+    },
+    {
+      "monotonic": 2737494.685886833,
+      "unix": 1794798546.632249,
+      "process_start": "Mon Nov 16 00:21:19 2026",
+      "cpu_seconds": 266.56,
+      "rss_kib": 42640,
+      "raw": "Mon Nov 16 00:21:19 2026       4:26.56  42640"
+    }
+  ],
+  "state": "complete",
+  "wall_seconds": 60.251400999724865,
+  "cpu_percent_one_core": 0.6638849775489931
+}

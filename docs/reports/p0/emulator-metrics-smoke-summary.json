@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "collection_valid": true,
+  "pid": 63083,
+  "samples": 3,
+  "measured_span_seconds": 2.007096292,
+  "maximum_gap_seconds": 1.005778208,
+  "rss_kib": {
+    "sample_mean": 2451818.6666666665,
+    "peak_sample": 2514160
+  },
+  "cpu_percent_ps": {
+    "sample_mean": 72.6,
+    "peak_sample": 77.2
+  },
+  "limitations": [
+    "One process only; excludes helpers/GPU allocations",
+    "ps CPU estimate, not interval CPU utilization",
+    "Arithmetic sample means, not time-weighted means",
+    "No gameplay, FPS, audio, memory pressure or engine acceptance conclusion"
+  ]
+}

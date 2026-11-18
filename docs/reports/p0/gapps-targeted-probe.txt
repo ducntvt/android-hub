@@ -1,0 +1,9 @@
+
+verity is disabled on slot with suffix _a.
+touch: '/product/.p0-write-probe': Read-only file system
+touch: '/system_ext/.p0-write-probe': Read-only file system
+Filesystem      1K-blocks   Used Available Use% Mounted on
+/dev/block/dm-9   6728248 191116   6537132   3% /mnt/scratch
+overlay /product overlay ro,seclabel,noatime,lowerdir=/product,upperdir=/mnt/scratch/overlay/product/upper,workdir=/mnt/scratch/overlay/product/work,redirect_dir=nofollow,userxattr 0 0
+overlay /system_ext overlay ro,seclabel,noatime,lowerdir=/system_ext,upperdir=/mnt/scratch/overlay/system_ext/upper,workdir=/mnt/scratch/overlay/system_ext/work,redirect_dir=nofollow,userxattr 0 0
+

@@ -1,0 +1,70 @@
+{
+  "schema": 1,
+  "state": "complete",
+  "started_at_unix": 1794573294.550153,
+  "duration_requested": 60,
+  "interval_seconds": 2,
+  "workload": "Two fresh disposable guests after boot; idle/setup screen; no account, no games, no gameplay benchmark",
+  "configuration": "Installed SDK; each guest 1024 MiB RAM, 480x854, 15 FPS cap; no Hub display stream",
+  "process_traces": [
+    "engine-44127.jsonl",
+    "engine-44191.jsonl"
+  ],
+  "engine_pids": [
+    44127,
+    44191
+  ],
+  "sampler_pids": [
+    44269,
+    44271
+  ],
+  "limitations": "Process RSS/ps CPU only; no FPS, gameplay, audio or acceptance claim",
+  "overlap_seconds": 62.015738010406494,
+  "summaries": [
+    {
+      "schema": 1,
+      "collection_valid": true,
+      "pid": 44127,
+      "samples": 32,
+      "measured_span_seconds": 62.018354417000005,
+      "maximum_gap_seconds": 2.018945583,
+      "rss_kib": {
+        "sample_mean": 1939716.5,
+        "peak_sample": 2265056
+      },
+      "cpu_percent_ps": {
+        "sample_mean": 194.453125,
+        "peak_sample": 251.2
+      },
+      "limitations": [
+        "One process only; excludes helpers/GPU allocations",
+        "ps CPU estimate, not interval CPU utilization",
+        "Arithmetic sample means, not time-weighted means",
+        "No gameplay, FPS, audio, memory pressure or engine acceptance conclusion"
+      ]
+    },
+    {
+      "schema": 1,
+      "collection_valid": true,
+      "pid": 44191,
+      "samples": 32,
+      "measured_span_seconds": 62.015375750000004,
+      "maximum_gap_seconds": 2.019343208,
+      "rss_kib": {
+        "sample_mean": 2021245,
+        "peak_sample": 2515296
+      },
+      "cpu_percent_ps": {
+        "sample_mean": 200.76875,
+        "peak_sample": 252
+      },
+      "limitations": [
+        "One process only; excludes helpers/GPU allocations",
+        "ps CPU estimate, not interval CPU utilization",
+        "Arithmetic sample means, not time-weighted means",
+        "No gameplay, FPS, audio, memory pressure or engine acceptance conclusion"
+      ]
+    }
+  ],
+  "finished_at_unix": 1794573356.684156
+}

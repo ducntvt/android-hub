@@ -1,0 +1,714 @@
+{
+  "date": "2026-11-16",
+  "before_allocated_bytes": 44207521792,
+  "preserved_profiles": [
+    {
+      "id": "p0-google-a",
+      "name": "Android A",
+      "port": 5580,
+      "ram_mb": 3072,
+      "cpus": 2,
+      "width": 720,
+      "height": 1280,
+      "fps": 30
+    },
+    {
+      "id": "p0-google-b",
+      "name": "Android B",
+      "port": 5582,
+      "ram_mb": 3072,
+      "cpus": 2,
+      "width": 720,
+      "height": 1280,
+      "fps": 30
+    },
+    {
+      "id": "hub-1794550846159",
+      "name": "Android 3",
+      "port": 5584,
+      "ram_mb": 3072,
+      "cpus": 2,
+      "width": 720,
+      "height": 1280,
+      "fps": 30
+    }
+  ],
+  "removed": [
+    {
+      "path": ".DS_Store",
+      "allocated_bytes": 12288
+    },
+    {
+      "path": "target",
+      "allocated_bytes": 10409996288
+    },
+    {
+      "path": "scripts/__pycache__",
+      "allocated_bytes": 86016
+    },
+    {
+      "path": "experiments/.DS_Store",
+      "allocated_bytes": 8192
+    },
+    {
+      "path": "docs/.DS_Store",
+      "allocated_bytes": 8192
+    },
+    {
+      "path": "docs/reports/.DS_Store",
+      "allocated_bytes": 8192
+    },
+    {
+      "path": "experiments/p0/.DS_Store",
+      "allocated_bytes": 8192
+    },
+    {
+      "path": "experiments/p0/images",
+      "allocated_bytes": 3537973248
+    },
+    {
+      "path": "experiments/p0/runtime/Hub-hub-1794542403877.app",
+      "allocated_bytes": 8192
+    },
+    {
+      "path": "experiments/p0/runtime/restorecheck",
+      "allocated_bytes": 2239229952
+    },
+    {
+      "path": "experiments/p0/runtime/hub-1794542403877.log",
+      "allocated_bytes": 12288
+    },
+    {
+      "path": "experiments/p0/runtime/.DS_Store",
+      "allocated_bytes": 16384
+    },
+    {
+      "path": "experiments/p0/runtime/a-targeted-failed",
+      "allocated_bytes": 2326102016
+    },
+    {
+      "path": "experiments/p0/runtime/hub-1794541891152.log",
+      "allocated_bytes": 12288
+    },
+    {
+      "path": "experiments/p0/runtime/gapps-stage-5v47pkdh",
+      "allocated_bytes": 716582912
+    },
+    {
+      "path": "experiments/p0/runtime/Hub-hub-1794541891152.app",
+      "allocated_bytes": 8192
+    },
+    {
+      "path": "experiments/p0/runtime/b",
+      "allocated_bytes": 1993830400
+    },
+    {
+      "path": "experiments/p0/runtime/hub-1794542709982.log",
+      "allocated_bytes": 12288
+    },
+    {
+      "path": "experiments/p0/runtime/hub-1794541847765.log",
+      "allocated_bytes": 12288
+    },
+    {
+      "path": "experiments/p0/runtime/hub-1794541929415.log",
+      "allocated_bytes": 12288
+    },
+    {
+      "path": "experiments/p0/control/target",
+      "allocated_bytes": 6529024
+    },
+    {
+      "path": "experiments/p0/runtime/Hub-hub-1794541847765.app",
+      "allocated_bytes": 8192
+    },
+    {
+      "path": "experiments/p0/runtime/P0Viewer.app",
+      "allocated_bytes": 1024000
+    },
+    {
+      "path": "experiments/p0/runtime/Hub-hub-1794541929415.app",
+      "allocated_bytes": 8192
+    },
+    {
+      "path": "experiments/p0/runtime/a",
+      "allocated_bytes": 2268233728
+    },
+    {
+      "path": "experiments/p0/control/.DS_Store",
+      "allocated_bytes": 8192
+    },
+    {
+      "path": "experiments/p0/runtime/a-overlay-failed",
+      "allocated_bytes": 2356355072
+    },
+    {
+      "path": "experiments/p0/runtime/Hub-hub-1794542709982.app",
+      "allocated_bytes": 8192
+    },
+    {
+      "path": "experiments/p0/runtime/backups/a-before-gapps",
+      "allocated_bytes": 2225897472
+    },
+    {
+      "path": "experiments/p0/runtime/emulator-avds/hub-1794541891152.ini",
+      "allocated_bytes": 4096
+    },
+    {
+      "path": "experiments/p0/runtime/emulator-avds/.DS_Store",
+      "allocated_bytes": 12288
+    },
+    {
+      "path": "experiments/p0/runtime/emulator-avds/hub-1794541847765.ini",
+      "allocated_bytes": 4096
+    },
+    {
+      "path": "experiments/p0/runtime/emulator-avds/hub-1794541847765.avd",
+      "allocated_bytes": 981258240
+    },
+    {
+      "path": "experiments/p0/runtime/emulator-avds/hub-1794542403877.avd",
+      "allocated_bytes": 2949758976
+    },
+    {
+      "path": "experiments/p0/runtime/emulator-avds/hub-1794541929415.ini",
+      "allocated_bytes": 4096
+    },
+    {
+      "path": "experiments/p0/runtime/emulator-avds/hub-1794541929415.avd",
+      "allocated_bytes": 36892672
+    },
+    {
+      "path": "experiments/p0/runtime/emulator-avds/hub-1794542709982.avd",
+      "allocated_bytes": 2925117440
+    },
+    {
+      "path": "experiments/p0/runtime/emulator-avds/hub-1794541891152.avd",
+      "allocated_bytes": 1266798592
+    },
+    {
+      "path": "experiments/p0/runtime/emulator-avds/hub-1794542709982.ini",
+      "allocated_bytes": 4096
+    },
+    {
+      "path": "experiments/p0/runtime/emulator-avds/hub-1794542403877.ini",
+      "allocated_bytes": 4096
+    }
+  ],
+  "protected_before": {
+    "experiments/p0/runtime/hub-profiles.json": {
+      "size": 500,
+      "mtime_ns": 1794550850411411598,
+      "inode": 306427966,
+      "mode": 33188,
+      "sha256": "094639c454e12aa1eeef2bcfc941819d7b862fc542596e6984661af6c2ef22b3"
+    },
+    "Android Hub.app": {
+      "size": 96,
+      "mtime_ns": 1794541457157104251,
+      "inode": 306241042,
+      "mode": 16877
+    },
+    "Android Hub.app/Contents": {
+      "size": 160,
+      "mtime_ns": 1794541457217210338,
+      "inode": 306241043,
+      "mode": 16877
+    },
+    "Android Hub.app/Contents/_CodeSignature": {
+      "size": 96,
+      "mtime_ns": 1794541457217437340,
+      "inode": 306241048,
+      "mode": 16877
+    },
+    "Android Hub.app/Contents/MacOS": {
+      "size": 96,
+      "mtime_ns": 1794798422675963565,
+      "inode": 306241044,
+      "mode": 16877
+    },
+    "Android Hub.app/Contents/Info.plist": {
+      "size": 466,
+      "mtime_ns": 1794798422606676941,
+      "inode": 306241046,
+      "mode": 33188,
+      "sha256": "1df983ec3ac7f42333714195ca7ede160c951075f4aa148ca8068d7782cff1b7"
+    },
+    "Android Hub.app/Contents/_CodeSignature/CodeResources": {
+      "size": 2200,
+      "mtime_ns": 1794798422619160349,
+      "inode": 306241049,
+      "mode": 33188,
+      "sha256": "6686de10a28a2fe11b36cbb86dcbacc827cfc4ea116b4dabf1845e5aee629e9b"
+    },
+    "Android Hub.app/Contents/MacOS/android-hub": {
+      "size": 19102928,
+      "mtime_ns": 1794798422675875981,
+      "inode": 307164422,
+      "mode": 33261,
+      "sha256": "ea1a10b1f3ae8c175425fc87d616baf2e95d9b2a2bbab229e6b084be3c8f49e2"
+    },
+    "experiments/p0/runtime/emulator-avds/hub-1794550846159.avd": {
+      "size": 96,
+      "mtime_ns": 1794550850411118679,
+      "inode": 306427961,
+      "mode": 16877
+    },
+    "experiments/p0/runtime/emulator-avds/hub-1794550846159.avd/config.ini": {
+      "size": 3601,
+      "mtime_ns": 1794550850411017845,
+      "inode": 306427965,
+      "mode": 33188,
+      "sha256": "15b9b702d15debb7b570c9640ef180c54e1beee6d78462cb6753498970a260a8"
+    },
+    "experiments/p0/runtime/emulator-avds/hub-1794550846159.ini": {
+      "size": 138,
+      "mtime_ns": 1794550850344392417,
+      "inode": 306427962,
+      "mode": 33188,
+      "sha256": "f28ba4c90a13062242120b5014c59d5d2577edbf17daf689b9a33dd43ceef7dc"
+    },
+    "experiments/p0/runtime/emulator-avds/p0-google-a.avd": {
+      "size": 736,
+      "mtime_ns": 1794545818972989232,
+      "inode": 306199675,
+      "mode": 16877
+    },
+    "experiments/p0/runtime/emulator-avds/p0-google-a.avd/initrd": {
+      "size": 1818576,
+      "mtime_ns": 1794543078843808786,
+      "inode": 306199784,
+      "mode": 33188
+    },
+    "experiments/p0/runtime/emulator-avds/p0-google-a.avd/bootcompleted.ini": {
+      "size": 0,
+      "mtime_ns": 1794543089458230583,
+      "inode": 306290879,
+      "mode": 33152,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "experiments/p0/runtime/emulator-avds/p0-google-a.avd/version_num.cache": {
+      "size": 9,
+      "mtime_ns": 1794539362050594005,
+      "inode": 306199789,
+      "mode": 33188,
+      "sha256": "c2dd0acefbf5387654d80af08bd8e10a4c00b1010ebec2a1b91041a99b0dbb41"
+    },
+    "experiments/p0/runtime/emulator-avds/p0-google-a.avd/hardware-qemu.ini": {
+      "size": 4401,
+      "mtime_ns": 1794543078844231748,
+      "inode": 306290794,
+      "mode": 33188,
+      "sha256": "52b695245fcddf7700a7ff733b6f73eabfb6d6e7bd1851439959cb2527fecc07"
+    },
+    "experiments/p0/runtime/emulator-avds/p0-google-a.avd/cache.img.qcow2": {
+      "size": 196616,
+      "mtime_ns": 1794539362046707272,
+      "inode": 306199786,
+      "mode": 33188,
+      "sha256": "653a5ddde6cc210b3492dc4690c696b758892d81d6a9b2d073ee85480637248f"
+    },
+    "experiments/p0/runtime/emulator-avds/p0-google-a.avd/AVD.conf": {
+      "size": 183,
+      "mtime_ns": 1794541561737418823,
+      "inode": 306241738,
+      "mode": 33188,
+      "sha256": "bcfe337122d9ebbe018181d67de4e683c9dca3622c220ebcf0917dd767ee7c2e"
+    },
+    "experiments/p0/runtime/emulator-avds/p0-google-a.avd/userdata-qemu.img": {
+      "size": 8323072,
+      "mtime_ns": 1794539361337002908,
+      "inode": 306199765,
+      "mode": 33188
+    },
+    "experiments/p0/runtime/emulator-avds/p0-google-a.avd/encryptionkey.img": {
+      "size": 18874368,
+      "mtime_ns": 1794539361387101883,
+      "inode": 306199766,
+      "mode": 33188
+    },
+    "experiments/p0/runtime/emulator-avds/p0-google-a.avd/multiinstance.lock": {
+      "size": 0,
+      "mtime_ns": 1794543078410340807,
+      "inode": 306199723,
+      "mode": 33188,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "experiments/p0/runtime/emulator-avds/p0-google-a.avd/read-snapshot.txt": {
+      "size": 0,
+      "mtime_ns": 1794543078863043145,
+      "inode": 306199790,
+      "mode": 33188,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "experiments/p0/runtime/emulator-avds/p0-google-a.avd/tmpAdbCmds": {
+      "size": 96,
+      "mtime_ns": 1794543093541607897,
+      "inode": 306199826,
+      "mode": 16877
+    },
+    "experiments/p0/runtime/emulator-avds/p0-google-a.avd/config.ini": {
+      "size": 3496,
+      "mtime_ns": 1794543077906270610,
+      "inode": 306290759,
+      "mode": 33188,
+      "sha256": "64a3da2ea89b16671ccb2f4b981a88e389a2a77cd77846e2ca7f699ac0809d96"
+    },
+    "experiments/p0/runtime/emulator-avds/p0-google-a.avd/qemu-version.txt": {
+      "size": 1,
+      "mtime_ns": 1794539360718968858,
+      "inode": 306199708,
+      "mode": 33188,
+      "sha256": "d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35"
+    },
+    "experiments/p0/runtime/emulator-avds/p0-google-a.avd/userdata-qemu.img.qcow2": {
+      "size": 4802871296,
+      "mtime_ns": 1794545809550935272,
+      "inode": 306199787,
+      "mode": 33188
+    },
+    "experiments/p0/runtime/emulator-avds/p0-google-a.avd/netsim.ini": {
+      "size": 38,
+      "mtime_ns": 1794539363055355516,
+      "inode": 306199796,
+      "mode": 33188,
+      "sha256": "c8fd846ec31ee1d607fc06f150e841e8c5287eb803ab0b2abf23abff6f39a080"
+    },
+    "experiments/p0/runtime/emulator-avds/p0-google-a.avd/emu-launch-params.txt": {
+      "size": 284,
+      "mtime_ns": 1794543078096127139,
+      "inode": 306199698,
+      "mode": 33188,
+      "sha256": "04c6902de0cfb65b1e2c9dce88f34d630a636616cb660bbff5ae0b326309c8d8"
+    },
+    "experiments/p0/runtime/emulator-avds/p0-google-a.avd/cache.img": {
+      "size": 69206016,
+      "mtime_ns": 1794539361388025347,
+      "inode": 306199768,
+      "mode": 33188
+    },
+    "experiments/p0/runtime/emulator-avds/p0-google-a.avd/modem_simulator": {
+      "size": 224,
+      "mtime_ns": 1794539395839682640,
+      "inode": 306199769,
+      "mode": 16877
+    },
+    "experiments/p0/runtime/emulator-avds/p0-google-a.avd/emulator-user.ini": {
+      "size": 113,
+      "mtime_ns": 1794545818960674502,
+      "inode": 306398792,
+      "mode": 33188,
+      "sha256": "e24385ac54ebfde37c82d5f1a9a407b0de196b009b25f11b3d2699d69d01fb9d"
+    },
+    "experiments/p0/runtime/emulator-avds/p0-google-a.avd/encryptionkey.img.qcow2": {
+      "size": 7995392,
+      "mtime_ns": 1794543115118151882,
+      "inode": 306199788,
+      "mode": 33188
+    },
+    "experiments/p0/runtime/emulator-avds/p0-google-a.avd/data": {
+      "size": 96,
+      "mtime_ns": 1794539535577049389,
+      "inode": 306200462,
+      "mode": 16877
+    },
+    "experiments/p0/runtime/emulator-avds/p0-google-a.avd/tmpAdbCmds/adbcommand114050b9-8a0d-4c25-a2fd-904366b5ea03": {
+      "size": 14,
+      "mtime_ns": 1794539584919890455,
+      "inode": 306200761,
+      "mode": 33216,
+      "sha256": "8f0acf19b9cbb9670c5e483a0fd471ca6603474e6fc4558565f14ba5cefe4c57"
+    },
+    "experiments/p0/runtime/emulator-avds/p0-google-a.avd/modem_simulator/iccprofile_for_sim_tel_alaska.xml": {
+      "size": 14474,
+      "mtime_ns": 1794543078452022509,
+      "inode": 306199776,
+      "mode": 33188,
+      "sha256": "462cc26ddaa9d6c470a2d9415771c80e323b526b1863f099accb298955b14db3"
+    },
+    "experiments/p0/runtime/emulator-avds/p0-google-a.avd/modem_simulator/iccprofile_for_sim0.xml": {
+      "size": 14747,
+      "mtime_ns": 1794545818964406409,
+      "inode": 306199775,
+      "mode": 33188,
+      "sha256": "7c7996b576a53d7f9be538ec417c09825433f0fdf6561d9204afcdb2f54ba98a"
+    },
+    "experiments/p0/runtime/emulator-avds/p0-google-a.avd/modem_simulator/modem_nvram.json": {
+      "size": 164,
+      "mtime_ns": 1794545818962569143,
+      "inode": 306199842,
+      "mode": 33188,
+      "sha256": "e4614cf0421c381b681d5337928ef61366688805d6a5aae211acfc4d3fead359"
+    },
+    "experiments/p0/runtime/emulator-avds/p0-google-a.avd/modem_simulator/etc": {
+      "size": 96,
+      "mtime_ns": 1794539361408257097,
+      "inode": 306199770,
+      "mode": 16877
+    },
+    "experiments/p0/runtime/emulator-avds/p0-google-a.avd/modem_simulator/iccprofile_for_carrierapitests.xml": {
+      "size": 16537,
+      "mtime_ns": 1794543078450853249,
+      "inode": 306199774,
+      "mode": 33188,
+      "sha256": "dc4b5f5344f084fc44f89250bbcf2b12e452eb98c104e4ef3ec115366eb6ce32"
+    },
+    "experiments/p0/runtime/emulator-avds/p0-google-a.avd/data/misc": {
+      "size": 96,
+      "mtime_ns": 1794539535577093890,
+      "inode": 306200463,
+      "mode": 16877
+    },
+    "experiments/p0/runtime/emulator-avds/p0-google-a.avd/data/misc/pstore": {
+      "size": 64,
+      "mtime_ns": 1794539535577092348,
+      "inode": 306200464,
+      "mode": 16895
+    },
+    "experiments/p0/runtime/emulator-avds/p0-google-a.avd/modem_simulator/etc/modem_simulator": {
+      "size": 96,
+      "mtime_ns": 1794539361408346430,
+      "inode": 306199771,
+      "mode": 16877
+    },
+    "experiments/p0/runtime/emulator-avds/p0-google-a.avd/modem_simulator/etc/modem_simulator/files": {
+      "size": 96,
+      "mtime_ns": 1794539361408443098,
+      "inode": 306199772,
+      "mode": 16877
+    },
+    "experiments/p0/runtime/emulator-avds/p0-google-a.avd/modem_simulator/etc/modem_simulator/files/numeric_operator.xml": {
+      "size": 297,
+      "mtime_ns": 1794543078450096077,
+      "inode": 306199773,
+      "mode": 33188,
+      "sha256": "c2557e604beea20b67642cdbb14ae7b792f804e4476b3f6cf47035690234f436"
+    },
+    "experiments/p0/runtime/emulator-avds/p0-google-a.ini": {
+      "size": 132,
+      "mtime_ns": 1794539352416791307,
+      "inode": 306199676,
+      "mode": 33188,
+      "sha256": "11e4a59d1dabdc9c7068ab146236331843c0deb8beadfb84e95395d9668a420e"
+    },
+    "experiments/p0/runtime/emulator-avds/p0-google-b.avd": {
+      "size": 736,
+      "mtime_ns": 1794551754299577167,
+      "inode": 306199856,
+      "mode": 16877
+    },
+    "experiments/p0/runtime/emulator-avds/p0-google-b.avd/initrd": {
+      "size": 1818576,
+      "mtime_ns": 1794549887142751421,
+      "inode": 306199936,
+      "mode": 33188
+    },
+    "experiments/p0/runtime/emulator-avds/p0-google-b.avd/bootcompleted.ini": {
+      "size": 0,
+      "mtime_ns": 1794549897630960762,
+      "inode": 306416851,
+      "mode": 33152,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "experiments/p0/runtime/emulator-avds/p0-google-b.avd/version_num.cache": {
+      "size": 9,
+      "mtime_ns": 1794539419689101438,
+      "inode": 306199944,
+      "mode": 33188,
+      "sha256": "c2dd0acefbf5387654d80af08bd8e10a4c00b1010ebec2a1b91041a99b0dbb41"
+    },
+    "experiments/p0/runtime/emulator-avds/p0-google-b.avd/hardware-qemu.ini": {
+      "size": 4401,
+      "mtime_ns": 1794549887143676388,
+      "inode": 306416818,
+      "mode": 33188,
+      "sha256": "1f4ab79551ce2cb68e8f92360635656df32711f4e30998251b7489be6c55f2da"
+    },
+    "experiments/p0/runtime/emulator-avds/p0-google-b.avd/cache.img.qcow2": {
+      "size": 196616,
+      "mtime_ns": 1794539419686858693,
+      "inode": 306199941,
+      "mode": 33188,
+      "sha256": "653a5ddde6cc210b3492dc4690c696b758892d81d6a9b2d073ee85480637248f"
+    },
+    "experiments/p0/runtime/emulator-avds/p0-google-b.avd/AVD.conf": {
+      "size": 183,
+      "mtime_ns": 1794540813307808564,
+      "inode": 306211367,
+      "mode": 33188,
+      "sha256": "bcfe337122d9ebbe018181d67de4e683c9dca3622c220ebcf0917dd767ee7c2e"
+    },
+    "experiments/p0/runtime/emulator-avds/p0-google-b.avd/userdata-qemu.img": {
+      "size": 8323072,
+      "mtime_ns": 1794539418104093284,
+      "inode": 306199917,
+      "mode": 33188
+    },
+    "experiments/p0/runtime/emulator-avds/p0-google-b.avd/encryptionkey.img": {
+      "size": 18874368,
+      "mtime_ns": 1794539418161719282,
+      "inode": 306199918,
+      "mode": 33188
+    },
+    "experiments/p0/runtime/emulator-avds/p0-google-b.avd/multiinstance.lock": {
+      "size": 0,
+      "mtime_ns": 1794549886560125921,
+      "inode": 306199879,
+      "mode": 33188,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "experiments/p0/runtime/emulator-avds/p0-google-b.avd/read-snapshot.txt": {
+      "size": 0,
+      "mtime_ns": 1794549887171328179,
+      "inode": 306199945,
+      "mode": 33188,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "experiments/p0/runtime/emulator-avds/p0-google-b.avd/tmpAdbCmds": {
+      "size": 64,
+      "mtime_ns": 1794549901705975232,
+      "inode": 306200135,
+      "mode": 16877
+    },
+    "experiments/p0/runtime/emulator-avds/p0-google-b.avd/config.ini": {
+      "size": 3496,
+      "mtime_ns": 1794543360759993573,
+      "inode": 306293384,
+      "mode": 33188,
+      "sha256": "64a3da2ea89b16671ccb2f4b981a88e389a2a77cd77846e2ca7f699ac0809d96"
+    },
+    "experiments/p0/runtime/emulator-avds/p0-google-b.avd/qemu-version.txt": {
+      "size": 1,
+      "mtime_ns": 1794539417141411045,
+      "inode": 306199863,
+      "mode": 33188,
+      "sha256": "d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35"
+    },
+    "experiments/p0/runtime/emulator-avds/p0-google-b.avd/userdata-qemu.img.qcow2": {
+      "size": 3051356160,
+      "mtime_ns": 1794551714949392289,
+      "inode": 306199942,
+      "mode": 33188
+    },
+    "experiments/p0/runtime/emulator-avds/p0-google-b.avd/netsim.ini": {
+      "size": 38,
+      "mtime_ns": 1794539419665996527,
+      "inode": 306199938,
+      "mode": 33188,
+      "sha256": "d2eab250906e76f6decde96bafc81690359823727ba375761ac1a67296b9eb7b"
+    },
+    "experiments/p0/runtime/emulator-avds/p0-google-b.avd/emu-launch-params.txt": {
+      "size": 299,
+      "mtime_ns": 1794549886201043019,
+      "inode": 306199862,
+      "mode": 33188,
+      "sha256": "63bd572eb3528889c7c8b2d850d1a5f846889fb93ed986ba9a4a9e066af949de"
+    },
+    "experiments/p0/runtime/emulator-avds/p0-google-b.avd/cache.img": {
+      "size": 69206016,
+      "mtime_ns": 1794539418163092346,
+      "inode": 306199919,
+      "mode": 33188
+    },
+    "experiments/p0/runtime/emulator-avds/p0-google-b.avd/modem_simulator": {
+      "size": 224,
+      "mtime_ns": 1794539493325716605,
+      "inode": 306199920,
+      "mode": 16877
+    },
+    "experiments/p0/runtime/emulator-avds/p0-google-b.avd/emulator-user.ini": {
+      "size": 113,
+      "mtime_ns": 1794551754288896242,
+      "inode": 306442072,
+      "mode": 33188,
+      "sha256": "e6714d488dbe8b4738b0fc33c8dfbd6dad97127cbd4bce354e9c5a2857f89f47"
+    },
+    "experiments/p0/runtime/emulator-avds/p0-google-b.avd/encryptionkey.img.qcow2": {
+      "size": 7995392,
+      "mtime_ns": 1794549965170320803,
+      "inode": 306199943,
+      "mode": 33188
+    },
+    "experiments/p0/runtime/emulator-avds/p0-google-b.avd/data": {
+      "size": 96,
+      "mtime_ns": 1794540811859672087,
+      "inode": 306211324,
+      "mode": 16877
+    },
+    "experiments/p0/runtime/emulator-avds/p0-google-b.avd/modem_simulator/iccprofile_for_sim_tel_alaska.xml": {
+      "size": 14474,
+      "mtime_ns": 1794549886608618358,
+      "inode": 306199927,
+      "mode": 33188,
+      "sha256": "462cc26ddaa9d6c470a2d9415771c80e323b526b1863f099accb298955b14db3"
+    },
+    "experiments/p0/runtime/emulator-avds/p0-google-b.avd/modem_simulator/iccprofile_for_sim0.xml": {
+      "size": 14747,
+      "mtime_ns": 1794551754292995611,
+      "inode": 306199926,
+      "mode": 33188,
+      "sha256": "7c7996b576a53d7f9be538ec417c09825433f0fdf6561d9204afcdb2f54ba98a"
+    },
+    "experiments/p0/runtime/emulator-avds/p0-google-b.avd/modem_simulator/modem_nvram.json": {
+      "size": 164,
+      "mtime_ns": 1794551754291449639,
+      "inode": 306200236,
+      "mode": 33188,
+      "sha256": "e4614cf0421c381b681d5337928ef61366688805d6a5aae211acfc4d3fead359"
+    },
+    "experiments/p0/runtime/emulator-avds/p0-google-b.avd/modem_simulator/etc": {
+      "size": 96,
+      "mtime_ns": 1794539418171126813,
+      "inode": 306199921,
+      "mode": 16877
+    },
+    "experiments/p0/runtime/emulator-avds/p0-google-b.avd/modem_simulator/iccprofile_for_carrierapitests.xml": {
+      "size": 16537,
+      "mtime_ns": 1794549886607552307,
+      "inode": 306199925,
+      "mode": 33188,
+      "sha256": "dc4b5f5344f084fc44f89250bbcf2b12e452eb98c104e4ef3ec115366eb6ce32"
+    },
+    "experiments/p0/runtime/emulator-avds/p0-google-b.avd/data/misc": {
+      "size": 96,
+      "mtime_ns": 1794540811859717462,
+      "inode": 306211325,
+      "mode": 16877
+    },
+    "experiments/p0/runtime/emulator-avds/p0-google-b.avd/data/misc/pstore": {
+      "size": 64,
+      "mtime_ns": 1794540811859715837,
+      "inode": 306211326,
+      "mode": 16895
+    },
+    "experiments/p0/runtime/emulator-avds/p0-google-b.avd/modem_simulator/etc/modem_simulator": {
+      "size": 96,
+      "mtime_ns": 1794539418171238565,
+      "inode": 306199922,
+      "mode": 16877
+    },
+    "experiments/p0/runtime/emulator-avds/p0-google-b.avd/modem_simulator/etc/modem_simulator/files": {
+      "size": 96,
+      "mtime_ns": 1794539418171384067,
+      "inode": 306199923,
+      "mode": 16877
+    },
+    "experiments/p0/runtime/emulator-avds/p0-google-b.avd/modem_simulator/etc/modem_simulator/files/numeric_operator.xml": {
+      "size": 297,
+      "mtime_ns": 1794549886606728591,
+      "inode": 306199924,
+      "mode": 33188,
+      "sha256": "c2557e604beea20b67642cdbb14ae7b792f804e4476b3f6cf47035690234f436"
+    },
+    "experiments/p0/runtime/emulator-avds/p0-google-b.ini": {
+      "size": 132,
+      "mtime_ns": 1794539412727402867,
+      "inode": 306199857,
+      "mode": 33188,
+      "sha256": "fd7b75e3aa82cf4b6b9d16c9eb0d6054bddf5885e59fe1e813ea24e4ad8e8f91"
+    }
+  },
+  "note": "Large retained payloads checked by size/mtime/inode/mode, small files and app executable additionally by SHA-256. du blocks are not exclusive APFS physical allocation.",
+  "protected_unchanged": true,
+  "after_allocated_bytes": 7965650944
+}

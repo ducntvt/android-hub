@@ -1,0 +1,18 @@
+    Finished `test` profile [optimized + debuginfo] target(s) in 0.22s
+     Running unittests src/lib.rs (target/debug/deps/hub_infrastructure-7c36de3d39c80e00)
+
+running 1 test
+Disposable root: /var/folders/wy/jv7506_12wvfkfmthtbgpy8c0000gn/T/hub-apk-smoke-1794561037775
+Framebuffer verified: 480x854
+APK installed and package found on disposable guest only
+Error: "Port 5584 đang được sử dụng; không thao tác để tránh nhầm máy"
+test apk::tests::installs_on_disposable_guest ... FAILED
+
+failures:
+
+failures:
+    apk::tests::installs_on_disposable_guest
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 37 filtered out; finished in 33.09s
+
+error: test failed, to rerun pass `-p hub-infrastructure --lib`

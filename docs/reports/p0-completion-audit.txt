@@ -1,0 +1,5 @@
+measurements: exit 1
+P0 rejected: [Errno 2] No such file or directory: 'docs/reports/p0/measurements.json'
+
+acceptance: exit 1
+P0 rejected: [Errno 2] No such file or directory: 'docs/reports/p0/measurements.json'

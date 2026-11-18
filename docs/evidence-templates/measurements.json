@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "host": "",
+  "engine": "",
+  "image": "",
+  "renderer": "",
+  "gapps": "",
+  "game_versions": "",
+  "runs": {
+    "single": {
+      "configuration": "",
+      "workload": "",
+      "process_traces": []
+    },
+    "dual": {
+      "configuration": "",
+      "workload": "",
+      "process_traces": []
+    },
+    "dual_minimized": {
+      "configuration": "",
+      "workload": "",
+      "process_traces": []
+    }
+  }
+}

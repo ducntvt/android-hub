@@ -1,0 +1,13 @@
+{
+  "root": "/tmp/android-hub-recovery-native-20261116/data/experiments/p0/runtime",
+  "registry_restored": true,
+  "original_marker_restored": true,
+  "pending_journals": 0,
+  "staging_and_previous_remaining": 0,
+  "receipts": [
+    "hub-recovery-native-16112026-rolled-back.json"
+  ],
+  "native_history": "Recovery original: đã đưa dữ liệu cũ trở lại sau gián đoạn",
+  "fixture": "Synthetic pending journal at post-registry boundary, not a killed guest or power-loss test",
+  "initial_fixture_correction": "Port 5690 rejected by profile validator; corrected to supported 5680 before successful smoke"
+}

@@ -1,0 +1,32 @@
+   Compiling android-hub v0.1.0 (/Users/ducnt/Desktop/Projects/VM/crates/desktop)
+    Finished `test` profile [optimized + debuginfo] target(s) in 2.23s
+warning: the following packages contain code that will be rejected by a future version of Rust: block v0.1.6
+note: to see what the problems were, use the option `--future-incompat-report`, or run `cargo report future-incompatibilities --id 1`
+     Running unittests src/main.rs (target/debug/deps/android_hub-0c08e7e672a89b8b)
+
+running 22 tests
+test screen::tests::maps_scaled_coordinates_and_clamps_release_outside ... ok
+test screen::tests::wheel_scales_lines_accumulates_pixels_and_rejects_invalid_values ... ok
+test screen::tests::wheel_routes_only_to_hovered_device_and_does_not_interrupt_drag ... ok
+test screen::tests::gesture_survives_events_before_parent_focus_update ... ok
+test tests::java_selection_result_preserves_sdk_and_refreshes_after_success ... ok
+test tests::delayed_clipboard_does_not_change_notice_after_selection_changes ... ok
+test tests::apk_confirmation_is_invalidated_by_selection_or_restart ... ok
+test tests::last_removed_device_clears_selection_and_archive_panel_can_reload ... ok
+test tests::old_catalog_results_cannot_cross_selection_or_reload ... ok
+test tests::managed_catalog_ignores_old_responses_and_selection_updates_both_drafts ... ok
+test tests::late_poll_cannot_overwrite_saved_configuration ... ok
+test tests::removal_confirmation_is_bound_to_saved_profile_and_selection ... ok
+test tests::resolution_keeps_orientation_without_mutating_saved_profile ... ok
+test tests::restore_requires_confirmation_and_rejects_changed_profile ... ok
+test tests::sdk_selection_result_changes_backend_only_after_success ... ok
+test data_root::tests::legacy_data_wins_and_missing_checkout_falls_back_without_creating_files ... ok
+test tests::stale_or_dismissed_history_cannot_replace_newer_results ... ok
+test tests::stale_poll_error_does_not_interrupt_command_and_fresh_poll_recovers ... ok
+test tests::sdk_cache_reset_requires_confirmation_and_does_not_start_download ... ok
+test tests::sdk_setup_ui_requires_consent_and_handles_retry_and_completion_without_selecting ... ok
+test tests::sdk_review_never_preaccepts_and_clears_consent_on_close_or_reopen ... ok
+test tests::frame_notifications_survive_early_arrival_and_coalesce ... ok
+
+test result: ok. 22 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.12s
+

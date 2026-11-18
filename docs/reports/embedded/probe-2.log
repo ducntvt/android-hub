@@ -1,0 +1,6 @@
+    Blocking waiting for file lock on build directory
+   Compiling hub-infrastructure v0.1.0 (/Users/ducnt/Desktop/Projects/VM/crates/infrastructure)
+    Finished `dev` profile [optimized + debuginfo] target(s) in 5.11s
+     Running `target/debug/examples/display_probe`
+Test engine hub-1794542709982 serial emulator-5586 pid 71573
+Authenticated RGBA frame 480x854, 1639680 bytes

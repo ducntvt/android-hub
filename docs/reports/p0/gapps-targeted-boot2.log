@@ -1,0 +1,10 @@
+[gpu] shader cache /Users/ducnt/Desktop/Projects/VM/experiments/p0/runtime/a/gpu-cache/emulator-37.2.12_moltenvk_apple-m2_macos-26a434 (2 MiB)
+[gpu] ASTC goes to Metal natively (no gfxstream decompression)
+[gpu] gfxstream from /Users/ducnt/Library/Android/sdk/emulator: Apple M2, flags 0x28, capsets 3,9, host-visible 8 GiB, hwc client
+[vmm] 2 vCPUs, 3072 MiB RAM, kernel 40.1 MiB, initrd 20.8 MiB, 46 PCI devices, GIC SPIs 32..1020
+[gpu] a device took Avo's VK_EXT_provoking_vertex (first in this engine; flat varyings come from the first vertex)
+[gpu] pipelines draw flat varyings from the first vertex (VK_EXT_provoking_vertex is Avo's layer's)
+[gpu] ctx=12 res=37 blobs=17 mapped=17MiB fences=0 oldest=0ms flush/s=12 readback avg/max=0.66/5.66ms rejected-maps=0 unknown=0 errors=0
+[gpu] ctx=12 res=52 blobs=18 mapped=18MiB fences=0 oldest=0ms flush/s=7 readback avg/max=0.69/4.94ms rejected-maps=0 unknown=0 errors=0
+[vmm] stopped (PowerOff) after 25.1s, 393225 exits (mmio 393212, hvc 8, wfi 0, vtimer 0, sysreg 4, canceled 1)
+[vmm] PowerOff

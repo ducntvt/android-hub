@@ -1,0 +1,17 @@
+{
+  "project_directory": "/Users/ducnt/Desktop/Projects/Android Hub",
+  "compatibility_link": "/Users/ducnt/Desktop/Projects/VM",
+  "same_directory_inode": true,
+  "protected_metadata_sha256": {
+    "experiments/p0/runtime/hub-profiles.json": "b89cc681fbf01b5c19c39c7196529feac5217667f24edc832466d26570e9197a",
+    "experiments/p0/runtime/emulator-avds/hub-1794829194704.ini": "1a4c4e981b9213a02b665676177e30962bb38989556bd51755120d1cee533334",
+    "experiments/p0/runtime/emulator-avds/hub-1794829194704.avd/config.ini": "15b9b702d15debb7b570c9640ef180c54e1beee6d78462cb6753498970a260a8"
+  },
+  "avd_paths": [
+    {
+      "registered": "/Users/ducnt/Desktop/Projects/VM/experiments/p0/runtime/emulator-avds/hub-1794829194704.avd",
+      "resolved": "/Users/ducnt/Desktop/Projects/Android Hub/experiments/p0/runtime/emulator-avds/hub-1794829194704.avd"
+    }
+  ],
+  "no_guests_started_or_stopped": true
+}

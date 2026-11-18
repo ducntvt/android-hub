@@ -1,0 +1,20 @@
+{
+  "build": "16644040",
+  "target": "aosp_cf_arm64_only_phone-userdebug",
+  "archive_sha256": "a9314183f3cf4d15a0a2121a85f8300ca7990788c52474d322c6fe9320b40802",
+  "renderer_source": "existing Android SDK emulator 37.2.12 (compatibility unverified)",
+  "files": {
+    "fastboot-info.txt": "14d1f1edc164429e94adc30977850a86648fd90645a3d3122e73bbd6b18baa15",
+    "vbmeta_vendor_dlkm.img": "ab774cc3996333dd814e760beb8144f5e1262f8335165abb05b664516fd63d61",
+    "boot.img": "b6f1c12a695e99c761f6a23713f4601dba06e690e77acfb5d1906b0d32f5c967",
+    "vbmeta.img": "260e1e38e27f363342d2d2c5bde20e10b748924e821f202130ba755dd2388f1b",
+    "init_boot.img": "c4f820039ef9c2d1957461f33916f4d24b94d7b866e03ff91dbd7e9f72793d29",
+    "vbmeta_system_dlkm.img": "5625cc8cadf992f91f83aaebbab77a43b0de9968a95b1239568608d21d1ed358",
+    "vendor_boot.img": "6f88b6c7164814bef200100763f9880733fe99aed17ee8e937f46b185b24fa8c",
+    "cuttlefish_example_custom.img": "3d17578db83de489aafbd421d98d2596cf4d486639c2802f4df7e9ac9e231847",
+    "android-info.txt": "9e65df4d6461e776a29250602980d7f9fbc3d4e12cf66af759dcc38df02b33ee",
+    "super.img": "b21bad18d8642dc141c33077d5f75832921fe99febbe124867ff31f316e90067",
+    "vbmeta_system.img": "898e1e0b3b1e369af1ad8e517b6b32ee1540cd0801757400e90b1c50c361c2dd",
+    "userdata.img": "860a526936e3c6ddf414ee8fbc84d20d718a363c2b8a5257aeb21527bdf0fba2"
+  }
+}

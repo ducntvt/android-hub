@@ -1,0 +1,18 @@
+[package]
+name = "android-hub"
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+
+[dependencies]
+android-hub-domain.workspace = true
+android-hub-infrastructure.workspace = true
+iced.workspace = true
+libc.workspace = true
+tokio = { workspace = true, features = ["rt"] }
+
+[target.'cfg(target_os = "macos")'.dependencies]
+rfd.workspace = true
+objc2.workspace = true
+objc2-foundation.workspace = true
+objc2-app-kit.workspace = true

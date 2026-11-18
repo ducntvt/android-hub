@@ -1,0 +1,11 @@
+   Compiling android-hub v0.1.0 (/Users/ducnt/Desktop/Projects/VM/crates/desktop)
+    Finished `test` profile [optimized + debuginfo] target(s) in 2.97s
+warning: the following packages contain code that will be rejected by a future version of Rust: block v0.1.6
+note: to see what the problems were, use the option `--future-incompat-report`, or run `cargo report future-incompatibilities --id 1`
+     Running unittests src/main.rs (target/debug/deps/android_hub-0c08e7e672a89b8b)
+
+running 1 test
+test tests::sdk_cache_reset_requires_confirmation_and_does_not_start_download ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 21 filtered out; finished in 0.00s
+

@@ -1,0 +1,20 @@
+{
+  "profile": "hub-1794811158106",
+  "backup": "/tmp/android-hub-ui-qa-20261116/data/experiments/p0/runtime/backups/hub-1794811158106-1794811777468174000",
+  "receipt": "/tmp/android-hub-ui-qa-20261116/data/experiments/p0/runtime/restore-history/hub-1794811158106-1794812145838168000-committed.json",
+  "state": "committed",
+  "restored_files_verified": 22,
+  "sha256_match": true,
+  "previous_data_retained": "/tmp/android-hub-ui-qa-20261116/data/experiments/p0/runtime/emulator-avds/.previous-hub-1794811158106-1794812145838168000",
+  "boot_after_restore": {
+    "sys.boot_completed": "1",
+    "native_home_visible": true,
+    "play_store_icon_visible": true
+  },
+  "stopped_via_hub_after_test": true,
+  "cancel_restore": {
+    "confirmation_closed": true,
+    "receipt_count_after_cancel": 1,
+    "pending_journals_after_cancel": 0
+  }
+}

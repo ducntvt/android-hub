@@ -1,0 +1,22 @@
+[package]
+name = "android-hub-infrastructure"
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+
+[dependencies]
+android-hub-domain.workspace = true
+serde_json.workspace = true
+sha2.workspace = true
+fs2.workspace = true
+libc.workspace = true
+zip.workspace = true
+# Enable the ZIP Deflate backend through Cargo feature unification (ADR 0025).
+flate2.workspace = true
+tonic.workspace = true
+prost.workspace = true
+tokio = { workspace = true, features = ["rt-multi-thread", "sync", "time", "macros", "process", "io-util"] }
+
+[build-dependencies]
+tonic-build.workspace = true
+protoc-bin-vendored.workspace = true

@@ -1,0 +1,9 @@
+   Compiling hub-infrastructure v0.1.0 (/Users/ducnt/Desktop/Projects/VM/crates/infrastructure)
+    Finished `test` profile [optimized + debuginfo] target(s) in 7.87s
+     Running unittests src/lib.rs (target/debug/deps/hub_infrastructure-7148cf37b1af3f1f)
+
+running 1 test
+test setup::tests::configure_java_persists_validated_home_and_preserves_settings_on_failure ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 103 filtered out; finished in 1.34s
+

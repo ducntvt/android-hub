@@ -1,0 +1,32 @@
+state active=false left=false mouse=Some((0.0, 0.0)) size=(360, 640)
+state active=true left=false mouse=Some((0.0, 378.6836)) size=(360, 640)
+state active=true left=true mouse=Some((137.0, 388.0)) size=(360, 640)
+input touch 0 0:12469:19864
+input touch 0 0:12469:19864
+input touch 0 0:12469:19864
+input touch 0 0:12469:19864
+input touch 0 0:12469:19864
+input touch 0 0:12469:19864
+input touch 0 0:12469:19864
+input touch 0 0:12469:19864
+input touch 0 0:12469:19864
+input touch 0 0:12469:19864
+input touch 0 0:12469:19864
+input touch 0 0:12469:19864
+input touch 0 0:12469:19864
+input touch 0 0:12469:19864
+input touch 0 0:12469:19864
+input touch 0 0:12469:19864
+state active=true left=false mouse=Some((137.0, 388.0)) size=(360, 640)
+input touch 0
+input key 158 1
+input key 158 0
+state active=true left=true mouse=Some((137.0, 388.0)) size=(360, 640)
+input touch 0 0:12469:19864
+input touch 0 0:12469:19864
+input touch 0 0:12469:19864
+input touch 0 0:12469:19864
+state active=true left=false mouse=Some((137.0, 388.0)) size=(360, 640)
+input touch 0
+input key 102 1
+input key 102 0

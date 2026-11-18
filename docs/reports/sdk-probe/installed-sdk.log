@@ -1,0 +1,10 @@
+   Compiling hub-infrastructure v0.1.0 (/Users/ducnt/Desktop/Projects/VM/crates/infrastructure)
+    Finished `test` profile [optimized + debuginfo] target(s) in 3.18s
+     Running unittests src/lib.rs (target/debug/deps/hub_infrastructure-01bf75d34b8d84a2)
+
+running 1 test
+SdkToolProbe { java_home: "/Applications/Android Studio.app/Contents/jbr/Contents/Home", java_major: 25, java_arch: "aarch64", adb_version: "Android Debug Bridge version 1.0.41", emulator_version: "Android emulator version 37.2.12.0 (build_id 16428233) (CL:N/A)" }
+test sdk_probe::tests::installed_sdk_tools_probe_in_isolated_home ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 71 filtered out; finished in 0.80s
+

@@ -1,0 +1,18 @@
+{
+  "time_unix": 1794539484.085432,
+  "checks": {
+    "a": {
+      "boot_completed": true,
+      "marker": "emulator-a",
+      "boot_id": "0423fc2e-9ed2-4fc3-bbee-e54fc240c787",
+      "uptime": "122.05 15.79"
+    },
+    "b": {
+      "boot_completed": true,
+      "marker": "emulator-b",
+      "boot_id": "4b92e2fd-53ad-47f4-be5c-337973476cae",
+      "uptime": "66.21 22.12"
+    }
+  },
+  "passed": true
+}

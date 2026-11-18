@@ -1,0 +1,4 @@
+1
+instance-a
+verity is enabled on slot with suffix _a.
+

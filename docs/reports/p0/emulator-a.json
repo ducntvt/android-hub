@@ -1,0 +1,32 @@
+{
+  "instance": "a",
+  "serial": "emulator-5580",
+  "passed": true,
+  "checked_at_unix": 1794539672.331587,
+  "checks": {
+    "avd_name": "p0-google-a",
+    "boot_completed": true,
+    "ro.build.version.release": "16",
+    "ro.build.version.sdk": "36",
+    "ro.product.cpu.abi": "arm64-v8a",
+    "ro.build.fingerprint": "google/sdk_gphone64_arm64/emu64a:16/BE2A.250530.026.D1/13818094:user/release-keys",
+    "ro.boot.veritymode": "enforcing",
+    "com.android.vending": {
+      "present": true,
+      "versions": [
+        "versionCode=84532130 minSdk=31 targetSdk=35",
+        "versionCode=85411140 minSdk=34 targetSdk=37",
+        "versionName=45.3.21-31 [0] [PR] 736181551",
+        "versionName=54.1.11-34 [0] [PR] 1016840738"
+      ]
+    },
+    "com.google.android.gms": {
+      "present": true,
+      "versions": [
+        "versionCode=250834035 minSdk=35 targetSdk=35",
+        "versionName=25.08.34 (260400-739221510)"
+      ]
+    },
+    "display": "Physical size: 720x1280"
+  }
+}

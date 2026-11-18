@@ -1,0 +1,19 @@
+[gpu] shader cache /Users/ducnt/Library/Caches/Avo/gpu-cache/emulator-37.2.12_moltenvk_apple-m2_macos-26a434 (1 MiB)
+[gpu] ASTC goes to Metal natively (no gfxstream decompression)
+[gpu] gfxstream from /Users/ducnt/Library/Android/sdk/emulator: Apple M2, flags 0x28, capsets 3,9, host-visible 8 GiB, hwc client
+[vmm] 2 vCPUs, 3072 MiB RAM, kernel 40.1 MiB, initrd 20.8 MiB, 46 PCI devices, GIC SPIs 32..1020
+[gpu] a device took Avo's VK_EXT_provoking_vertex (first in this engine; flat varyings come from the first vertex)
+[gpu] pipelines draw flat varyings from the first vertex (VK_EXT_provoking_vertex is Avo's layer's)
+[gpu] ctx=7 res=15 blobs=11 mapped=15MiB fences=0 oldest=0ms flush/s=6 readback avg/max=1.65/26.24ms rejected-maps=0 unknown=0 errors=0
+[gpu] ctx=12 res=54 blobs=20 mapped=20MiB fences=0 oldest=0ms flush/s=15 readback avg/max=0.66/2.85ms rejected-maps=0 unknown=0 errors=0
+[gpu] ctx=12 res=55 blobs=20 mapped=20MiB fences=0 oldest=0ms flush/s=3 readback avg/max=0.84/2.09ms rejected-maps=0 unknown=0 errors=0
+[gpu] ctx=12 res=54 blobs=22 mapped=22MiB fences=0 oldest=0ms flush/s=6 readback avg/max=1.09/9.09ms rejected-maps=0 unknown=0 errors=0
+[vmm] sound: the Mac's audio output took 2364 ms to start
+[gpu] ctx=12 res=54 blobs=22 mapped=22MiB fences=0 oldest=0ms flush/s=13 readback avg/max=1.05/9.04ms rejected-maps=0 unknown=0 errors=0
+[gpu] ctx=12 res=54 blobs=22 mapped=22MiB fences=0 oldest=0ms flush/s=10 readback avg/max=0.98/8.40ms rejected-maps=0 unknown=0 errors=0
+[gpu] ctx=12 res=55 blobs=23 mapped=22MiB fences=0 oldest=0ms flush/s=4 readback avg/max=1.16/7.61ms rejected-maps=0 unknown=0 errors=0
+[gpu] ctx=12 res=55 blobs=23 mapped=22MiB fences=0 oldest=0ms flush/s=3 readback avg/max=1.90/14.93ms rejected-maps=0 unknown=0 errors=0
+[gpu] ctx=12 res=55 blobs=23 mapped=22MiB fences=0 oldest=0ms flush/s=0 readback avg/max=84.91/84.91ms rejected-maps=0 unknown=0 errors=0
+[gpu] ctx=12 res=54 blobs=22 mapped=21MiB fences=0 oldest=0ms flush/s=0 readback avg/max=0.00/0.00ms rejected-maps=0 unknown=0 errors=0
+[vmm] stopped (PowerOff) after 158.4s, 475383 exits (mmio 475370, hvc 8, wfi 0, vtimer 0, sysreg 4, canceled 1)
+[vmm] PowerOff

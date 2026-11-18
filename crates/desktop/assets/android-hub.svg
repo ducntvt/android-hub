@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <title>Android Hub</title>
+  <desc>Two connected device silhouettes form a white H on a blue and teal tile.</desc>
+  <defs>
+    <linearGradient id="tile" x1="80" y1="944" x2="944" y2="80" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#073ce5"/>
+      <stop offset=".52" stop-color="#008bea"/>
+      <stop offset="1" stop-color="#00b9c2"/>
+    </linearGradient>
+    <mask id="earpieces" maskUnits="userSpaceOnUse" x="230" y="270" width="564" height="490">
+      <rect x="230" y="270" width="564" height="490" fill="white"/>
+      <rect x="301" y="307" width="87" height="25" rx="12.5" fill="black"/>
+      <rect x="637" y="307" width="87" height="25" rx="12.5" fill="black"/>
+    </mask>
+  </defs>
+  <path fill="url(#tile)" d="M280 80H744C880 80 944 144 944 280V744C944 880 880 944 744 944H280C144 944 80 880 80 744V280C80 144 144 80 280 80Z"/>
+  <path fill="white" mask="url(#earpieces)" d="M299 277H391Q449 277 449 335V455H575V335Q575 277 633 277H727Q785 277 785 335V693Q785 751 727 751H633Q575 751 575 693V562H449V693Q449 751 391 751H299Q239 751 239 693V335Q239 277 299 277Z"/>
+</svg>

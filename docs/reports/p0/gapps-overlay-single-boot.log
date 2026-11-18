@@ -1,0 +1,7 @@
+[gpu] shader cache /Users/ducnt/Desktop/Projects/VM/experiments/p0/runtime/a-overlay-failed/gpu-cache/emulator-37.2.12_moltenvk_apple-m2_macos-26a434 (2 MiB)
+[gpu] ASTC goes to Metal natively (no gfxstream decompression)
+[gpu] gfxstream from /Users/ducnt/Library/Android/sdk/emulator: Apple M2, flags 0x28, capsets 3,9, host-visible 8 GiB, hwc client
+[vmm] 2 vCPUs, 3072 MiB RAM, kernel 40.1 MiB, initrd 20.8 MiB, 46 PCI devices, GIC SPIs 32..1020
+[vmm] stopped (Reset) after 1.7s, 144227 exits (mmio 144214, hvc 8, wfi 0, vtimer 0, sysreg 4, canceled 1)
+[vmm] Reset
+[vmm] guest rebooted: the daemon starts it again

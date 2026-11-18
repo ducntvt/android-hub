@@ -1,0 +1,20 @@
+{
+  "phase": "after-a-restart",
+  "started_at_unix": 1794537965.269251,
+  "checks": {
+    "a": {
+      "boot_completed": true,
+      "marker": "instance-a",
+      "uptime": "8.54 3.30",
+      "boot_id": "b852c7bd-2eb1-495e-ad3a-2e38f0ee7f7d"
+    },
+    "b": {
+      "boot_completed": true,
+      "marker": "instance-b",
+      "uptime": "275.42 472.08",
+      "boot_id": "cd14649a-5137-4cb0-91d3-eeb224a277c9"
+    }
+  },
+  "passed": true,
+  "finished_at_unix": 1794537965.391464
+}

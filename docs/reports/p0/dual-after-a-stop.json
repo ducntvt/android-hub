@@ -1,0 +1,15 @@
+{
+  "phase": "after-a-stop",
+  "started_at_unix": 1794537952.275685,
+  "checks": {
+    "b": {
+      "boot_completed": true,
+      "marker": "instance-b",
+      "uptime": "262.36 446.58",
+      "boot_id": "cd14649a-5137-4cb0-91d3-eeb224a277c9"
+    },
+    "a_unreachable": true
+  },
+  "passed": true,
+  "finished_at_unix": 1794537952.325098
+}

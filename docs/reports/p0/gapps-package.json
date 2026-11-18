@@ -1,0 +1,234 @@
+{
+  "status": "host_staged",
+  "source": "https://github.com/MindTheGapps/17.0.0-arm64/releases/download/MindTheGapps-17.0.0-arm64-20261022_132445/MindTheGapps-17.0.0-arm64-20261022_132445.zip",
+  "archive_sha256": "a6844eeb2613541558237e467b20feb01f8b45b2ebab0109834140ea59b6ca4d",
+  "properties": {
+    "arch": "arm64",
+    "version": "37",
+    "version_nice": "17.0.0"
+  },
+  "guest": {
+    "sdk": 37,
+    "arch": "arm64",
+    "product": "vsoc_arm64_only"
+  },
+  "stage": "experiments/p0/runtime/gapps-stage-5v47pkdh",
+  "expanded_selected_bytes": 716481828,
+  "files": [
+    {
+      "source": "system/product/apex/com.google.android.gmssystem.prodvic.apex",
+      "destination": "product/apex/com.google.android.gmssystem.prodvic.apex",
+      "bytes": 146501632,
+      "sha256": "fd56d1e45eb46c9a56253129242231c0d47555e568870ae39c1317ca818efa4c"
+    },
+    {
+      "source": "system/product/app/GoogleCalendarSyncAdapter/GoogleCalendarSyncAdapter.apk",
+      "destination": "product/app/GoogleCalendarSyncAdapter/GoogleCalendarSyncAdapter.apk",
+      "bytes": 3117863,
+      "sha256": "0b3aa6f8d4bc16645b26136dbc228f3a0fe503c01f54892f577715f61e3ef5a7"
+    },
+    {
+      "source": "system/product/app/GoogleContactsSyncAdapter/GoogleContactsSyncAdapter.apk",
+      "destination": "product/app/GoogleContactsSyncAdapter/GoogleContactsSyncAdapter.apk",
+      "bytes": 1505961,
+      "sha256": "5396a4ddf818f69a51d34a10ab23c8356add171ef2394f5bbca9e63b74594f4e"
+    },
+    {
+      "source": "system/product/app/PrebuiltExchange3Google/PrebuiltExchange3Google.apk",
+      "destination": "product/app/PrebuiltExchange3Google/PrebuiltExchange3Google.apk",
+      "bytes": 491242,
+      "sha256": "3f65c5fb9da1e341590373497a520c18b286eb44946d0b1b6a8e588e6985acdb"
+    },
+    {
+      "source": "system/product/app/SpeechServicesByGoogle/SpeechServicesByGoogle.apk",
+      "destination": "product/app/SpeechServicesByGoogle/SpeechServicesByGoogle.apk",
+      "bytes": 74981363,
+      "sha256": "db98860a224c8f6a2439d467bfd0a9ca411b2562a759fd45a072269d309cacda"
+    },
+    {
+      "source": "system/product/app/talkback/talkback.apk",
+      "destination": "product/app/talkback/talkback.apk",
+      "bytes": 44435283,
+      "sha256": "d6c5a7848dab3c5a47d4ed05cbeee6536cf7e841c74a0ba5b69bf11eb83b671e"
+    },
+    {
+      "source": "system/product/etc/default-permissions/default-permissions-google.xml",
+      "destination": "product/etc/default-permissions/default-permissions-google.xml",
+      "bytes": 4238,
+      "sha256": "75aed46d9b30bdf9371bd9e713ab3ef191f90ea476b45952e31cc326e7ee1354"
+    },
+    {
+      "source": "system/product/etc/default-permissions/default-permissions-mtg.xml",
+      "destination": "product/etc/default-permissions/default-permissions-mtg.xml",
+      "bytes": 1453,
+      "sha256": "250a22a5b0fd63140ae3842404d3ea85b5f390962d8350c96ff4b7ce4029a4f3"
+    },
+    {
+      "source": "system/product/etc/init/gapps.rc",
+      "destination": "product/etc/init/gapps.rc",
+      "bytes": 95,
+      "sha256": "c39439ea6fe0b6971ca360f1e7c4412248959f39044075d9f14ad1ac20cbf62d"
+    },
+    {
+      "source": "system/product/etc/permissions/com.google.android.dialer.support.xml",
+      "destination": "product/etc/permissions/com.google.android.dialer.support.xml",
+      "bytes": 610,
+      "sha256": "b3b530828259e81adffbd78cd64735afe65849f78dc2bb09b62e14b8ddef3244"
+    },
+    {
+      "source": "system/product/etc/permissions/privapp-permissions-google-product.xml",
+      "destination": "product/etc/permissions/privapp-permissions-google-product.xml",
+      "bytes": 34943,
+      "sha256": "dd6b89032c052a53f77954aa2762cfe98ebf23af8969321d0bc5443d1b31dafc"
+    },
+    {
+      "source": "system/product/etc/permissions/privapp-permissions-mtg.xml",
+      "destination": "product/etc/permissions/privapp-permissions-mtg.xml",
+      "bytes": 561,
+      "sha256": "44da0c634eb9ef97d43b5783b68c6dedd00232b03ebe66556e696c9855507d9d"
+    },
+    {
+      "source": "system/product/etc/security/fsverity/gms_fsverity_cert.der",
+      "destination": "product/etc/security/fsverity/gms_fsverity_cert.der",
+      "bytes": 1484,
+      "sha256": "1a78f5d70b87441c7d13384179e377f4f3105be25814eef05cd95d1b736775b9"
+    },
+    {
+      "source": "system/product/etc/sysconfig/allowed_apex_com.google.android.gmssystem.xml",
+      "destination": "product/etc/sysconfig/allowed_apex_com.google.android.gmssystem.xml",
+      "bytes": 616,
+      "sha256": "741b47e0fbbbac2ea9ff684698ddb7963dcd2e6c929012bcc5ac46f93d219595"
+    },
+    {
+      "source": "system/product/etc/sysconfig/d2d_cable_migration_feature.xml",
+      "destination": "product/etc/sysconfig/d2d_cable_migration_feature.xml",
+      "bytes": 136,
+      "sha256": "364372d5bb87bbf22b2628b14e2b56d521fb17ce27df804713c6fbea2eb2088c"
+    },
+    {
+      "source": "system/product/etc/sysconfig/google-hiddenapi-package-allowlist.xml",
+      "destination": "product/etc/sysconfig/google-hiddenapi-package-allowlist.xml",
+      "bytes": 4193,
+      "sha256": "101de8a2abfbcd1f08712eedd5b123c72b81e9fef701f0cbf6b29ccb81c24c45"
+    },
+    {
+      "source": "system/product/etc/sysconfig/google.xml",
+      "destination": "product/etc/sysconfig/google.xml",
+      "bytes": 6247,
+      "sha256": "863fa3b4623dfa8b6c2a33dd69ffa32de9156900a8a73048b6b26f368b3973be"
+    },
+    {
+      "source": "system/product/etc/sysconfig/sysconfig-mtg.xml",
+      "destination": "product/etc/sysconfig/sysconfig-mtg.xml",
+      "bytes": 440,
+      "sha256": "c37f9eaf1d708b3f7ccb262c1378e7c7e742bb45150087d84db4b008fe2ce318"
+    },
+    {
+      "source": "system/product/etc/sysconfig/wellbeing.xml",
+      "destination": "product/etc/sysconfig/wellbeing.xml",
+      "bytes": 118,
+      "sha256": "eb737eb93ffa855638793cf898c9bb73dff81fa48fa0ecaf7707280a9f1b2753"
+    },
+    {
+      "source": "system/product/framework/com.google.android.dialer.support.jar",
+      "destination": "product/framework/com.google.android.dialer.support.jar",
+      "bytes": 946,
+      "sha256": "584859f94fe2dd0c4aec65f514a990b6f4fc8290bfd7565e2fe036d761aee89e"
+    },
+    {
+      "source": "system/product/lib64/libjni_latinimegoogle.so",
+      "destination": "product/lib64/libjni_latinimegoogle.so",
+      "bytes": 1112352,
+      "sha256": "41a39a7410dfe3e90d530aeca84cb4dfbe2c2e411ca7470cb32e93625a5f33e0"
+    },
+    {
+      "source": "system/product/overlay/GmsOverlay.apk",
+      "destination": "product/overlay/GmsOverlay.apk",
+      "bytes": 12632,
+      "sha256": "c60c5cecdea5770b232fafe9e1a4abb12787c516bb61dded5e5e22e0051ef8e6"
+    },
+    {
+      "source": "system/product/overlay/GmsSettingsOverlay.apk",
+      "destination": "product/overlay/GmsSettingsOverlay.apk",
+      "bytes": 8536,
+      "sha256": "81315cf74321f8974c92ad20f9d66e420936526e7df822e70dda7a211aacb3a3"
+    },
+    {
+      "source": "system/product/overlay/GmsSettingsProviderOverlay.apk",
+      "destination": "product/overlay/GmsSettingsProviderOverlay.apk",
+      "bytes": 8536,
+      "sha256": "d6e500d5b38be4807d63c9f57010bbadb3c015f777e04738e731316e3a983501"
+    },
+    {
+      "source": "system/product/overlay/GmsSetupWizardOverlay.apk",
+      "destination": "product/overlay/GmsSetupWizardOverlay.apk",
+      "bytes": 8536,
+      "sha256": "e5b61cba2e7bc27dc72f624a05c9fc69708d3b54f84927604fbfd1966580b04e"
+    },
+    {
+      "source": "system/product/priv-app/AndroidAutoStub/AndroidAutoStub.apk",
+      "destination": "product/priv-app/AndroidAutoStub/AndroidAutoStub.apk",
+      "bytes": 4097016,
+      "sha256": "8cd34781445d122621f1ecc75eb92e71c519cb73a40585c46107543f7ca85345"
+    },
+    {
+      "source": "system/product/priv-app/FamilyLinkParentalControls/FamilyLinkParentalControls.apk",
+      "destination": "product/priv-app/FamilyLinkParentalControls/FamilyLinkParentalControls.apk",
+      "bytes": 31345884,
+      "sha256": "0e57780e7a16aca3421c5cd7f1089e6b231f7e42f4ff0c61b84c56abeea0bb21"
+    },
+    {
+      "source": "system/product/priv-app/GooglePartnerSetup/GooglePartnerSetup.apk",
+      "destination": "product/priv-app/GooglePartnerSetup/GooglePartnerSetup.apk",
+      "bytes": 1731178,
+      "sha256": "6ee2ea824e1c39eed76f815929a29848b66f26457a6c88398aee0fefb92c81f2"
+    },
+    {
+      "source": "system/product/priv-app/GoogleRestore/GoogleRestore.apk",
+      "destination": "product/priv-app/GoogleRestore/GoogleRestore.apk",
+      "bytes": 29047122,
+      "sha256": "7abf24869a15847fdf2a5abb1e73c68a3f27242ee6c4f09c15530ca04f9108cc"
+    },
+    {
+      "source": "system/product/priv-app/Phonesky/Phonesky.apk",
+      "destination": "product/priv-app/Phonesky/Phonesky.apk",
+      "bytes": 106972026,
+      "sha256": "259bdd44ebaed8a0378b9773d5b838e9cb45383ae084458b3ec44e06a88c1039"
+    },
+    {
+      "source": "system/product/priv-app/Velvet/Velvet.apk",
+      "destination": "product/priv-app/Velvet/Velvet.apk",
+      "bytes": 243683703,
+      "sha256": "edf7bcc2c818a529d19cb8c2316fc3c82fec08cd431a1d44c21f68de1085c5d3"
+    },
+    {
+      "source": "system/product/priv-app/Wellbeing/Wellbeing.apk",
+      "destination": "product/priv-app/Wellbeing/Wellbeing.apk",
+      "bytes": 25691319,
+      "sha256": "9bb424cf2267e7739bcafc68c3bd87746bc261b378e0b00710b3a8851e2afccd"
+    },
+    {
+      "source": "system/system_ext/etc/permissions/privapp-permissions-google-system_ext.xml",
+      "destination": "system_ext/etc/permissions/privapp-permissions-google-system_ext.xml",
+      "bytes": 4644,
+      "sha256": "e22d9050b622d139eac56b80fb551786b2a212d791225d8c248e63b108cc9982"
+    },
+    {
+      "source": "system/system_ext/priv-app/GoogleFeedback/GoogleFeedback.apk",
+      "destination": "system_ext/priv-app/GoogleFeedback/GoogleFeedback.apk",
+      "bytes": 544588,
+      "sha256": "6478956cd0e39fd7ab6dc175e6a5f5c086c12dd0e51e9b8b6f0a8f576ee1da13"
+    },
+    {
+      "source": "system/system_ext/priv-app/GoogleServicesFramework/GoogleServicesFramework.apk",
+      "destination": "system_ext/priv-app/GoogleServicesFramework/GoogleServicesFramework.apk",
+      "bytes": 1124332,
+      "sha256": "a923583e561945309599a8117cad54de2896f4f93b333e50789dc7b3f2cc30eb"
+    }
+  ],
+  "skipped": [
+    "product/priv-app/VelvetTitan/VelvetTitan.apk",
+    "system_ext/priv-app/SetupWizard/SetupWizard.apk"
+  ],
+  "guest_installed": false
+}

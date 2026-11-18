@@ -1,0 +1,2 @@
+# Historical logs/fixtures retain their exact captured whitespace as evidence.
+docs/reports/** -whitespace

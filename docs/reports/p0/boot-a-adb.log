@@ -1,0 +1,18 @@
+[gpu] shader cache /Users/ducnt/Desktop/Projects/VM/experiments/p0/runtime/a/gpu-cache/emulator-37.2.12_moltenvk_apple-m2_macos-26a434 (0 MiB)
+[gpu] ASTC goes to Metal natively (no gfxstream decompression)
+[gpu] gfxstream from /Users/ducnt/Library/Android/sdk/emulator: Apple M2, flags 0x28, capsets 3,9, host-visible 8 GiB, hwc client
+[vmm] 2 vCPUs, 3072 MiB RAM, kernel 40.1 MiB, initrd 20.8 MiB, 46 PCI devices, GIC SPIs 32..1020
+[gpu] a device took Avo's VK_EXT_provoking_vertex (first in this engine; flat varyings come from the first vertex)
+[gpu] pipelines draw flat varyings from the first vertex (VK_EXT_provoking_vertex is Avo's layer's)
+[gpu] ctx=7 res=16 blobs=11 mapped=15MiB fences=0 oldest=0ms flush/s=5 readback avg/max=2.54/44.22ms rejected-maps=0 unknown=0 errors=0
+[gpu] ctx=12 res=51 blobs=18 mapped=18MiB fences=0 oldest=0ms flush/s=14 readback avg/max=0.84/2.72ms rejected-maps=0 unknown=0 errors=0
+[gpu] ctx=12 res=51 blobs=18 mapped=18MiB fences=0 oldest=0ms flush/s=2 readback avg/max=0.97/3.50ms rejected-maps=0 unknown=0 errors=0
+[gpu] ctx=12 res=51 blobs=18 mapped=18MiB fences=0 oldest=0ms flush/s=0 readback avg/max=8.61/8.61ms rejected-maps=0 unknown=0 errors=0
+[gpu] ctx=12 res=52 blobs=18 mapped=18MiB fences=0 oldest=0ms flush/s=2 readback avg/max=1.11/3.18ms rejected-maps=0 unknown=0 errors=0
+[gpu] ctx=12 res=49 blobs=18 mapped=18MiB fences=0 oldest=0ms flush/s=2 readback avg/max=1.55/7.17ms rejected-maps=0 unknown=0 errors=0
+[gpu] ctx=12 res=49 blobs=18 mapped=18MiB fences=0 oldest=0ms flush/s=0 readback avg/max=6.72/11.87ms rejected-maps=0 unknown=0 errors=0
+[gpu] ctx=12 res=49 blobs=18 mapped=18MiB fences=0 oldest=0ms flush/s=0 readback avg/max=35.77/35.77ms rejected-maps=0 unknown=0 errors=0
+[gpu] ctx=12 res=48 blobs=17 mapped=17MiB fences=0 oldest=0ms flush/s=0 readback avg/max=0.00/0.00ms rejected-maps=0 unknown=0 errors=0
+[gpu] ctx=12 res=48 blobs=17 mapped=17MiB fences=0 oldest=0ms flush/s=0 readback avg/max=27.81/27.81ms rejected-maps=0 unknown=0 errors=0
+[vmm] stopped (PowerOff) after 143.5s, 449850 exits (mmio 449837, hvc 8, wfi 0, vtimer 0, sysreg 4, canceled 1)
+[vmm] PowerOff

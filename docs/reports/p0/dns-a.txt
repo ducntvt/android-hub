@@ -1,0 +1,63 @@
+null
+NetId: 100
+  DnsEvent subsampling map: 7:110 2:110 0:400 default:8
+  DnsEvent subsampling map for MDNS: default:1
+  DNS servers: # IP (total, successes, errors, timeouts, internal errors, RTT avg, last sample)
+    10.0.2.3 (6, 6, 0, 0, 0, 17ms, 36s)
+  Interface names: [wlan0]
+  No search domains defined
+  DNS parameters: sample validity = 1800s, success threshold = 25%, samples (min, max) = (8, 64), base_timeout = 5000msec, retry count = 2times
+  DNS64 config: none
+  Private DNS mode: OPPORTUNISTIC
+  DoT configuration (1 entries)
+    10.0.2.3 name{} status{fail}
+  No DoH servers configured
+  Concurrent DNS query timeout: 0
+  Server statistics: (total, RTT avg, {rcode:counts}, last update)
+    over UDP
+      10.0.2.3:53 (6, 17ms, [NOERROR:6 ], 35s) score{99.8}
+    over DOH
+      <no data>
+    over TLS
+      10.0.2.3:853 <no data> score{100.0}
+    over TCP
+      10.0.2.3:53 <no data> score{100.0}
+    over MDNS
+      224.0.0.251:5353 <no data> score{100.0}
+      [ff02::fb]:5353 <no data> score{100.0}
+  TC mode: default
+  TransportType: WIFI
+  Metered: false
+
+PrivateDnsLog:
+  02:24:57.986 - netId=100 PrivateDns={10.0.2.3:853/} state=in_process
+  02:24:58.004 - netId=100 PrivateDns={10.0.2.3:853/} state=fail
+  02:24:58.137 - netId=100 PrivateDns={10.0.2.3:853/} state=in_process
+  02:24:58.163 - netId=100 PrivateDns={10.0.2.3:853/} state=fail
+
+Experiments list: 
+  doh_early_data: UNSET
+  doh_idle_timeout_ms: UNSET
+  doh_probe_timeout_ms: UNSET
+  doh_query_timeout_ms: UNSET
+  doh_session_resumption: UNSET
+  dot_async_handshake: UNSET
+  dot_connect_timeout_ms: UNSET
+  dot_maxtries: UNSET
+  dot_query_timeout_ms: UNSET
+  dot_quick_fallback: UNSET
+  dot_revalidation_threshold: UNSET
+  dot_validation_latency_factor: UNSET
+  dot_validation_latency_offset_ms: UNSET
+  dot_xport_unusable_threshold: UNSET
+  fail_fast_on_uid_network_blocking: UNSET
+  keep_listening_udp: UNSET
+  max_cache_entries: UNSET
+  max_queries_global: UNSET
+  mdns_resolution: UNSET
+  no_retry_after_cancel: UNSET
+  parallel_lookup_sleep_time: UNSET
+  retransmission_time_interval: UNSET
+  retry_count: UNSET
+  sort_nameservers: UNSET
+

@@ -1,0 +1,20 @@
+{
+  "phase": "both",
+  "started_at_unix": 1794537928.0245209,
+  "checks": {
+    "a": {
+      "boot_completed": true,
+      "marker": "instance-a",
+      "uptime": "248.91 439.74",
+      "boot_id": "2a2d6ce2-b25e-4744-bed1-3656143962f9"
+    },
+    "b": {
+      "boot_completed": true,
+      "marker": "instance-b",
+      "uptime": "238.22 400.15",
+      "boot_id": "cd14649a-5137-4cb0-91d3-eeb224a277c9"
+    }
+  },
+  "passed": true,
+  "finished_at_unix": 1794537928.189522
+}

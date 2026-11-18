@@ -1,0 +1,38 @@
+{
+  "instance": "a",
+  "backup": "experiments/p0/runtime/backups/a-before-gapps",
+  "time_unix": 1794538680.163737,
+  "files": [
+    {
+      "name": "frp.img",
+      "bytes": 1048576,
+      "sha256": "cc7c764613bc5fccdf7229b0c5f938aff4cfb6d452d0f20d2f2f098b3dd9563e"
+    },
+    {
+      "name": "metadata.img",
+      "bytes": 67108864,
+      "sha256": "41fac32f242c7146ec4cef62c0219a303222228655cfe3d21ff70a41a0f0cee9"
+    },
+    {
+      "name": "misc.img",
+      "bytes": 1048576,
+      "sha256": "9db6c74fd419a9b058506bbd67f7819206a1660fd0e85d29c31a9d4b341caf91"
+    },
+    {
+      "name": "super.img",
+      "bytes": 8589934592,
+      "sha256": "91effacdbc2170fe16269fb71666b739befe8b192e0dc049a2b11de3f093a017"
+    },
+    {
+      "name": "userdata.img",
+      "bytes": 8589934592,
+      "sha256": "0497cd9e874e2b75af7f347fe749299ee9788092ea487cd6062c6f6605fe2680"
+    },
+    {
+      "name": "vbmeta.img",
+      "bytes": 12288,
+      "sha256": "260e1e38e27f363342d2d2c5bde20e10b748924e821f202130ba755dd2388f1b"
+    }
+  ],
+  "verified": true
+}

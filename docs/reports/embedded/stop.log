@@ -1,0 +1,5 @@
+   Compiling hub-infrastructure v0.1.0 (/Users/ducnt/Desktop/Projects/VM/crates/infrastructure)
+    Finished `dev` profile [optimized + debuginfo] target(s) in 1.59s
+     Running `target/debug/examples/finish_display_test`
+Stopped test hub-1794542403877
+Stopped test hub-1794542709982

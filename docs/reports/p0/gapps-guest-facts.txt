@@ -1,0 +1,4 @@
+37
+arm64
+vsoc_arm64_only
+

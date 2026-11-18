@@ -1,0 +1,11 @@
+    Finished `test` profile [optimized + debuginfo] target(s) in 0.12s
+     Running unittests src/lib.rs (target/debug/deps/hub_infrastructure-984480e5c4ee1935)
+
+running 1 test
+SIGKILL first-package-moved: commit boundary, unchanged preferences/SDK, cache retry passed
+SIGKILL before-publish: commit boundary, unchanged preferences/SDK, cache retry passed
+SIGKILL after-publish: commit boundary, unchanged preferences/SDK, cache retry passed
+test sdk_install::tests::assembly_sigkill_preserves_commit_boundary_and_cache_retry ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 93 filtered out; finished in 4.42s
+

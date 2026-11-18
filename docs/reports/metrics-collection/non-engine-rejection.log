@@ -1,0 +1,1 @@
+PASS: real engine-metrics rejected a Python PID; wrapper retained incomplete status and reaped owned sampler. No VM was started/stopped. Not benchmark evidence.

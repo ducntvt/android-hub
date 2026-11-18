@@ -1,0 +1,23 @@
+Wifi is enabled
+Wifi scanning is only available when wifi is enabled
+==== Primary ClientModeManager instance ====
+Wifi is connected to "VirtWifi"
+WifiInfo: SSID: "VirtWifi", BSSID: be:f7:bd:59:27:e6, MAC: 02:15:b2:00:00:00, IP: /10.0.2.15, Security type: 0, Supplicant state: COMPLETED, Wi-Fi standard: unknown, RSSI: -50, Link speed: 1Mbps, Tx Link speed: 1Mbps, Max Supported Tx Link speed: -1Mbps, Calculated Tx : 0Mbps, Rx Link speed: -1Mbps, Max Supported Rx Link speed: -1Mbps, Calculated Rx : 0Mbps, Frequency: 5240MHz, Net ID: 0, Metered hint: false, score: 100, isUsable: true, CarrierMerged: false, SubscriptionId: -1, IsPrimary: 1, Trusted: true, Restricted: false, Ephemeral: false, OEM paid: false, OEM private: false, OSU AP: false, FQDN: <none>, Provider friendly name: <none>, Requesting package name: <none>"VirtWifi"openMLO Information: , Is TID-To-Link negotiation supported by the AP: false, AP MLD Address: <none>, AP MLO Link Id: <none>, AP MLO Affiliated links: <none>, Vendor Data: <none>
+successfulTxPackets: 155
+successfulTxPacketsPerSecond: 12.884639978134732
+retriedTxPackets: 0
+retriedTxPacketsPerSecond: 0.0
+lostTxPackets: 0
+lostTxPacketsPerSecond: 0.0
+successfulRxPackets: 173
+successfulRxPacketsPerSecond: 13.951066441820576
+10.0.2.0/24 dev wlan0 proto kernel scope link src 10.0.2.15 
+PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.
+64 bytes from 8.8.8.8: icmp_seq=1 ttl=64 time=34.3 ms
+64 bytes from 8.8.8.8: icmp_seq=2 ttl=64 time=34.9 ms
+
+--- 8.8.8.8 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1002ms
+rtt min/avg/max/mdev = 34.380/34.644/34.908/0.264 ms
+ping: unknown host google.com
+

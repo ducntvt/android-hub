@@ -1,0 +1,7 @@
+{
+  "backup": "/tmp/android-hub-ui-qa-20261116/data/experiments/p0/runtime/backups/hub-1794811158106-1794811777468174000",
+  "files_verified": 22,
+  "bytes_verified": 1830786506,
+  "sha256_match": true,
+  "check": "Read-only re-audit of the UI-created backup; live guest data not compared after later QA activity"
+}

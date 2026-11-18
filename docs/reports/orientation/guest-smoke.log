@@ -1,0 +1,16 @@
+    Blocking waiting for file lock on build directory
+   Compiling hub-infrastructure v0.1.0 (/Users/ducnt/Desktop/Projects/VM/crates/infrastructure)
+    Finished `test` profile [optimized + debuginfo] target(s) in 6.17s
+     Running unittests src/lib.rs (target/debug/deps/hub_infrastructure-7c36de3d39c80e00)
+
+running 1 test
+Disposable root: /var/folders/wy/jv7506_12wvfkfmthtbgpy8c0000gn/T/hub-apk-smoke-1794557190741
+Framebuffer verified: 854x480
+APK installed and package found on disposable guest only
+test apk::tests::installs_on_disposable_guest has been running for over 60 seconds
+Stopped guest backup and SDK compatibility verified
+Restored backup booted; installed test package persisted
+test apk::tests::installs_on_disposable_guest ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 21 filtered out; finished in 139.02s
+

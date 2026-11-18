@@ -1,0 +1,40 @@
+{
+  "recorded_at": "2026-11-16T16:52:42.889771+07:00",
+  "qa_bundle": "/tmp/android-hub-ui-qa-20261116/Android Hub QA.app",
+  "guest_id": "hub-1794811158106",
+  "serial": "emulator-5588",
+  "apk": "/tmp/hub-apk-ui-qa-20261116/test.apk",
+  "apk_sha256": "345c78a8a0b349fc92dc696616fa995698ee592286bce50e311fd71a2e761692",
+  "apk_bytes": 8532,
+  "package": "local.androidhub.installsmoke",
+  "before_install": {
+    "avd_name": "hub-1794811158106",
+    "pm_path_stdout": "",
+    "pm_path_exit_code": 1
+  },
+  "native_drop": "User reports drop showed install confirmation and clicked Install; agent observed success notice afterward",
+  "main_data_touched": false,
+  "after_install": {
+    "avd_name": "hub-1794811158106",
+    "pm_path_exit_code": 0,
+    "package_present": true,
+    "native_notice": "Đã cài APK vào máy đã chọn"
+  },
+  "fixture_limitation": "Manifest hasCode=false, no activity or launcher icon; successful install does not open a screen.",
+  "peer_check": {
+    "profile": "QA Lifecycle",
+    "id": "hub-1794811024355",
+    "serial": "emulator-5586",
+    "boot_completed": "1",
+    "pm_path_stdout": "",
+    "pm_path_exit_code": 1,
+    "package_present": false,
+    "lifecycle": "Started and stopped through native Hub with stop confirmation",
+    "limit": "Post-install absence check; no before/after full filesystem comparison, peer was stopped during installation."
+  },
+  "cancel_check": {
+    "source": "user confirmation in conversation",
+    "result": "Đã bấm Hủy, hộp xác nhận đóng",
+    "scope": "Native confirmation dismissed after repeated drop on updated QA build; no independent package-change measurement during cancel."
+  }
+}

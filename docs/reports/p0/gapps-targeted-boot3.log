@@ -1,0 +1,8 @@
+[gpu] shader cache /Users/ducnt/Desktop/Projects/VM/experiments/p0/runtime/a/gpu-cache/emulator-37.2.12_moltenvk_apple-m2_macos-26a434 (2 MiB)
+[gpu] ASTC goes to Metal natively (no gfxstream decompression)
+[gpu] gfxstream from /Users/ducnt/Library/Android/sdk/emulator: Apple M2, flags 0x28, capsets 3,9, host-visible 8 GiB, hwc client
+[vmm] 2 vCPUs, 3072 MiB RAM, kernel 40.1 MiB, initrd 20.8 MiB, 46 PCI devices, GIC SPIs 32..1020
+[gpu] ctx=0 res=0 blobs=0 mapped=0MiB fences=0 oldest=0ms flush/s=0 readback avg/max=0.00/0.00ms rejected-maps=0 unknown=0 errors=0
+[vmm] stopped (Reset) after 20.9s, 291681 exits (mmio 291668, hvc 8, wfi 0, vtimer 0, sysreg 4, canceled 1)
+[vmm] Reset
+[vmm] guest rebooted: the daemon starts it again

@@ -1,0 +1,308 @@
+state active=false left=false mouse=Some((0.0, 0.0)) size=(360, 640)
+state active=true left=false mouse=Some((0.0, 634.96094)) size=(360, 640)
+state active=true left=true mouse=Some((0.0, 638.6367)) size=(360, 640)
+input touch 0 0:0:32697
+input touch 0 0:0:32697
+input touch 0 0:0:32697
+input touch 0 0:0:32697
+input touch 0 0:0:32697
+input touch 0 0:0:32697
+input touch 0 0:0:32697
+input touch 0 0:0:32697
+input touch 0 0:0:32697
+input touch 0 0:0:32697
+input touch 0 0:0:32697
+input touch 0 0:0:32697
+input touch 0 0:0:32697
+input touch 0 0:0:32697
+input touch 0 0:0:32697
+input touch 0 0:0:32697
+input touch 0 0:0:32697
+input touch 0 0:0:32697
+input touch 0 0:0:32697
+input touch 0 0:0:32697
+input touch 0 0:0:32697
+input touch 0 0:0:32697
+input touch 0 0:0:32697
+input touch 0 0:0:32697
+input touch 0 0:0:32697
+state active=true left=false mouse=Some((0.0, 638.6367)) size=(360, 640)
+input touch 0
+state active=true left=true mouse=Some((153.77344, 566.9492)) size=(360, 640)
+input touch 0 0:13996:29026
+input touch 0 0:14593:28088
+input touch 0 0:15429:25251
+input touch 0 0:16273:20527
+input touch 0 0:17039:16009
+input touch 0 0:17879:12561
+input touch 0 0:18966:9728
+state active=true left=false mouse=Some((221.61719, 156.72656)) size=(360, 640)
+input touch 0
+state active=true left=true mouse=Some((227.34766, 456.6953)) size=(360, 640)
+input touch 0 0:20693:23382
+input touch 0 0:20703:21934
+input touch 0 0:21416:18025
+input touch 0 0:22558:12885
+input touch 0 0:23139:8412
+state active=true left=false mouse=Some((254.875, 113.99219)) size=(360, 640)
+input touch 0
+state active=true left=true mouse=Some((239.10547, 296.0664)) size=(360, 640)
+input touch 0 0:21763:15158
+input touch 0 0:21825:14579
+input touch 0 0:21990:11901
+input touch 0 0:22646:8402
+state active=true left=false mouse=Some((252.5664, 122.796875)) size=(360, 640)
+input touch 0
+state active=true left=true mouse=Some((185.71484, 48.64453)) size=(360, 640)
+input touch 0 0:16903:2490
+input touch 0 0:16903:2490
+input touch 0 0:16956:3283
+input touch 0 0:17918:7445
+input touch 0 0:19725:14883
+input touch 0 0:21564:22429
+input touch 0 0:22690:28488
+state active=true left=false mouse=Some((248.82031, 601.6797)) size=(360, 640)
+input touch 0
+state active=true left=true mouse=Some((252.94922, 347.07422)) size=(360, 640)
+input touch 0 0:23023:17769
+input touch 0 0:23460:16062
+input touch 0 0:23186:11133
+state active=true left=false mouse=Some((240.34766, 105.046875)) size=(360, 640)
+input touch 0
+state active=true left=true mouse=Some((193.27344, 46.21875)) size=(360, 640)
+input touch 0 0:17591:2366
+input touch 0 0:17453:2809
+input touch 0 0:17435:3923
+input touch 0 0:17611:7316
+input touch 0 0:18297:12658
+input touch 0 0:19402:18307
+input touch 0 0:19852:22110
+input touch 0 0:19729:24626
+state active=true left=false mouse=Some((215.5625, 494.1289)) size=(360, 640)
+input touch 0
+state active=true left=true mouse=Some((224.8789, 433.16016)) size=(360, 640)
+input touch 0 0:20468:22177
+input touch 0 0:21039:19749
+input touch 0 0:21695:15276
+input touch 0 0:22113:11526
+state active=true left=false mouse=Some((248.77734, 170.90625)) size=(360, 640)
+input touch 0
+state active=true left=true mouse=Some((169.98438, 28.976563)) size=(360, 640)
+input touch 0 0:15471:1483
+input touch 0 0:15564:1905
+input touch 0 0:15731:3601
+input touch 0 0:15974:7968
+input touch 0 0:16339:15360
+state active=true left=false mouse=Some((180.30469, 446.40625)) size=(360, 640)
+input touch 0
+state active=true left=true mouse=Some((179.48047, 545.72656)) size=(360, 640)
+input touch 0 0:16336:27940
+input touch 0 0:16915:26843
+input touch 0 0:17896:24358
+input touch 0 0:18596:20869
+input touch 0 0:18761:17780
+input touch 0 0:17379:11928
+input touch 0 0:16127:7398
+state active=true left=false mouse=Some((170.92969, 108.359375)) size=(360, 640)
+input touch 0
+state active=true left=true mouse=Some((169.98828, 60.121094)) size=(360, 640)
+input touch 0 0:15472:3078
+input touch 0 0:15763:4264
+input touch 0 0:16803:7452
+input touch 0 0:18068:12486
+input touch 0 0:19257:20749
+input touch 0 0:19636:29832
+state active=true left=false mouse=Some((216.61328, 639.0)) size=(360, 640)
+input touch 0
+state active=true left=true mouse=Some((0.0, 347.54297)) size=(360, 640)
+input touch 0 0:0:17793
+state active=true left=false mouse=Some((0.0, 341.16406)) size=(360, 640)
+input touch 0
+state active=true left=true mouse=Some((176.83203, 429.48047)) size=(360, 640)
+input touch 0 0:16095:21988
+input touch 0 0:18833:19248
+input touch 0 0:21499:14672
+input touch 0 0:25264:9532
+state active=true left=false mouse=Some((309.41406, 107.56641)) size=(360, 640)
+input touch 0
+state active=true left=true mouse=Some((205.59375, 417.6328)) size=(360, 640)
+input touch 0 0:18713:21382
+input touch 0 0:27557:21491
+input touch 0 0:32675:21851
+input touch 0 0:32675:22647
+input touch 0 0:32675:23485
+state active=true left=false mouse=Some((359.0, 468.46094)) size=(360, 640)
+input touch 0
+state active=true left=true mouse=Some((190.17188, 486.67578)) size=(360, 640)
+input touch 0 0:17309:24917
+input touch 0 0:14265:24965
+input touch 0 0:6704:24926
+input touch 0 0:0:24707
+state active=true left=false mouse=Some((0.0, 478.40625)) size=(360, 640)
+input touch 0
+state active=true left=true mouse=Some((190.9961, 472.33203)) size=(360, 640)
+input touch 0 0:17384:24182
+input touch 0 0:17422:24384
+input touch 0 0:17425:26522
+input touch 0 0:16857:30837
+input touch 0 0:16659:32715
+input touch 0 0:16408:32715
+state active=true left=false mouse=Some((177.01953, 639.0)) size=(360, 640)
+input touch 0
+state active=true left=true mouse=Some((247.39453, 292.73047)) size=(360, 640)
+input touch 0 0:22517:14987
+input touch 0 0:22437:15576
+input touch 0 0:22087:18815
+input touch 0 0:21950:24567
+input touch 0 0:22395:32715
+input touch 0 0:22611:32715
+state active=true left=false mouse=Some((248.02344, 639.0)) size=(360, 640)
+input touch 0
+state active=true left=true mouse=Some((169.46484, 56.76172)) size=(360, 640)
+input touch 0 0:15424:2906
+input touch 0 0:15424:2906
+input touch 0 0:15498:3254
+input touch 0 0:16471:6545
+input touch 0 0:17857:14142
+input touch 0 0:18783:24097
+input touch 0 0:19442:31540
+state active=true left=false mouse=Some((217.07813, 639.0)) size=(360, 640)
+input touch 0
+state active=true left=true mouse=Some((201.90234, 388.52344)) size=(360, 640)
+input touch 0 0:18377:19891
+input touch 0 0:18646:18849
+input touch 0 0:20104:12531
+input touch 0 0:20951:6366
+state active=true left=false mouse=Some((224.17578, 25.058594)) size=(360, 640)
+input touch 0
+state active=true left=true mouse=Some((187.95313, 544.28516)) size=(360, 640)
+input touch 0 0:17107:27866
+input touch 0 0:17107:27866
+input touch 0 0:17107:27866
+state active=true left=false mouse=Some((187.95313, 544.28516)) size=(360, 640)
+input touch 0
+state active=true left=true mouse=Some((75.87891, 634.10156)) size=(360, 640)
+input touch 0 0:6906:32465
+input touch 0 0:6906:32465
+state active=true left=false mouse=Some((75.87891, 634.10156)) size=(360, 640)
+input touch 0
+state active=true left=true mouse=Some((152.875, 378.26172)) size=(360, 640)
+input touch 0 0:13914:19366
+input touch 0 0:13729:19439
+input touch 0 0:13295:19661
+input touch 0 0:12419:19996
+input touch 0 0:11346:20277
+input touch 0 0:10610:20386
+input touch 0 0:9929:20407
+input touch 0 0:9134:20432
+input touch 0 0:8542:20453
+input touch 0 0:7332:20484
+input touch 0 0:4399:20553
+input touch 0 0:3443:20578
+input touch 0 0:3406:20578
+input touch 0 0:3406:20578
+input touch 0 0:3406:20578
+input touch 0 0:3406:20578
+input touch 0 0:3406:20578
+input touch 0 0:3406:20578
+input touch 0 0:3406:20578
+input touch 0 0:3406:20578
+input touch 0 0:3406:20578
+input touch 0 0:3406:20578
+input touch 0 0:3406:20578
+input touch 0 0:3406:20578
+input touch 0 0:3406:20578
+state active=true left=false mouse=Some((37.421875, 401.9414)) size=(360, 640)
+input touch 0
+state active=true left=true mouse=Some((124.38281, 399.23047)) size=(360, 640)
+input touch 0 0:11321:20439
+input touch 0 0:11321:20439
+input touch 0 0:11321:20439
+input touch 0 0:11321:20439
+input touch 0 0:11321:20439
+input touch 0 0:11321:20439
+input touch 0 0:11340:20439
+input touch 0 0:11340:20439
+input touch 0 0:11340:20439
+input touch 0 0:11340:20439
+input touch 0 0:11340:20439
+input touch 0 0:11340:20439
+input touch 0 0:11340:20439
+input touch 0 0:11340:20439
+input touch 0 0:11340:20439
+input touch 0 0:11340:20439
+input touch 0 0:11340:20439
+input touch 0 0:11340:20439
+input touch 0 0:11340:20439
+input touch 0 0:11340:20439
+input touch 0 0:11340:20439
+input touch 0 0:11340:20439
+input touch 0 0:11340:20439
+input touch 0 0:11340:20439
+input touch 0 0:11340:20439
+input touch 0 0:11340:20439
+input touch 0 0:11321:20439
+input touch 0 0:10563:20491
+input touch 0 0:8632:20576
+input touch 0 0:6747:20645
+input touch 0 0:6133:20656
+input touch 0 0:5874:20656
+input touch 0 0:5230:20677
+input touch 0 0:4594:20708
+input touch 0 0:4502:20718
+input touch 0 0:4502:20718
+input touch 0 0:4502:20718
+input touch 0 0:4502:20718
+input touch 0 0:4502:20718
+input touch 0 0:4502:20718
+input touch 0 0:4502:20718
+input touch 0 0:4502:20718
+input touch 0 0:4502:20718
+input touch 0 0:4502:20718
+input touch 0 0:4502:20718
+input touch 0 0:4502:20718
+input touch 0 0:4502:20718
+input touch 0 0:4502:20718
+input touch 0 0:4502:20718
+input touch 0 0:4502:20718
+input touch 0 0:4502:20718
+input touch 0 0:4502:20718
+input touch 0 0:4502:20718
+input touch 0 0:4391:20739
+input touch 0 0:3873:20843
+input touch 0 0:3429:20968
+input touch 0 0:3134:21061
+input touch 0 0:3041:21103
+input touch 0 0:2949:21145
+input touch 0 0:2875:21207
+input touch 0 0:2856:21228
+input touch 0 0:2856:21228
+input touch 0 0:2838:21238
+input touch 0 0:2838:21249
+input touch 0 0:2819:21446
+input touch 0 0:2960:21819
+input touch 0 0:3111:22068
+input touch 0 0:3224:22287
+input touch 0 0:3242:22349
+input touch 0 0:3261:22349
+input touch 0 0:3261:22349
+input touch 0 0:3261:22349
+input touch 0 0:3261:22349
+input touch 0 0:3261:22349
+state active=true left=false mouse=Some((35.835938, 436.52734)) size=(360, 640)
+input touch 0
+state active=true left=true mouse=Some((246.14844, 304.03516)) size=(360, 640)
+input touch 0 0:22404:15566
+input touch 0 0:22404:15566
+input touch 0 0:22404:15566
+input touch 0 0:22404:15566
+state active=true left=false mouse=Some((246.14844, 304.03516)) size=(360, 640)
+input touch 0
+state active=true left=true mouse=Some((282.95313, 342.8203)) size=(360, 640)
+input touch 0 0:25754:17551
+input touch 0 0:25754:17551
+input touch 0 0:25754:17551
+input touch 0 0:25754:17551
+input touch 0 0:25754:17551
+state active=true left=false mouse=Some((282.95313, 342.8203)) size=(360, 640)
+input touch 0

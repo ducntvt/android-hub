@@ -1,0 +1,85 @@
+[gpu] shader cache /Users/ducnt/Desktop/Projects/VM/experiments/p0/runtime/a/gpu-cache/emulator-37.2.12_moltenvk_apple-m2_macos-26a434 (1 MiB)
+[gpu] ASTC goes to Metal natively (no gfxstream decompression)
+[gpu] gfxstream from /Users/ducnt/Library/Android/sdk/emulator: Apple M2, flags 0x28, capsets 3,9, host-visible 8 GiB, hwc client
+[vmm] 2 vCPUs, 3072 MiB RAM, kernel 40.1 MiB, initrd 20.8 MiB, 46 PCI devices, GIC SPIs 32..1020
+[gpu] a device took Avo's VK_EXT_provoking_vertex (first in this engine; flat varyings come from the first vertex)
+[gpu] pipelines draw flat varyings from the first vertex (VK_EXT_provoking_vertex is Avo's layer's)
+[gpu] ctx=7 res=14 blobs=10 mapped=14MiB fences=0 oldest=0ms flush/s=6 readback avg/max=2.10/38.85ms rejected-maps=0 unknown=0 errors=0
+[gpu] ctx=12 res=51 blobs=18 mapped=18MiB fences=0 oldest=0ms flush/s=15 readback avg/max=0.83/2.95ms rejected-maps=0 unknown=0 errors=0
+[gpu] ctx=12 res=51 blobs=18 mapped=18MiB fences=0 oldest=0ms flush/s=2 readback avg/max=0.99/3.22ms rejected-maps=0 unknown=0 errors=0
+[gpu] ctx=12 res=52 blobs=18 mapped=18MiB fences=0 oldest=0ms flush/s=2 readback avg/max=0.78/1.78ms rejected-maps=0 unknown=0 errors=0
+[gpu] ctx=12 res=49 blobs=18 mapped=18MiB fences=0 oldest=0ms flush/s=2 readback avg/max=3.06/23.66ms rejected-maps=0 unknown=0 errors=0
+[gpu] ctx=12 res=49 blobs=18 mapped=18MiB fences=0 oldest=0ms flush/s=1 readback avg/max=21.62/36.04ms rejected-maps=0 unknown=0 errors=0
+[gpu] ctx=12 res=49 blobs=18 mapped=18MiB fences=0 oldest=0ms flush/s=0 readback avg/max=28.71/28.71ms rejected-maps=0 unknown=0 errors=0
+[gpu] ctx=12 res=48 blobs=17 mapped=17MiB fences=0 oldest=0ms flush/s=0 readback avg/max=0.00/0.00ms rejected-maps=0 unknown=0 errors=0
+[gpu] ctx=12 res=48 blobs=17 mapped=17MiB fences=0 oldest=0ms flush/s=0 readback avg/max=65.38/65.38ms rejected-maps=0 unknown=0 errors=0
+[vmm] stopped (Timeout) after 180.0s, 465785 exits (mmio 465772, hvc 7, wfi 0, vtimer 0, sysreg 4, canceled 2)
+[gfxstream] ERROR [virtio_gpu_frontend.cpp(789)] failed to detach resource 27 to context 13: context not found.
+[gfxstream] ERROR [virtio_gpu_frontend.cpp(789)] failed to detach resource 50 to context 13: context not found.
+[gfxstream] ERROR [virtio_gpu_frontend.cpp(789)] failed to detach resource 18 to context 2: context not found.
+[gfxstream] ERROR [virtio_gpu_frontend.cpp(789)] failed to detach resource 43 to context 11: context not found.
+[gfxstream] ERROR [virtio_gpu_frontend.cpp(789)] failed to detach resource 43 to context 3: context not found.
+[gfxstream] ERROR [virtio_gpu_frontend.cpp(789)] failed to detach resource 43 to context 4: context not found.
+[gfxstream] ERROR [virtio_gpu_frontend.cpp(789)] failed to detach resource 51 to context 7: context not found.
+[gfxstream] ERROR [virtio_gpu_frontend.cpp(789)] failed to detach resource 19 to context 9: context not found.
+[gfxstream] ERROR [virtio_gpu_frontend.cpp(789)] failed to detach resource 25 to context 12: context not found.
+[gfxstream] ERROR [virtio_gpu_frontend.cpp(789)] failed to detach resource 34 to context 9: context not found.
+[gfxstream] ERROR [virtio_gpu_frontend.cpp(789)] failed to detach resource 35 to context 14: context not found.
+[gfxstream] ERROR [virtio_gpu_frontend.cpp(789)] failed to detach resource 2 to context 2: context not found.
+[gfxstream] ERROR [virtio_gpu_frontend.cpp(789)] failed to detach resource 14 to context 3: context not found.
+[gfxstream] ERROR [virtio_gpu_frontend.cpp(789)] failed to detach resource 14 to context 4: context not found.
+[gfxstream] ERROR [virtio_gpu_frontend.cpp(789)] failed to detach resource 44 to context 11: context not found.
+[gfxstream] ERROR [virtio_gpu_frontend.cpp(789)] failed to detach resource 44 to context 3: context not found.
+[gfxstream] ERROR [virtio_gpu_frontend.cpp(789)] failed to detach resource 44 to context 4: context not found.
+[gfxstream] ERROR [virtio_gpu_frontend.cpp(789)] failed to detach resource 45 to context 11: context not found.
+[gfxstream] ERROR [virtio_gpu_frontend.cpp(789)] failed to detach resource 45 to context 3: context not found.
+[gfxstream] ERROR [virtio_gpu_frontend.cpp(789)] failed to detach resource 45 to context 4: context not found.
+[gfxstream] ERROR [virtio_gpu_frontend.cpp(789)] failed to detach resource 54 to context 14: context not found.
+[gfxstream] ERROR [virtio_gpu_frontend.cpp(789)] failed to detach resource 17 to context 3: context not found.
+[gfxstream] ERROR [virtio_gpu_frontend.cpp(789)] failed to detach resource 17 to context 4: context not found.
+[gfxstream] ERROR [virtio_gpu_frontend.cpp(789)] failed to detach resource 17 to context 5: context not found.
+[gfxstream] ERROR [virtio_gpu_frontend.cpp(789)] failed to detach resource 42 to context 12: context not found.
+[gfxstream] ERROR [virtio_gpu_frontend.cpp(789)] failed to detach resource 62 to context 14: context not found.
+[gfxstream] ERROR [virtio_gpu_frontend.cpp(789)] failed to detach resource 64 to context 14: context not found.
+[gfxstream] ERROR [virtio_gpu_frontend.cpp(789)] failed to detach resource 58 to context 14: context not found.
+[gfxstream] ERROR [virtio_gpu_frontend.cpp(789)] failed to detach resource 31 to context 13: context not found.
+[gfxstream] ERROR [virtio_gpu_frontend.cpp(789)] failed to detach resource 61 to context 14: context not found.
+[gfxstream] ERROR [virtio_gpu_frontend.cpp(789)] failed to detach resource 65 to context 14: context not found.
+[gfxstream] ERROR [virtio_gpu_frontend.cpp(789)] failed to detach resource 68 to context 14: context not found.
+[gfxstream] ERROR [virtio_gpu_frontend.cpp(789)] failed to detach resource 69 to context 14: context not found.
+[gfxstream] ERROR [virtio_gpu_frontend.cpp(789)] failed to detach resource 16 to context 2: context not found.
+[gfxstream] ERROR [virtio_gpu_frontend.cpp(789)] failed to detach resource 60 to context 14: context not found.
+[gfxstream] ERROR [virtio_gpu_frontend.cpp(789)] failed to detach resource 38 to context 14: context not found.
+[gfxstream] ERROR [virtio_gpu_frontend.cpp(789)] failed to detach resource 38 to context 3: context not found.
+[gfxstream] ERROR [virtio_gpu_frontend.cpp(789)] failed to detach resource 29 to context 13: context not found.
+[gfxstream] ERROR [virtio_gpu_frontend.cpp(789)] failed to detach resource 32 to context 14: context not found.
+[gfxstream] ERROR [virtio_gpu_frontend.cpp(789)] failed to detach resource 59 to context 14: context not found.
+[gfxstream] ERROR [virtio_gpu_frontend.cpp(789)] failed to detach resource 33 to context 14: context not found.
+[gfxstream] ERROR [virtio_gpu_frontend.cpp(789)] failed to detach resource 26 to context 12: context not found.
+[gfxstream] ERROR [virtio_gpu_frontend.cpp(789)] failed to detach resource 37 to context 14: context not found.
+[gfxstream] ERROR [virtio_gpu_frontend.cpp(789)] failed to detach resource 37 to context 3: context not found.
+[gfxstream] ERROR [virtio_gpu_frontend.cpp(789)] failed to detach resource 40 to context 11: context not found.
+[gfxstream] ERROR [virtio_gpu_frontend.cpp(789)] failed to detach resource 40 to context 3: context not found.
+[gfxstream] ERROR [virtio_gpu_frontend.cpp(789)] failed to detach resource 40 to context 4: context not found.
+[gfxstream] ERROR [virtio_gpu_frontend.cpp(789)] failed to detach resource 52 to context 13: context not found.
+[gfxstream] ERROR [virtio_gpu_frontend.cpp(789)] failed to detach resource 49 to context 14: context not found.
+[gfxstream] ERROR [virtio_gpu_frontend.cpp(789)] failed to detach resource 47 to context 14: context not found.
+[gfxstream] ERROR [virtio_gpu_frontend.cpp(789)] failed to detach resource 63 to context 14: context not found.
+[gfxstream] ERROR [virtio_gpu_frontend.cpp(789)] failed to detach resource 66 to context 14: context not found.
+[gfxstream] ERROR [virtio_gpu_frontend.cpp(789)] failed to detach resource 67 to context 14: context not found.
+[gfxstream] ERROR [virtio_gpu_frontend.cpp(789)] failed to detach resource 30 to context 13: context not found.
+[gfxstream] ERROR [virtio_gpu_frontend.cpp(789)] failed to detach resource 36 to context 14: context not found.
+[gfxstream] ERROR [virtio_gpu_frontend.cpp(789)] failed to detach resource 36 to context 3: context not found.
+[gfxstream] ERROR [virtio_gpu_frontend.cpp(789)] failed to detach resource 39 to context 11: context not found.
+[gfxstream] ERROR [virtio_gpu_frontend.cpp(789)] failed to detach resource 39 to context 3: context not found.
+[gfxstream] ERROR [virtio_gpu_frontend.cpp(789)] failed to detach resource 39 to context 4: context not found.
+[gfxstream] ERROR [virtio_gpu_frontend.cpp(789)] failed to detach resource 15 to context 2: context not found.
+[gfxstream] ERROR [virtio_gpu_frontend.cpp(789)] failed to detach resource 41 to context 11: context not found.
+[gfxstream] ERROR [virtio_gpu_frontend.cpp(789)] failed to detach resource 41 to context 3: context not found.
+[gfxstream] ERROR [virtio_gpu_frontend.cpp(789)] failed to detach resource 41 to context 4: context not found.
+[gfxstream] ERROR [virtio_gpu_frontend.cpp(789)] failed to detach resource 24 to context 11: context not found.
+[gfxstream] ERROR [virtio_gpu_frontend.cpp(789)] failed to detach resource 24 to context 3: context not found.
+[gfxstream] ERROR [virtio_gpu_frontend.cpp(789)] failed to detach resource 24 to context 4: context not found.
+[gfxstream] ERROR [virtio_gpu_frontend.cpp(789)] failed to detach resource 48 to context 14: context not found.
+[gfxstream] ERROR [virtio_gpu_frontend.cpp(789)] failed to detach resource 23 to context 12: context not found.
+[vmm] Timeout

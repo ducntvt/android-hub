@@ -1,0 +1,9 @@
+{
+  "old_alias_absent": true,
+  "active_metadata_has_no_old_root": true,
+  "archived_registration_inodes_preserved": true,
+  "emulator_regenerated_after_boot": [
+    "experiments/p0/runtime/emulator-avds/hub-1794829194704.avd/hardware-qemu.ini"
+  ],
+  "lifecycle": "Started hub-1794829194704 pid 709\nAndroid boot_completed=1\nStopped hub-1794829194704 pid 709\n"
+}

@@ -1,0 +1,12 @@
+    Finished `test` profile [optimized + debuginfo] target(s) in 0.13s
+     Running unittests src/lib.rs (target/debug/deps/hub_infrastructure-984480e5c4ee1935)
+
+running 4 tests
+test sdk_download::tests::crash_download_worker ... ok
+SIGKILL driver: live curl retained lock, competing transfer rejected, lock released at curl exit, retained payload verified on retry
+test sdk_download::tests::parent_crash_keeps_download_locked_until_curl_exits ... ok
+test sdk_download::tests::cancel_stalled_transfer_reaps_curl_and_retains_partial ... ok
+test sdk_download::tests::interrupted_transfer_resumes_and_ignored_range_never_publishes ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 91 filtered out; finished in 0.72s
+

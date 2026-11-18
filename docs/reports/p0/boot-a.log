@@ -1,0 +1,19 @@
+[vmm] preparing super.img
+[vmm] preparing userdata.img
+[vmm] preparing vbmeta.img
+[gpu] shader cache /Users/ducnt/Library/Caches/Avo/gpu-cache/emulator-37.2.12_moltenvk_apple-m2_macos-26a434 (0 MiB)
+[gpu] ASTC goes to Metal natively (no gfxstream decompression)
+[gpu] gfxstream from /Users/ducnt/Library/Android/sdk/emulator: Apple M2, flags 0x28, capsets 3,9, host-visible 8 GiB, hwc client
+[vmm] 2 vCPUs, 3072 MiB RAM, kernel 40.1 MiB, initrd 20.8 MiB, 46 PCI devices, GIC SPIs 32..1020
+[gpu] a device took Avo's VK_EXT_provoking_vertex (first in this engine; flat varyings come from the first vertex)
+[gpu] pipelines draw flat varyings from the first vertex (VK_EXT_provoking_vertex is Avo's layer's)
+[gpu] ctx=7 res=17 blobs=12 mapped=16MiB fences=1 oldest=0ms flush/s=0 readback avg/max=32.18/32.18ms rejected-maps=0 unknown=0 errors=0
+[gpu] ctx=7 res=17 blobs=12 mapped=16MiB fences=0 oldest=0ms flush/s=9 readback avg/max=1.09/4.12ms rejected-maps=0 unknown=0 errors=0
+[gpu] ctx=7 res=18 blobs=13 mapped=16MiB fences=0 oldest=0ms flush/s=12 readback avg/max=0.98/2.80ms rejected-maps=0 unknown=0 errors=0
+[gpu] ctx=13 res=31 blobs=19 mapped=16MiB fences=0 oldest=0ms flush/s=14 readback avg/max=1.09/6.85ms rejected-maps=0 unknown=0 errors=0
+[gpu] ctx=14 res=48 blobs=25 mapped=22MiB fences=0 oldest=0ms flush/s=10 readback avg/max=0.85/4.49ms rejected-maps=0 unknown=0 errors=0
+[gpu] ctx=14 res=55 blobs=28 mapped=25MiB fences=0 oldest=0ms flush/s=0 readback avg/max=0.00/0.00ms rejected-maps=0 unknown=0 errors=0
+[gpu] ctx=14 res=56 blobs=28 mapped=25MiB fences=0 oldest=0ms flush/s=0 readback avg/max=28.26/55.76ms rejected-maps=0 unknown=0 errors=0
+[gpu] ctx=14 res=55 blobs=28 mapped=25MiB fences=0 oldest=0ms flush/s=5 readback avg/max=1.18/7.15ms rejected-maps=0 unknown=0 errors=0
+[vmm] stopped (PowerOff) after 56.3s, 519939 exits (mmio 519926, hvc 8, wfi 0, vtimer 0, sysreg 4, canceled 1)
+[vmm] PowerOff

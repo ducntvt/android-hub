@@ -1,0 +1,23 @@
+   Compiling hub-infrastructure v0.1.0 (/Users/ducnt/Desktop/Projects/VM/crates/infrastructure)
+    Finished `test` profile [optimized + debuginfo] target(s) in 5.08s
+     Running unittests src/lib.rs (target/debug/deps/hub_infrastructure-7c36de3d39c80e00)
+
+running 2 tests
+
+thread '<unnamed>' (28381647) panicked at crates/infrastructure/src/sdk_download.rs:492:48:
+called `Result::unwrap()` on an `Err` value: Os { code: 35, kind: WouldBlock, message: "Resource temporarily unavailable" }
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+thread 'sdk_download::tests::cancel_stalled_transfer_reaps_curl_and_retains_partial' (28381644) panicked at crates/infrastructure/src/sdk_download.rs:504:23:
+called `Result::unwrap()` on an `Err` value: Any { .. }
+test sdk_download::tests::cancel_stalled_transfer_reaps_curl_and_retains_partial ... FAILED
+test sdk_download::tests::interrupted_transfer_resumes_and_ignored_range_never_publishes ... ok
+
+failures:
+
+failures:
+    sdk_download::tests::cancel_stalled_transfer_reaps_curl_and_retains_partial
+
+test result: FAILED. 1 passed; 1 failed; 0 ignored; 0 measured; 54 filtered out; finished in 0.73s
+
+error: test failed, to rerun pass `-p hub-infrastructure --lib`

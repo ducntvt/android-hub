@@ -1,0 +1,18 @@
+    Finished `test` profile [optimized + debuginfo] target(s) in 0.09s
+     Running unittests src/lib.rs (target/debug/deps/hub_infrastructure-01bf75d34b8d84a2)
+
+running 1 test
+
+thread 'sdk_probe::tests::installed_sdk_tools_probe_in_isolated_home' (28411076) panicked at crates/infrastructure/src/sdk_probe.rs:264:14:
+called `Result::unwrap()` on an `Err` value: "avdmanager probe: Lệnh thất bại: \nUsage:\n      avdmanager [global options] [action] [action options]\n      Global options:\n  -s --silent     : Silent mode, shows errors only.\n  -v --verbose    : Verbose mode, shows errors, warnings and all messages.\n     --clear-cache: Clear the SDK Manager repository manifest cache.\n  -h --help       : Help on a specific command.\n\nValid actions are composed of a verb and an optional direct object:\n-   list              : Lists existing targets or virtual devices.\n-   list avd          : Lists existing Android Virtual Devices.\n-   list target       : Lists existing targets.\n-   list device       : Lists existing devices.\n- create avd          : Creates a new Android Virtual Device.\n-   move avd          : Moves or renames an Android Virtual Device.\n- delete avd          : Deletes an Android Virtual Device.\n; thư mục kiểm tra giữ tại /var/folders/wy/jv7506_12wvfkfmthtbgpy8c0000gn/T/hub-probe-fixture-30738-0/experiments/p0/runtime/sdk-probe-30738-1"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test sdk_probe::tests::installed_sdk_tools_probe_in_isolated_home ... FAILED
+
+failures:
+
+failures:
+    sdk_probe::tests::installed_sdk_tools_probe_in_isolated_home
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 71 filtered out; finished in 0.47s
+
+error: test failed, to rerun pass `-p hub-infrastructure --lib`

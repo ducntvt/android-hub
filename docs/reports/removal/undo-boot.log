@@ -1,0 +1,15 @@
+    Finished `test` profile [optimized + debuginfo] target(s) in 0.23s
+     Running unittests src/lib.rs (target/debug/deps/hub_infrastructure-7c36de3d39c80e00)
+
+running 1 test
+Disposable root: /var/folders/wy/jv7506_12wvfkfmthtbgpy8c0000gn/T/hub-apk-smoke-1794559026120
+Framebuffer verified: 480x854
+APK installed and package found on disposable guest only
+test apk::tests::installs_on_disposable_guest has been running for over 60 seconds
+Stopped guest backup and SDK compatibility verified
+Removed and returned disposable guest through production APIs
+Restored backup booted; installed test package persisted
+test apk::tests::installs_on_disposable_guest ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 29 filtered out; finished in 132.11s
+

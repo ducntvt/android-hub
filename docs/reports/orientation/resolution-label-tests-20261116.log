@@ -1,0 +1,165 @@
+   Compiling android-hub v0.1.0 (/Users/ducnt/Desktop/Projects/VM/crates/desktop)
+    Finished `test` profile [optimized + debuginfo] target(s) in 2.25s
+warning: the following packages contain code that will be rejected by a future version of Rust: block v0.1.6
+note: to see what the problems were, use the option `--future-incompat-report`, or run `cargo report future-incompatibilities --id 1`
+     Running unittests src/main.rs (target/debug/deps/android_hub-f798542ed878b17c)
+
+running 25 tests
+test screen::tests::drag_uses_scrolled_content_cursor_and_releases_after_leaving_viewport ... ok
+test screen::tests::wheel_routes_only_to_hovered_device_and_does_not_interrupt_drag ... ok
+test screen::tests::gesture_survives_events_before_parent_focus_update ... ok
+test screen::tests::reconnect_resets_drag_focus_and_fractional_wheel_without_an_error_frame ... ok
+test screen::tests::maps_scaled_coordinates_and_clamps_release_outside ... ok
+test screen::tests::wheel_scales_lines_accumulates_pixels_and_rejects_invalid_values ... ok
+test tests::java_selection_result_preserves_sdk_and_refreshes_after_success ... ok
+test tests::late_poll_cannot_overwrite_saved_configuration ... ok
+test tests::last_removed_device_clears_selection_and_archive_panel_can_reload ... ok
+test tests::delayed_clipboard_does_not_change_notice_after_selection_changes ... ok
+test tests::managed_catalog_ignores_old_responses_and_selection_updates_both_drafts ... ok
+test tests::apk_confirmation_is_invalidated_by_selection_or_restart ... ok
+test tests::old_catalog_results_cannot_cross_selection_or_reload ... ok
+test tests::polls_and_save_keep_nonfirst_selection_and_unsaved_orientation ... ok
+test tests::removal_confirmation_is_bound_to_saved_profile_and_selection ... ok
+test tests::restore_requires_confirmation_and_rejects_changed_profile ... ok
+test tests::resolution_keeps_orientation_without_mutating_saved_profile ... ok
+test tests::sdk_selection_result_changes_backend_only_after_success ... ok
+test tests::stale_or_dismissed_history_cannot_replace_newer_results ... ok
+test tests::stale_poll_error_does_not_interrupt_command_and_fresh_poll_recovers ... ok
+test tests::sdk_cache_reset_requires_confirmation_and_does_not_start_download ... ok
+test data_root::tests::legacy_data_wins_and_missing_checkout_falls_back_without_creating_files ... ok
+test tests::sdk_setup_ui_requires_consent_and_handles_retry_and_completion_without_selecting ... ok
+test tests::sdk_review_never_preaccepts_and_clears_consent_on_close_or_reopen ... ok
+test tests::frame_notifications_survive_early_arrival_and_coalesce ... ok
+
+test result: ok. 25 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.12s
+
+     Running unittests src/lib.rs (target/debug/deps/hub_domain-a48321a3ba63c528)
+
+running 2 tests
+test tests::rejects_unsafe_identity_and_out_of_bounds_settings ... ok
+test tests::accepts_supported_orientations_and_maps_input_from_actual_frame ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/hub_infrastructure-779325228a215a38)
+
+running 104 tests
+test apk::tests::installs_on_disposable_guest ... ignored, requires local Android SDK and ANDROID_HUB_TEST_APK fixture
+test backup::tests::offline_backup_publishes_verified_copy_and_rejects_busy_port ... ignored, requires host process inspection and loopback port checks
+test creation::tests::creation_crash_worker ... ignored, worker for creation_process_kill_recovery only
+test creation::tests::creation_process_kill_recovery ... ignored, kills an owned fixture child; requires process inspection and loopback ports
+test apk::tests::installation_targets_one_serial_and_preserves_literal_path ... ok
+test apk::tests::installation_rejects_stopped_restarted_or_other_guest ... ok
+test backup::tests::rejects_traversal_and_nonregular_files ... ok
+test creation::tests::startup_creation_recovery_waits_for_busy_port ... ignored, requires host process inspection and loopback ports
+test display::tests::clipboard_limits_utf8_bytes_without_rejecting_unicode ... ok
+test apk::tests::apk_requires_existing_nonempty_file ... ok
+test display::tests::delayed_clipboard_cannot_cross_reconnect_after_input_is_ready_again ... ok
+test display::tests::reconnect_discards_old_clipboard_and_blocks_new_inputs_until_ready ... ok
+test display::tests::full_queue_release_cannot_be_overtaken_or_spawn_unbounded_waiters ... ok
+test creation::tests::history_symlink_cannot_redirect_journal ... ok
+test metrics_smoke::collects_two_disposable_engines ... ignored, boots two disposable Android guests and collects 60 seconds of idle metrics; requires installed SDK and host access
+test creation::tests::interrupted_preparation_preserves_partial_data_without_registering_it ... ok
+test logs::tests::rotates_only_at_threshold_retains_three_and_preserves_other_guests ... ok
+test logs::tests::unsafe_paths_are_rejected_before_any_rotation ... ok
+test removal::tests::foreign_live_directory_prevents_rollback_without_data_loss ... ok
+test removal::tests::public_remove_undo_and_startup_recovery_respect_busy_port ... ignored, requires host process inspection and loopback ports
+test creation::tests::creation_history_validates_receipt_and_survives_guest_changes ... ok
+test backup::tests::verifier_detects_corruption_missing_and_extra_files ... ok
+test removal::tests::catalog_lists_archived_device_with_conflict_and_hides_restored_device ... ok
+test removal::tests::recovery_resumes_after_first_rollback_move_and_rejects_registry_edits ... ok
+test removal::tests::history_labels_commit_and_rollback_and_rejects_forged_receipt_state ... ok
+test restore::tests::changed_registry_and_unsafe_journal_are_not_overwritten ... ok
+test creation::tests::modified_data_or_registry_blocks_registration_and_keeps_journal ... ok
+test removal::tests::undo_rejects_reused_port_and_existing_paths ... ok
+test restore::tests::reopening_hub_recovers_pending_transaction_only_when_stopped ... ignored, requires host process inspection and loopback port checks
+test restore::tests::foreign_directory_is_preserved_instead_of_forced_rollback ... ok
+test scroll::tests::concurrent_cache_creation_and_partial_cache_repair ... ok
+test scroll::tests::overlong_reply_fails_without_waiting_for_newline_or_eof ... ok
+test creation::tests::ready_and_registry_commit_boundaries_recover_idempotently ... ok
+test scroll::tests::preserves_coordinates_axes_and_fractional_scroll ... ok
+test scroll::tests::failed_cache_write_preserves_published_file_and_cleans_staging ... ok
+test scroll::tests::refuses_boot_identity_with_shell_metacharacters ... ok
+test scroll::tests::reply_reader_preserves_boundaries_and_rejects_truncation ... ok
+test scroll::tests::selects_only_online_exact_serial_transport ... ok
+test restore::tests::registry_write_failure_keeps_journal_until_recovery_can_finish ... ok
+test sdk_cache::tests::lock_and_aborted_intent_are_handled_without_losing_cache ... ok
+test sdk_cache_lock::tests::normal_release_survives_a_shared_open_file_description ... ok
+test sdk_download::tests::cancel_stalled_transfer_reaps_curl_and_retains_partial ... ignored, requires localhost HTTP fixture to test canceling an owned curl
+test sdk_download::tests::cancellation_before_start_creates_no_files_and_control_is_single_use ... ok
+test sdk_cache::tests::interrupted_moves_recover_idempotently_before_cache_use ... ok
+test sdk_download::tests::crash_download_worker ... ignored, worker for parent_crash_keeps_download_locked only
+test sdk_cache::tests::changed_source_or_symlink_blocks_recovery_without_overwrite ... ok
+test sdk_download::tests::interrupted_transfer_resumes_and_ignored_range_never_publishes ... ignored, requires local HTTP fixture server and curl loopback access
+test sdk_download::tests::parent_crash_keeps_download_locked_until_curl_exits ... ignored, kills an owned fixture driver; requires curl and localhost server
+test sdk_download::tests::http_validator_requires_complete_success_and_one_strong_etag ... ok
+test sdk_download::tests::partial_without_validator_is_preserved_and_not_resumed ... ok
+test sdk_download::tests::rejects_symlink_partial_without_touching_target ... ok
+test sdk_download::tests::rejects_wrong_license_url_checksum_before_creating_downloads ... ok
+test sdk_cache::tests::reset_retains_all_bytes_and_fresh_full_partial_can_publish_without_network ... ok
+test sdk_extract::tests::budget_is_checked_and_cancel_prevents_writes ... ok
+test sdk_download::tests::complete_partial_is_verified_then_reverified_on_cache_hit ... ok
+test sdk_extract::tests::deflated_payload_and_explicit_directory_use_private_permissions ... ok
+test removal::tests::interruption_at_every_step_rolls_back_or_preserves_commit ... ok
+test sdk_extract::tests::rejects_symlinks_and_empty_archives ... ok
+test sdk_install::tests::assembly_sigkill_preserves_commit_boundary_and_cache_retry ... ignored, SIGKILLs only owned fixture workers at package move and publish boundaries
+test sdk_extract::tests::rejects_unsafe_paths_and_file_directory_conflicts ... ok
+test sdk_extract::tests::extraction_preserves_executable_and_checks_crc ... ok
+test restore::tests::recovery_can_resume_after_each_directory_move ... ok
+test sdk_install::tests::crash_assembly_worker ... ignored, helper for owned assembly SIGKILL test; no-op without explicit fixture environment
+test sdk_download::tests::sha1_upstream_archive_is_verified_and_download_lock_is_exclusive ... ok
+test sdk_install::tests::select_published_sdk_updates_both_preferences_and_preserves_migration_guard ... ignored, process/port gates on disposable SDK fixture; no real SDK or guest mutation
+test sdk_extract::tests::cached_extraction_requires_license_lock_and_matching_checksum ... ok
+test restore::tests::every_commit_boundary_recovers_without_losing_original ... ok
+test sdk_package::tests::creation_requires_hardware_and_userdata_source ... ok
+test sdk_install::tests::cancel_license_mismatch_and_lock_contention_do_not_publish ... ok
+test sdk_package::tests::package_set_requires_all_four_and_sufficient_emulator ... ok
+test sdk_package::tests::rejects_missing_empty_nonexecutable_and_linked_payload ... ok
+test sdk_package::tests::rejects_extra_roots_symlinked_parent_and_oversized_properties ... ok
+test sdk_package::tests::revisions_are_numeric_stable_and_normalized ... ok
+test sdk_plan::tests::bundled_plan_pins_four_packages_and_requires_exact_license_consent ... ok
+test sdk_plan::tests::plan_rejects_tampering_preaccepted_licenses_and_invalid_package_graph ... ok
+test sdk_probe::tests::installed_sdk_tools_probe_in_isolated_home ... ignored, requires installed macOS ARM64 SDK and Android Studio JBR; explicit read-only tool probes
+test sdk_probe::tests::java_requires_supported_major_native_arch_and_unambiguous_output ... ok
+test sdk_probe::tests::version_output_and_child_environment_are_constrained ... ok
+test sdk_registration::tests::real_avdmanager_requires_emulator_registration_and_accepts_empty_data_marker ... ignored, clones installed command-line tool libs into temporary SDK and creates only disposable AVD metadata; no emulator boot
+test sdk_package::tests::rejects_wrong_revision_image_metadata_and_duplicate_properties ... ok
+test sdk_registration::tests::registration_is_pinned_and_preserves_existing_metadata ... ok
+test sdk_workflow::tests::no_consent_or_canceled_attempt_cannot_create_runtime ... ok
+test setup::tests::configure_installed_sdk_persists_without_touching_guest_data ... ignored, read-only installed SDK validation plus process/loopback gates on a temporary root
+test setup::tests::configure_java_persists_validated_home_and_preserves_settings_on_failure ... ignored, installed SDK/JBR probes and process gates, writes only temporary preferences
+test setup::tests::installed_sdk_prerequisites ... ignored, read-only check of installed host Android SDK
+test sdk_workflow::tests::admission_counts_remaining_archives_and_rejects_oversized_partial ... ok
+test setup::tests::java_preference_is_optional_validated_and_preserved_when_sdk_changes ... ok
+test setup::tests::sdk_preferences_roundtrip_corruption_and_atomic_repair ... ok
+test setup::tests::reports_all_missing_components_and_distinguishes_start_from_create ... ok
+test storage::tests::counts_logical_bytes_rounding_and_reserve_without_overflow ... ok
+test storage::tests::creation_budget_checks_boundary_without_overflow_or_writes ... ok
+test storage::tests::insufficient_disk_reports_required_available_and_destination ... ok
+test setup::tests::sdk_switch_rejects_existing_avd_or_archive_but_accepts_same_path ... ok
+test tests::isolates_known_avd_and_checks_port ... ok
+test tests::rejects_duplicate_registry_ports ... ok
+test tests::create_never_overwrites_existing_ini_or_dangling_avd_path ... ok
+test tests::shell_quote_retains_literals ... ok
+test usage::tests::counts_allocated_blocks_once_and_never_follows_symlinks ... ok
+test removal::tests::undo_each_boundary_preserves_archived_or_restored_data ... ok
+test sdk_install::tests::cached_packages_publish_new_sdk_without_selecting_or_copying_user_data ... ok
+test sdk_install::tests::catalog_distinguishes_published_incomplete_invalid_and_busy ... ok
+test sdk_install::tests::setup_failure_keeps_cache_and_retry_requires_fresh_control ... ok
+test sdk_install::tests::setup_workflow_uses_verified_cache_and_never_selects_result ... ok
+test sdk_install::tests::failed_probe_does_not_publish_and_retry_uses_cached_archives ... ok
+
+test result: ok. 84 passed; 0 failed; 20 ignored; 0 measured; 0 filtered out; finished in 2.31s
+
+   Doc-tests hub_domain
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests hub_infrastructure
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

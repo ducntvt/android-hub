@@ -1,0 +1,9 @@
+Successfully disabled verity
+Using overlayfs for /product
+Using overlayfs for /system_ext
+Remounted /product as RW
+Remounted /system_ext as RW
+Overlayfs enabled.
+Remount succeeded
+Now reboot your device for settings to take effect
+

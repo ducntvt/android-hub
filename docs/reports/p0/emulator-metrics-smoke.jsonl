@@ -1,0 +1,5 @@
+{"event":"start","schema":1,"pid":63083,"engine":"qemu-system-aarch64","samples_requested":3,"interval_seconds":1,"rss_unit":"KiB","cpu_source":"macOS ps %cpu estimate; one CPU = 100 percent","scope":"single process only; excludes helpers and GPU allocations; not FPS or gameplay evidence"}
+{"event":"sample","index":0,"unix_seconds":1794539846.130602,"elapsed_seconds":0.00624525,"rss_kib":2514160,"cpu_percent_ps":70}
+{"event":"sample","index":1,"unix_seconds":1794539847.136387,"elapsed_seconds":1.012023458,"rss_kib":2411616,"cpu_percent_ps":70.6}
+{"event":"sample","index":2,"unix_seconds":1794539848.137712,"elapsed_seconds":2.013341542,"rss_kib":2429680,"cpu_percent_ps":77.2}
+{"event":"end","complete":true,"samples_written":3}

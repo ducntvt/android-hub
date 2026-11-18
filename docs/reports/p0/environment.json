@@ -1,0 +1,43 @@
+{
+  "platform": "Darwin",
+  "architecture": "arm64",
+  "macos": {
+    "exit_code": 0,
+    "stdout": "27.0.1",
+    "stderr": ""
+  },
+  "memory_bytes": {
+    "exit_code": 1,
+    "stdout": "",
+    "stderr": "sysctl: sysctl fmt -1 1024 1: Operation not permitted"
+  },
+  "rustc": {
+    "exit_code": 0,
+    "stdout": "rustc 1.96.1 (31fca3adb 2026-06-26)",
+    "stderr": ""
+  },
+  "cargo": {
+    "exit_code": 0,
+    "stdout": "cargo 1.96.1 (356927216 2026-06-26)",
+    "stderr": ""
+  },
+  "xcode": {
+    "exit_code": 0,
+    "stdout": "Xcode 27.1\nBuild version 27A9275",
+    "stderr": ""
+  },
+  "cmake": {
+    "exit_code": 0,
+    "stdout": "cmake version 4.3.4\n\nCMake suite maintained and supported by Kitware (kitware.com/cmake).",
+    "stderr": ""
+  },
+  "ninja": {
+    "error": "[Errno 2] No such file or directory: 'ninja'"
+  },
+  "expected_revision": "08096b2a3cfa93f1ba924870e2ed18ac0b309f7a",
+  "actual_revision": {
+    "exit_code": 0,
+    "stdout": "08096b2a3cfa93f1ba924870e2ed18ac0b309f7a",
+    "stderr": ""
+  }
+}

@@ -1,0 +1,22 @@
+[
+  {
+    "path": "target",
+    "allocated_kib_before": 5018744,
+    "removed": true
+  },
+  {
+    "path": "experiments/p0/control/target",
+    "allocated_kib_before": 21516,
+    "removed": true
+  },
+  {
+    "path": "experiments/p0/viewer/target",
+    "allocated_kib_before": 73224,
+    "removed": true
+  },
+  {
+    "path": "scripts/__pycache__",
+    "allocated_kib_before": 64,
+    "removed": true
+  }
+]

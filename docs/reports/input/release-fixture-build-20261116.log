@@ -1,0 +1,12 @@
+warning: [options] source value 8 is obsolete and will be removed in a future release
+warning: [options] target value 8 is obsolete and will be removed in a future release
+warning: [options] To suppress warnings about obsolete options, use -Xlint:-options.
+3 warnings
+Generating 3072-bit RSA key pair and self-signed certificate (SHA384withRSA) with a validity of 2 days
+	for: CN=Local Hub Input QA
+WARNING: A restricted method in java.lang.System has been called
+WARNING: java.lang.System::loadLibrary has been called by org.conscrypt.NativeLibraryUtil in an unnamed module (file:/Users/ducnt/Library/Android/sdk/build-tools/35.0.1/lib/apksigner.jar)
+WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module
+WARNING: Restricted methods will be blocked in a future release unless native access is enabled
+
+/tmp/hub-input-release-qa-20261116/input-qa.apk

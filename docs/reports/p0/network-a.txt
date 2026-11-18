@@ -1,0 +1,4 @@
+1
+connect: Network is unreachable
+ping: unknown host google.com
+

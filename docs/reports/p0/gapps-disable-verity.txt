@@ -1,0 +1,2 @@
+Successfully disabled verity on slot with suffix _a. Reboot the device for changes to take effect.
+

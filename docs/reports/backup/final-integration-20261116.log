@@ -1,0 +1,8 @@
+    Finished `test` profile [optimized + debuginfo] target(s) in 0.38s
+     Running unittests src/lib.rs (target/debug/deps/hub_infrastructure-7148cf37b1af3f1f)
+
+running 1 test
+test backup::tests::offline_backup_publishes_verified_copy_and_rejects_busy_port ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 103 filtered out; finished in 2.60s
+

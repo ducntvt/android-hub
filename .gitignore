@@ -1,0 +1,15 @@
+.DS_Store
+/tools/metrics/target/
+
+__pycache__/
+*.py[cod]
+/.pytest_cache/
+
+/target/
+/Android Hub.app/
+
+# Local packaging and credentials (never part of source releases).
+/dist/
+.env
+.env.*
+!.env.example

@@ -1,0 +1,33 @@
+[gpu] shader cache /Users/ducnt/Desktop/Projects/VM/experiments/p0/runtime/a/gpu-cache/emulator-37.2.12_moltenvk_apple-m2_macos-26a434 (1 MiB)
+[gpu] ASTC goes to Metal natively (no gfxstream decompression)
+[gpu] gfxstream from /Users/ducnt/Library/Android/sdk/emulator: Apple M2, flags 0x28, capsets 3,9, host-visible 8 GiB, hwc client
+[vmm] 2 vCPUs, 3072 MiB RAM, kernel 40.1 MiB, initrd 20.8 MiB, 46 PCI devices, GIC SPIs 32..1020
+[gpu] a device took Avo's VK_EXT_provoking_vertex (first in this engine; flat varyings come from the first vertex)
+[gpu] pipelines draw flat varyings from the first vertex (VK_EXT_provoking_vertex is Avo's layer's)
+[gpu] ctx=11 res=30 blobs=14 mapped=14MiB fences=0 oldest=0ms flush/s=12 readback avg/max=0.84/6.52ms rejected-maps=0 unknown=0 errors=0
+[gpu] ctx=12 res=51 blobs=18 mapped=18MiB fences=0 oldest=0ms flush/s=10 readback avg/max=0.75/4.12ms rejected-maps=0 unknown=0 errors=0
+[gpu] ctx=12 res=50 blobs=18 mapped=18MiB fences=1 oldest=0ms flush/s=0 readback avg/max=0.00/0.00ms rejected-maps=0 unknown=0 errors=0
+[gpu] ctx=12 res=49 blobs=18 mapped=18MiB fences=0 oldest=0ms flush/s=5 readback avg/max=0.96/4.94ms rejected-maps=0 unknown=0 errors=0
+[vmm] sound: the Mac's audio output took 2337 ms to start
+[gpu] ctx=12 res=53 blobs=22 mapped=22MiB fences=0 oldest=0ms flush/s=11 readback avg/max=0.69/2.81ms rejected-maps=0 unknown=0 errors=0
+[gpu] ctx=12 res=55 blobs=24 mapped=22MiB fences=0 oldest=0ms flush/s=12 readback avg/max=0.67/3.11ms rejected-maps=0 unknown=0 errors=0
+[gpu] ctx=12 res=55 blobs=24 mapped=22MiB fences=0 oldest=0ms flush/s=10 readback avg/max=0.68/2.96ms rejected-maps=0 unknown=0 errors=0
+[gpu] ctx=12 res=55 blobs=24 mapped=22MiB fences=0 oldest=0ms flush/s=7 readback avg/max=0.71/3.23ms rejected-maps=0 unknown=0 errors=0
+[gpu] ctx=12 res=55 blobs=24 mapped=22MiB fences=0 oldest=0ms flush/s=5 readback avg/max=0.66/1.33ms rejected-maps=0 unknown=0 errors=0
+[gpu] ctx=12 res=55 blobs=24 mapped=22MiB fences=0 oldest=0ms flush/s=11 readback avg/max=0.72/3.02ms rejected-maps=0 unknown=0 errors=0
+[gpu] ctx=12 res=56 blobs=24 mapped=22MiB fences=0 oldest=0ms flush/s=18 readback avg/max=0.63/1.87ms rejected-maps=0 unknown=0 errors=0
+[gpu] ctx=12 res=56 blobs=24 mapped=22MiB fences=0 oldest=0ms flush/s=0 readback avg/max=31.37/31.37ms rejected-maps=0 unknown=0 errors=0
+[gpu] ctx=12 res=55 blobs=23 mapped=21MiB fences=0 oldest=0ms flush/s=0 readback avg/max=0.00/0.00ms rejected-maps=0 unknown=0 errors=0
+[gpu] ctx=12 res=55 blobs=23 mapped=21MiB fences=0 oldest=0ms flush/s=0 readback avg/max=18.39/18.39ms rejected-maps=0 unknown=0 errors=0
+[gpu] ctx=12 res=55 blobs=23 mapped=21MiB fences=0 oldest=0ms flush/s=1 readback avg/max=6.30/14.83ms rejected-maps=0 unknown=0 errors=0
+[gpu] ctx=12 res=55 blobs=23 mapped=21MiB fences=0 oldest=0ms flush/s=0 readback avg/max=31.07/31.07ms rejected-maps=0 unknown=0 errors=0
+[gpu] ctx=12 res=56 blobs=23 mapped=21MiB fences=0 oldest=0ms flush/s=5 readback avg/max=2.00/37.28ms rejected-maps=0 unknown=0 errors=0
+[gpu] ctx=12 res=56 blobs=23 mapped=21MiB fences=0 oldest=0ms flush/s=2 readback avg/max=1.48/7.97ms rejected-maps=0 unknown=0 errors=0
+[gpu] ctx=14 res=73 blobs=34 mapped=31MiB fences=0 oldest=0ms flush/s=8 readback avg/max=0.88/6.49ms rejected-maps=0 unknown=0 errors=0
+[gpu] ctx=14 res=70 blobs=34 mapped=31MiB fences=0 oldest=0ms flush/s=6 readback avg/max=0.77/5.10ms rejected-maps=0 unknown=0 errors=0
+[gpu] ctx=14 res=70 blobs=34 mapped=31MiB fences=0 oldest=0ms flush/s=0 readback avg/max=26.52/45.56ms rejected-maps=0 unknown=0 errors=0
+[gpu] ctx=15 res=71 blobs=33 mapped=30MiB fences=0 oldest=0ms flush/s=3 readback avg/max=2.39/22.49ms rejected-maps=0 unknown=0 errors=0
+[gpu] ctx=15 res=67 blobs=33 mapped=30MiB fences=0 oldest=0ms flush/s=3 readback avg/max=0.55/0.63ms rejected-maps=0 unknown=0 errors=0
+[gpu] ctx=15 res=66 blobs=32 mapped=29MiB fences=0 oldest=0ms flush/s=0 readback avg/max=4.92/4.92ms rejected-maps=0 unknown=0 errors=0
+[vmm] stopped (PowerOff) after 378.3s, 588604 exits (mmio 588591, hvc 8, wfi 0, vtimer 0, sysreg 4, canceled 1)
+[vmm] PowerOff

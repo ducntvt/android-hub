@@ -1,0 +1,6 @@
+verity is enabled on slot with suffix _a.
+Filesystem       1K-blocks   Used Available Use% Mounted on
+/dev/block/dm-17   8386560 427200   7828288   6% /data/user/0
+/dev/block/dm-11    222384 222384         0 100% /product
+/dev/block/dm-12    247320 247320         0 100% /system_ext
+

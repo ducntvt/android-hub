@@ -1,0 +1,10 @@
+{
+  "profile": "hub-1794811158106",
+  "backup": "/tmp/android-hub-ui-qa-20261116/data/experiments/p0/runtime/backups/hub-1794811158106-1794811777468174000",
+  "schema": 2,
+  "files_verified": 22,
+  "logical_bytes_verified": 1830786506,
+  "sha256_match": true,
+  "source": "UI-created backup after QA first boot and UI stop",
+  "limitation": "No login or game data; native restore not yet exercised"
+}

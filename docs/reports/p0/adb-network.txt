@@ -1,0 +1,8 @@
+uid=2000(shell) gid=2000(shell) groups=2000(shell),1004(input),1007(log),1011(adb),1015(sdcard_rw),1028(sdcard_r),1078(ext_data_rw),1079(ext_obb_rw),3001(net_bt_admin),3002(net_bt),3003(inet),3006(net_bw_stats),3009(readproc),3011(uhid),3012(readtracefs) context=u:r:shell:s0
+PING google.com (142.250.197.142) 56(84) bytes of data.
+64 bytes from nchkga-aj-in-f14.1e100.net (142.250.197.142): icmp_seq=1 ttl=64 time=46.7 ms
+64 bytes from nchkga-aj-in-f14.1e100.net (142.250.197.142): icmp_seq=2 ttl=64 time=47.5 ms
+
+--- google.com ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1004ms
+rtt min/avg/max/mdev = 46.717/47.151/47.585/0.434 ms

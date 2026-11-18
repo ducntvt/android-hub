@@ -1,0 +1,19 @@
+Usage: remount [-h] [-R] [-T fstab_file] [partition]...
+
+Options:
+    -h --help       this help
+    -R --reboot     disable verity & reboot to facilitate remount
+    -v --verbose    be noisy
+    -T --fstab      custom fstab file location
+    partition       specific partition(s) (empty does all)
+
+Remount specified partition(s) read-write, by name or mount point.
+-R notwithstanding, verity must be disabled on partition(s).
+-R within a DSU guest system reboots into the DSU instead of the host system,
+this command would enable DSU (one-shot) if not already enabled.
+drwxr-xr-x  9 root root   145 2009-01-01 00:00 /product
+drwxr-xr-x 13 root root   290 2009-01-01 00:00 /system
+drwxr-x--x  4 root shell 9141 2009-01-01 00:00 /system/bin
+drwxr-xr-x  8 root root   129 2009-01-01 00:00 /system_ext
+1
+

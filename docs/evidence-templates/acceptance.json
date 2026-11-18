@@ -1,0 +1,124 @@
+{
+  "schema": 1,
+  "checks": {
+    "host_manifest": {
+      "status": "pending",
+      "reviewer": "",
+      "reviewed_at": "",
+      "observation": "",
+      "evidence": []
+    },
+    "component_licenses": {
+      "status": "pending",
+      "reviewer": "",
+      "reviewed_at": "",
+      "observation": "",
+      "evidence": []
+    },
+    "host_integration": {
+      "status": "pending",
+      "reviewer": "",
+      "reviewed_at": "",
+      "observation": "",
+      "evidence": []
+    },
+    "gpu_renderer": {
+      "status": "pending",
+      "reviewer": "",
+      "reviewed_at": "",
+      "observation": "",
+      "evidence": []
+    },
+    "play_store": {
+      "status": "pending",
+      "reviewer": "",
+      "reviewed_at": "",
+      "observation": "",
+      "evidence": []
+    },
+    "top_heroes": {
+      "status": "pending",
+      "reviewer": "",
+      "reviewed_at": "",
+      "observation": "",
+      "evidence": []
+    },
+    "hunt_royale": {
+      "status": "pending",
+      "reviewer": "",
+      "reviewed_at": "",
+      "observation": "",
+      "evidence": []
+    },
+    "dual_gameplay": {
+      "status": "pending",
+      "reviewer": "",
+      "reviewed_at": "",
+      "observation": "",
+      "evidence": []
+    },
+    "audio_network": {
+      "status": "pending",
+      "reviewer": "",
+      "reviewed_at": "",
+      "observation": "",
+      "evidence": []
+    },
+    "isolation_restart": {
+      "status": "pending",
+      "reviewer": "",
+      "reviewed_at": "",
+      "observation": "",
+      "evidence": []
+    },
+    "persistence": {
+      "status": "pending",
+      "reviewer": "",
+      "reviewed_at": "",
+      "observation": "",
+      "evidence": []
+    },
+    "guest_fps": {
+      "status": "pending",
+      "reviewer": "",
+      "reviewed_at": "",
+      "observation": "",
+      "evidence": []
+    },
+    "host_presentation": {
+      "status": "pending",
+      "reviewer": "",
+      "reviewed_at": "",
+      "observation": "",
+      "evidence": []
+    },
+    "memory_pressure": {
+      "status": "pending",
+      "reviewer": "",
+      "reviewed_at": "",
+      "observation": "",
+      "evidence": []
+    },
+    "minimized_behavior": {
+      "status": "pending",
+      "reviewer": "",
+      "reviewed_at": "",
+      "observation": "",
+      "evidence": []
+    },
+    "engine_comparison": {
+      "status": "pending",
+      "reviewer": "",
+      "reviewed_at": "",
+      "observation": "",
+      "evidence": []
+    },
+    "engine_decision": {
+      "status": "pending",
+      "reviewer": "",
+      "reviewed_at": "",
+      "observation": "",
+      "evidence": []
+    }
+  }
+}

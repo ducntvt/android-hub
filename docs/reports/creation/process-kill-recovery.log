@@ -1,0 +1,15 @@
+   Compiling hub-infrastructure v0.1.0 (/Users/ducnt/Desktop/Projects/VM/crates/infrastructure)
+    Finished `test` profile [optimized + debuginfo] target(s) in 3.98s
+     Running unittests src/lib.rs (target/debug/deps/hub_infrastructure-7c36de3d39c80e00)
+
+running 1 test
+SIGKILL intent: recovery and second initialize passed; payload retained
+SIGKILL partial: recovery and second initialize passed; payload retained
+SIGKILL ready_temp: recovery and second initialize passed; payload retained
+SIGKILL ready: recovery and second initialize passed; payload retained
+SIGKILL registry: recovery and second initialize passed; payload retained
+SIGKILL archived: recovery and second initialize passed; payload retained
+test creation::tests::creation_process_kill_recovery ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 39 filtered out; finished in 1.36s
+

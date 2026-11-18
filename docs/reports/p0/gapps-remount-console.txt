@@ -1,0 +1,25 @@
+console:/ $ printf '\nP0_BEGIN_%s\n' 'f55556eea97149519270a9c91b2a389d'; ( su BEGIN_%s\n' 'f55556eea97149519270a9c91b2a389d'; ( su                          <0 remount 2>&1 ); code=$?49519270a9c91b2a389d'; ( su 0 remount 2>&1 ); code=$?                         <; printf '\nP0_END_%s:%s\su 0 remount 2>&1 ); code=$?; printf '\nP0_END_%s:%s\                         <n' 'f55556eea97149519270a=$?; printf '\nP0_END_%s:%s\n' 'f55556eea97149519270a                         <9c91b2a389d' "$code"
+
+P0_BEGIN_f55556eea97149519270a9c91b2a389d
+Successfully disabled verity
+Using overlayfs for /system
+Using overlayfs for /odm
+Using overlayfs for /product
+Using overlayfs for /system_ext
+Using overlayfs for /vendor
+Using overlayfs for /vendor_dlkm
+Using overlayfs for /odm_dlkm
+Using overlayfs for /system_dlkm
+Remounted /system as RW
+Remounted /odm as RW
+Remounted /product as RW
+Remounted /system_ext as RW
+Remounted /vendor as RW
+Remounted /vendor_dlkm as RW
+Remounted /odm_dlkm as RW
+Remounted /system_dlkm as RW
+Overlayfs enabled.
+Remount succeeded
+Now reboot your device for settings to take effect
+/system/bin/sh: printf: inaccessible or not found
+127|console:/ $ 

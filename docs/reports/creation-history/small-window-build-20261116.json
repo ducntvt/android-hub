@@ -1,0 +1,10 @@
+{
+  "qa_bundle": "/tmp/android-hub-recovery-native-20261116/Android Hub Recovery QA.app",
+  "only_source_substitution": {
+    "from": "size: iced::Size::new(1180., 820.),",
+    "to": "size: iced::Size::new(1000., 640.),"
+  },
+  "source_restored": true,
+  "source_sha256": "ea3966602dc60a77196687d8965438874f8acf9a0f33ecf3a505e6da47e42040",
+  "main_bundle_unchanged": true
+}

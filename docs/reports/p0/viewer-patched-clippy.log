@@ -1,0 +1,48 @@
+warning: minifb@0.29.0: src/native/macosx/MacMiniFB.m:425:38: warning: unused parameter 'window' [-Wunused-parameter]
+warning: minifb@0.29.0:   425 | void mfb_set_cursor_visibility(void *window, bool visibility) {
+warning: minifb@0.29.0:       |                                      ^
+warning: minifb@0.29.0: 1 warning generated.
+    Checking minifb v0.29.0 (/Users/ducnt/Desktop/Projects/VM/experiments/p0/vendor/minifb)
+warning: field `has_set_data` is never read
+   --> /Users/ducnt/Desktop/Projects/VM/experiments/p0/vendor/minifb/src/os/macos/mod.rs:250:9
+    |
+243 | pub struct WindowState {
+    |            ----------- field in this struct
+...
+250 |     pub has_set_data: bool,
+    |         ^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: hiding a lifetime that's elided elsewhere is confusing
+   --> /Users/ducnt/Desktop/Projects/VM/experiments/p0/vendor/minifb/src/os/macos/mod.rs:290:22
+    |
+290 |     fn window_handle(&self) -> std::result::Result<WindowHandle, HandleError> {
+    |                      ^^^^^                         ^^^^^^^^^^^^ the same lifetime is hidden here
+    |                      |
+    |                      the lifetime is elided here
+    |
+    = help: the same lifetime is referred to in inconsistent ways, making the signature confusing
+    = note: `#[warn(mismatched_lifetime_syntaxes)]` on by default
+help: use `'_` for type paths
+    |
+290 |     fn window_handle(&self) -> std::result::Result<WindowHandle<'_>, HandleError> {
+    |                                                                ++++
+
+warning: hiding a lifetime that's elided elsewhere is confusing
+   --> /Users/ducnt/Desktop/Projects/VM/experiments/p0/vendor/minifb/src/os/macos/mod.rs:304:23
+    |
+304 |     fn display_handle(&self) -> std::result::Result<DisplayHandle, HandleError> {
+    |                       ^^^^^                         ^^^^^^^^^^^^^ the same lifetime is hidden here
+    |                       |
+    |                       the lifetime is elided here
+    |
+    = help: the same lifetime is referred to in inconsistent ways, making the signature confusing
+help: use `'_` for type paths
+    |
+304 |     fn display_handle(&self) -> std::result::Result<DisplayHandle<'_>, HandleError> {
+    |                                                                  ++++
+
+warning: `minifb` (lib) generated 3 warnings (run `cargo clippy --fix --lib -p minifb -- -D warnings` to apply 2 suggestions)
+    Checking p0-viewer v0.1.0 (/Users/ducnt/Desktop/Projects/VM/experiments/p0/viewer)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.24s

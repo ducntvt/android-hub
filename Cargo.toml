@@ -1,0 +1,37 @@
+[workspace]
+members = ["crates/domain", "crates/infrastructure", "crates/desktop"]
+exclude = ["tools/metrics"]
+resolver = "2"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+publish = false
+
+[workspace.dependencies]
+android-hub-domain = { path = "crates/domain" }
+android-hub-infrastructure = { path = "crates/infrastructure" }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tokio = "1"
+sha2 = "=0.11.1"
+fs2 = "0.4"
+libc = "=0.2.191"
+zip = { version = "=9.5.1", default-features = false, features = ["deflate-flate2"] }
+flate2 = { version = "=1.1.11", default-features = false, features = ["rust_backend"] }
+tonic = "0.12"
+prost = "0.13"
+tonic-build = "0.12"
+protoc-bin-vendored = "3"
+iced = { version = "=0.13.1", default-features = false, features = ["wgpu", "tokio", "fira-sans", "canvas", "image", "svg", "lazy", "advanced"] }
+objc2 = "=0.6.5"
+objc2-foundation = { version = "=0.3.2", default-features = false, features = ["std", "NSArray", "NSString"] }
+objc2-app-kit = { version = "=0.3.2", default-features = false, features = ["std", "NSAppearance", "NSApplication", "NSResponder"] }
+rfd = { version = "=0.17.2", default-features = false }
+
+# Keep software rendering responsive in local debug builds.
+[profile.dev]
+opt-level = 1
+
+[profile.dev.package."*"]
+opt-level = 2

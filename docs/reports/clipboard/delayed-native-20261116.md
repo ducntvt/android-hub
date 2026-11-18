@@ -1,0 +1,9 @@
+# Delayed clipboard callback native QA — 2026-11-16
+
+A separate checkout `/tmp/android-hub-clipboard-delay-20261116/checkout` was compiled with distinct rustc metadata. QA-only edits delay delivery of the actual iced clipboard read result by 30 seconds and display pending/stale-epoch notices. Production guards and send path are unchanged. The delay is after macOS read and before ClipboardRead delivery; this tests late callback handling, not macOS clipboard latency. No production source edits or plaintext logging.
+
+Closed regular QA, opened the instrumented bundle against the existing isolated QA data root. Used native search field/copy to prepare `QA delayed clipboard 30s`, cleared search, selected running Android 3. Clicked its clipboard button then selected stopped QA Lifecycle in the same native action sequence. Screenshot showed QA Lifecycle selected and pending notice. After 30 seconds, screenshot showed the stale-epoch callback notice. The unchanged handler requires epoch equality before any RPC send; this callback did not pass that gate. No guest clipboard API was read. Prior native Unicode/two-guest paste evidence remains in native-qa-20261116.md.
+
+The delayed QA window was closed afterward by its specific bundle ID and native close button (procNotFound afterward). Android 3 engine stays running per normal Hub lifecycle. Host clipboard contains the non-sensitive test text.
+
+Normal main bundle rebuilt and strict codesign verified: delay-final-build-20261116.log. QA build log: delay-build-20261116.log. Main production source never contained delay or diagnostic notices. Existing unchanged-source fmt, 113 workspace tests and clippy pass from ../apk/result-panel-* logs cover current code. This closes native change-of-selection while callback is pending; it is not transport interruption or a simultaneous-running peer test (the latter isolation has separate earlier evidence).

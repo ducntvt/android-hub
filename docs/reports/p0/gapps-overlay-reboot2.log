@@ -1,0 +1,169 @@
+[gpu] shader cache /Users/ducnt/Desktop/Projects/VM/experiments/p0/runtime/a/gpu-cache/emulator-37.2.12_moltenvk_apple-m2_macos-26a434 (2 MiB)
+[gpu] ASTC goes to Metal natively (no gfxstream decompression)
+[gpu] gfxstream from /Users/ducnt/Library/Android/sdk/emulator: Apple M2, flags 0x28, capsets 3,9, host-visible 8 GiB, hwc client
+[vmm] 2 vCPUs, 3072 MiB RAM, kernel 40.1 MiB, initrd 20.8 MiB, 46 PCI devices, GIC SPIs 32..1020
+[vmm] stopped (Reset) after 1.8s, 145945 exits (mmio 145932, hvc 8, wfi 0, vtimer 0, sysreg 4, canceled 1)
+[vmm] Reset
+[vmm] guest rebooted
+[vmm] 2 vCPUs, 3072 MiB RAM, kernel 40.1 MiB, initrd 20.8 MiB, 46 PCI devices, GIC SPIs 32..1020
+[vmm] stopped (Reset) after 1.7s, 145895 exits (mmio 145882, hvc 8, wfi 0, vtimer 0, sysreg 4, canceled 1)
+[vmm] Reset
+[vmm] guest rebooted
+[vmm] 2 vCPUs, 3072 MiB RAM, kernel 40.1 MiB, initrd 20.8 MiB, 46 PCI devices, GIC SPIs 32..1020
+[vmm] stopped (Reset) after 1.7s, 146046 exits (mmio 146033, hvc 8, wfi 0, vtimer 0, sysreg 4, canceled 1)
+[gpu] ctx=0 res=0 blobs=0 mapped=0MiB fences=0 oldest=0ms flush/s=0 readback avg/max=0.00/0.00ms rejected-maps=0 unknown=0 errors=0
+[vmm] Reset
+[vmm] guest rebooted
+[vmm] 2 vCPUs, 3072 MiB RAM, kernel 40.1 MiB, initrd 20.8 MiB, 46 PCI devices, GIC SPIs 32..1020
+[vmm] stopped (Reset) after 1.6s, 148313 exits (mmio 148300, hvc 8, wfi 0, vtimer 0, sysreg 4, canceled 1)
+[vmm] Reset
+[vmm] guest rebooted
+[vmm] 2 vCPUs, 3072 MiB RAM, kernel 40.1 MiB, initrd 20.8 MiB, 46 PCI devices, GIC SPIs 32..1020
+[vmm] stopped (Reset) after 1.6s, 145409 exits (mmio 145396, hvc 8, wfi 0, vtimer 0, sysreg 4, canceled 1)
+[vmm] Reset
+[vmm] guest rebooted
+[vmm] 2 vCPUs, 3072 MiB RAM, kernel 40.1 MiB, initrd 20.8 MiB, 46 PCI devices, GIC SPIs 32..1020
+[vmm] stopped (Reset) after 1.5s, 147444 exits (mmio 147431, hvc 8, wfi 0, vtimer 0, sysreg 4, canceled 1)
+[vmm] Reset
+[vmm] guest rebooted
+[vmm] 2 vCPUs, 3072 MiB RAM, kernel 40.1 MiB, initrd 20.8 MiB, 46 PCI devices, GIC SPIs 32..1020
+[vmm] stopped (Reset) after 1.5s, 145881 exits (mmio 145868, hvc 8, wfi 0, vtimer 0, sysreg 4, canceled 1)
+[vmm] Reset
+[vmm] guest rebooted
+[vmm] 2 vCPUs, 3072 MiB RAM, kernel 40.1 MiB, initrd 20.8 MiB, 46 PCI devices, GIC SPIs 32..1020
+[vmm] stopped (Reset) after 1.5s, 147768 exits (mmio 147755, hvc 8, wfi 0, vtimer 0, sysreg 4, canceled 1)
+[vmm] Reset
+[vmm] guest rebooted
+[vmm] 2 vCPUs, 3072 MiB RAM, kernel 40.1 MiB, initrd 20.8 MiB, 46 PCI devices, GIC SPIs 32..1020
+[vmm] stopped (Reset) after 1.5s, 147861 exits (mmio 147848, hvc 8, wfi 0, vtimer 0, sysreg 4, canceled 1)
+[vmm] Reset
+[vmm] guest rebooted
+[vmm] 2 vCPUs, 3072 MiB RAM, kernel 40.1 MiB, initrd 20.8 MiB, 46 PCI devices, GIC SPIs 32..1020
+[vmm] stopped (Reset) after 1.6s, 146723 exits (mmio 146710, hvc 8, wfi 0, vtimer 0, sysreg 4, canceled 1)
+[vmm] Reset
+[vmm] guest rebooted
+[vmm] 2 vCPUs, 3072 MiB RAM, kernel 40.1 MiB, initrd 20.8 MiB, 46 PCI devices, GIC SPIs 32..1020
+[vmm] stopped (Reset) after 1.6s, 146705 exits (mmio 146692, hvc 8, wfi 0, vtimer 0, sysreg 4, canceled 1)
+[vmm] Reset
+[vmm] guest rebooted
+[vmm] 2 vCPUs, 3072 MiB RAM, kernel 40.1 MiB, initrd 20.8 MiB, 46 PCI devices, GIC SPIs 32..1020
+[vmm] stopped (Reset) after 1.6s, 146720 exits (mmio 146707, hvc 8, wfi 0, vtimer 0, sysreg 4, canceled 1)
+[vmm] Reset
+[vmm] guest rebooted
+[vmm] 2 vCPUs, 3072 MiB RAM, kernel 40.1 MiB, initrd 20.8 MiB, 46 PCI devices, GIC SPIs 32..1020
+[vmm] stopped (Reset) after 1.3s, 145251 exits (mmio 145238, hvc 8, wfi 0, vtimer 0, sysreg 4, canceled 1)
+[vmm] Reset
+[vmm] guest rebooted
+[vmm] 2 vCPUs, 3072 MiB RAM, kernel 40.1 MiB, initrd 20.8 MiB, 46 PCI devices, GIC SPIs 32..1020
+[vmm] stopped (Reset) after 1.3s, 148070 exits (mmio 148057, hvc 8, wfi 0, vtimer 0, sysreg 4, canceled 1)
+[vmm] Reset
+[vmm] guest rebooted
+[vmm] 2 vCPUs, 3072 MiB RAM, kernel 40.1 MiB, initrd 20.8 MiB, 46 PCI devices, GIC SPIs 32..1020
+[vmm] stopped (Reset) after 1.3s, 145571 exits (mmio 145558, hvc 8, wfi 0, vtimer 0, sysreg 4, canceled 1)
+[vmm] Reset
+[vmm] guest rebooted
+[vmm] 2 vCPUs, 3072 MiB RAM, kernel 40.1 MiB, initrd 20.8 MiB, 46 PCI devices, GIC SPIs 32..1020
+[vmm] stopped (Reset) after 1.1s, 145254 exits (mmio 145241, hvc 8, wfi 0, vtimer 0, sysreg 4, canceled 1)
+[vmm] Reset
+[vmm] guest rebooted
+[vmm] 2 vCPUs, 3072 MiB RAM, kernel 40.1 MiB, initrd 20.8 MiB, 46 PCI devices, GIC SPIs 32..1020
+[vmm] stopped (Reset) after 1.2s, 144545 exits (mmio 144532, hvc 8, wfi 0, vtimer 0, sysreg 4, canceled 1)
+[vmm] Reset
+[vmm] guest rebooted
+[vmm] 2 vCPUs, 3072 MiB RAM, kernel 40.1 MiB, initrd 20.8 MiB, 46 PCI devices, GIC SPIs 32..1020
+[vmm] stopped (Reset) after 1.1s, 146543 exits (mmio 146530, hvc 8, wfi 0, vtimer 0, sysreg 4, canceled 1)
+[vmm] Reset
+[vmm] guest rebooted
+[vmm] 2 vCPUs, 3072 MiB RAM, kernel 40.1 MiB, initrd 20.8 MiB, 46 PCI devices, GIC SPIs 32..1020
+[vmm] stopped (Reset) after 1.3s, 145444 exits (mmio 145431, hvc 8, wfi 0, vtimer 0, sysreg 4, canceled 1)
+[vmm] Reset
+[vmm] guest rebooted
+[vmm] 2 vCPUs, 3072 MiB RAM, kernel 40.1 MiB, initrd 20.8 MiB, 46 PCI devices, GIC SPIs 32..1020
+[vmm] stopped (Reset) after 2.1s, 138530 exits (mmio 138517, hvc 8, wfi 0, vtimer 0, sysreg 4, canceled 1)
+[vmm] Reset
+[vmm] guest rebooted
+[vmm] 2 vCPUs, 3072 MiB RAM, kernel 40.1 MiB, initrd 20.8 MiB, 46 PCI devices, GIC SPIs 32..1020
+[vmm] stopped (Reset) after 1.4s, 145993 exits (mmio 145980, hvc 8, wfi 0, vtimer 0, sysreg 4, canceled 1)
+[vmm] Reset
+[vmm] guest rebooted
+[vmm] 2 vCPUs, 3072 MiB RAM, kernel 40.1 MiB, initrd 20.8 MiB, 46 PCI devices, GIC SPIs 32..1020
+[vmm] stopped (Reset) after 1.1s, 145246 exits (mmio 145233, hvc 8, wfi 0, vtimer 0, sysreg 4, canceled 1)
+[vmm] Reset
+[vmm] guest rebooted
+[vmm] 2 vCPUs, 3072 MiB RAM, kernel 40.1 MiB, initrd 20.8 MiB, 46 PCI devices, GIC SPIs 32..1020
+[vmm] stopped (Reset) after 1.3s, 147975 exits (mmio 147962, hvc 8, wfi 0, vtimer 0, sysreg 4, canceled 1)
+[vmm] Reset
+[vmm] guest rebooted
+[vmm] 2 vCPUs, 3072 MiB RAM, kernel 40.1 MiB, initrd 20.8 MiB, 46 PCI devices, GIC SPIs 32..1020
+[vmm] stopped (Reset) after 1.2s, 145417 exits (mmio 145404, hvc 8, wfi 0, vtimer 0, sysreg 4, canceled 1)
+[vmm] Reset
+[vmm] guest rebooted
+[vmm] 2 vCPUs, 3072 MiB RAM, kernel 40.1 MiB, initrd 20.8 MiB, 46 PCI devices, GIC SPIs 32..1020
+[vmm] stopped (Reset) after 1.2s, 146507 exits (mmio 146494, hvc 8, wfi 0, vtimer 0, sysreg 4, canceled 1)
+[vmm] Reset
+[vmm] guest rebooted
+[vmm] 2 vCPUs, 3072 MiB RAM, kernel 40.1 MiB, initrd 20.8 MiB, 46 PCI devices, GIC SPIs 32..1020
+[vmm] stopped (Reset) after 1.4s, 147391 exits (mmio 147378, hvc 8, wfi 0, vtimer 0, sysreg 4, canceled 1)
+[vmm] Reset
+[vmm] guest rebooted
+[vmm] 2 vCPUs, 3072 MiB RAM, kernel 40.1 MiB, initrd 20.8 MiB, 46 PCI devices, GIC SPIs 32..1020
+[vmm] stopped (Reset) after 1.6s, 147686 exits (mmio 147673, hvc 8, wfi 0, vtimer 0, sysreg 4, canceled 1)
+[vmm] Reset
+[vmm] guest rebooted
+[vmm] 2 vCPUs, 3072 MiB RAM, kernel 40.1 MiB, initrd 20.8 MiB, 46 PCI devices, GIC SPIs 32..1020
+[vmm] stopped (Reset) after 1.4s, 147394 exits (mmio 147381, hvc 8, wfi 0, vtimer 0, sysreg 4, canceled 1)
+[vmm] Reset
+[vmm] guest rebooted
+[vmm] 2 vCPUs, 3072 MiB RAM, kernel 40.1 MiB, initrd 20.8 MiB, 46 PCI devices, GIC SPIs 32..1020
+[vmm] stopped (Reset) after 1.3s, 148568 exits (mmio 148555, hvc 8, wfi 0, vtimer 0, sysreg 4, canceled 1)
+[vmm] Reset
+[vmm] guest rebooted
+[vmm] 2 vCPUs, 3072 MiB RAM, kernel 40.1 MiB, initrd 20.8 MiB, 46 PCI devices, GIC SPIs 32..1020
+[vmm] stopped (Reset) after 1.4s, 145882 exits (mmio 145869, hvc 8, wfi 0, vtimer 0, sysreg 4, canceled 1)
+[vmm] Reset
+[vmm] guest rebooted
+[vmm] 2 vCPUs, 3072 MiB RAM, kernel 40.1 MiB, initrd 20.8 MiB, 46 PCI devices, GIC SPIs 32..1020
+[vmm] stopped (Reset) after 1.6s, 144887 exits (mmio 144874, hvc 8, wfi 0, vtimer 0, sysreg 4, canceled 1)
+[vmm] Reset
+[vmm] guest rebooted
+[vmm] 2 vCPUs, 3072 MiB RAM, kernel 40.1 MiB, initrd 20.8 MiB, 46 PCI devices, GIC SPIs 32..1020
+[vmm] stopped (Reset) after 1.5s, 145661 exits (mmio 145648, hvc 8, wfi 0, vtimer 0, sysreg 4, canceled 1)
+[vmm] Reset
+[vmm] guest rebooted
+[vmm] 2 vCPUs, 3072 MiB RAM, kernel 40.1 MiB, initrd 20.8 MiB, 46 PCI devices, GIC SPIs 32..1020
+[vmm] stopped (Reset) after 1.4s, 145788 exits (mmio 145775, hvc 8, wfi 0, vtimer 0, sysreg 4, canceled 1)
+[vmm] Reset
+[vmm] guest rebooted
+[vmm] 2 vCPUs, 3072 MiB RAM, kernel 40.1 MiB, initrd 20.8 MiB, 46 PCI devices, GIC SPIs 32..1020
+[vmm] stopped (Reset) after 1.4s, 144794 exits (mmio 144781, hvc 8, wfi 0, vtimer 0, sysreg 4, canceled 1)
+[vmm] Reset
+[vmm] guest rebooted
+[vmm] 2 vCPUs, 3072 MiB RAM, kernel 40.1 MiB, initrd 20.8 MiB, 46 PCI devices, GIC SPIs 32..1020
+[vmm] stopped (Reset) after 1.3s, 147316 exits (mmio 147303, hvc 8, wfi 0, vtimer 0, sysreg 4, canceled 1)
+[vmm] Reset
+[vmm] guest rebooted
+[vmm] 2 vCPUs, 3072 MiB RAM, kernel 40.1 MiB, initrd 20.8 MiB, 46 PCI devices, GIC SPIs 32..1020
+[vmm] stopped (Reset) after 1.3s, 145490 exits (mmio 145477, hvc 8, wfi 0, vtimer 0, sysreg 4, canceled 1)
+[vmm] Reset
+[vmm] guest rebooted
+[vmm] 2 vCPUs, 3072 MiB RAM, kernel 40.1 MiB, initrd 20.8 MiB, 46 PCI devices, GIC SPIs 32..1020
+[vmm] stopped (Reset) after 1.4s, 147236 exits (mmio 147223, hvc 8, wfi 0, vtimer 0, sysreg 4, canceled 1)
+[vmm] Reset
+[vmm] guest rebooted
+[vmm] 2 vCPUs, 3072 MiB RAM, kernel 40.1 MiB, initrd 20.8 MiB, 46 PCI devices, GIC SPIs 32..1020
+[vmm] stopped (Reset) after 1.3s, 145631 exits (mmio 145618, hvc 8, wfi 0, vtimer 0, sysreg 4, canceled 1)
+[vmm] Reset
+[vmm] guest rebooted
+[vmm] 2 vCPUs, 3072 MiB RAM, kernel 40.1 MiB, initrd 20.8 MiB, 46 PCI devices, GIC SPIs 32..1020
+[vmm] stopped (Reset) after 1.3s, 145476 exits (mmio 145463, hvc 8, wfi 0, vtimer 0, sysreg 4, canceled 1)
+[vmm] Reset
+[vmm] guest rebooted
+[vmm] 2 vCPUs, 3072 MiB RAM, kernel 40.1 MiB, initrd 20.8 MiB, 46 PCI devices, GIC SPIs 32..1020
+[vmm] stopped (Reset) after 1.5s, 145562 exits (mmio 145549, hvc 8, wfi 0, vtimer 0, sysreg 4, canceled 1)
+[vmm] Reset
+[vmm] guest rebooted
+[vmm] 2 vCPUs, 3072 MiB RAM, kernel 40.1 MiB, initrd 20.8 MiB, 46 PCI devices, GIC SPIs 32..1020
+[vmm] stopped (Reset) after 1.4s, 145254 exits (mmio 145241, hvc 8, wfi 0, vtimer 0, sysreg 4, canceled 1)
+[vmm] Reset
+[vmm] guest rebooted
+[vmm] 2 vCPUs, 3072 MiB RAM, kernel 40.1 MiB, initrd 20.8 MiB, 46 PCI devices, GIC SPIs 32..1020

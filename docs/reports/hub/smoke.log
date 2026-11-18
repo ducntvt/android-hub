@@ -1,0 +1,6 @@
+   Compiling hub-infrastructure v0.1.0 (/Users/ducnt/Desktop/Projects/VM/crates/infrastructure)
+    Finished `dev` profile [optimized + debuginfo] target(s) in 1.23s
+     Running `target/debug/examples/smoke`
+Created and persisted hub-1794541929415 on 5588
+Started; running config edits and duplicate start refused
+Stopped test engine; original profiles and engine PIDs unchanged
