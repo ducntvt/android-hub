@@ -1,15 +1,14 @@
 # Development
 
-Android Hub is a macOS Apple Silicon Rust workspace. Current verification uses Rust/Cargo 1.96.1 with rustfmt and clippy, plus Python 3.9+ for script tests. This is a verified toolchain, not a claimed minimum supported Rust version. No cargo-scaffold installation is required.
+Android Hub is a macOS Apple Silicon Rust workspace. Current verification uses Rust/Cargo 1.96.1 with rustfmt and clippy, plus Python 3.11+ for script tests. This is a verified toolchain, not a claimed minimum supported Rust version. No cargo-scaffold installation is required.
 
 ## Get started
 
 Clone the private repository and install the verified toolchain using the
-[README](../README.md). Use `develop` for new work after the owner has created that
-branch; use [GitHub setup](GITHUB.md) for initial authentication/bootstrap.
+[README](../README.md). Use `develop` for new work;
+see [GitHub setup](GITHUB.md) for authentication/bootstrap.
 
-`rustup override set 1.96.1` selects the verified toolchain for this checkout.
-The repository does not yet pin it with `rust-toolchain.toml`. Network access is
+`rust-toolchain.toml` pins Rust 1.96.1 with rustfmt and Clippy for local and CI builds. Network access is
 needed to install the toolchain and obtain uncached Cargo dependencies. Keep the
 lockfiles and use `--locked` for normal checks/builds.
 
@@ -67,9 +66,8 @@ Use kebab-case for Cargo packages, example targets and shell/Python command file
 ## Commands
 
 ```bash
-# Local checks: app + standalone metrics fmt/tests/clippy, Python tests, shell syntax
+# Local checks: app + metrics fmt/tests/clippy, Python tests, docs, shell syntax
 bash scripts/check.sh
-PYTHONDONTWRITEBYTECODE=1 python3 scripts/check-docs.py
 
 # Build the locally ad-hoc-signed app when changing app behavior
 bash scripts/build-android-hub.sh
@@ -99,9 +97,9 @@ Default data lives directly in `~/Library/Application Support/Android Hub`. `AND
 Display name and project directory: **Android Hub**. Cargo packages: `android-hub`, `android-hub-domain`, `android-hub-infrastructure`; the excluded metrics package is `android-hub-metrics`. Main app bundle ID: `local.androidhub.desktop`.
 
 Local packaging currently uses the optimized development profile, not `--release`.
-Bundle version/build number are still literal fields in the packaging script;
-[Releasing](RELEASING.md) describes keeping them consistent with Cargo. CI and
-automatic tag publishing are not configured yet.
+Both bundle version fields derive from the numeric Cargo product version via
+`scripts/release.py`. [Releasing](RELEASING.md) describes PR/branch CI and automatic
+source releases from verified version tags.
 
 Product commands are `scripts/build-android-hub.sh`, `scripts/build-android-hub-qa.py` and `scripts/collect-android-hub-metrics.py`. Historical reports retain the command names used at the time. P0 research paths in old reports describe historical runs, not the current data layout.
 

@@ -33,7 +33,7 @@ máy Android; chúng không nằm trong repository.
 
 | Mục đích | Thành phần |
 | --- | --- |
-| Build Hub | macOS Apple Silicon, Xcode Command Line Tools, Rust/Cargo với rustfmt và Clippy, Python 3.9+ |
+| Build Hub | macOS Apple Silicon, Xcode Command Line Tools, Rust/Cargo với rustfmt và Clippy, Python 3.11+ |
 | Chạy Android | Android SDK gồm Emulator, Platform-Tools, Command-line Tools và image Google Play ARM64 API 36 |
 | Tạo máy | Java 17+ ARM64; mặc định dùng JBR đi kèm Android Studio |
 | Dung lượng | Ít nhất 12 GiB trống trước khi tạo máy; game và backup cần thêm dung lượng |
@@ -54,7 +54,6 @@ chưa có (`xcode-select --install`), sau đó:
 git clone https://github.com/ducntvt/android-hub.git
 cd android-hub
 rustup toolchain install 1.96.1 --profile minimal --component rustfmt --component clippy
-rustup override set 1.96.1
 bash scripts/check.sh
 bash scripts/build-android-hub.sh
 open 'Android Hub.app'
@@ -101,6 +100,14 @@ và không thể hoàn tác; **Sao lưu trước** không tự chuyển sang bư
   cho máy vẫn còn trong registry.
 - Hỗ trợ một APK; chưa có XAPK/split APK hay luồng cập nhật app đã cài.
 - Benchmark hai game dài hạn và native accessibility chưa hoàn tất.
+
+## CI và release source
+
+PR và push vào `main`/`develop` chạy bộ kiểm tra chung và đóng gói app trên
+macOS ARM64. Rust được cố định trong `rust-toolchain.toml`. Khi push tag `v*`,
+workflow kiểm tra version, commit thuộc lịch sử `main` và changelog, chạy lại CI
+rồi tạo release chỉ chứa source. Xem [cách chuẩn bị release](docs/RELEASING.md)
+trước khi tạo tag.
 
 ## Tài liệu
 

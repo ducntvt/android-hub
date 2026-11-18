@@ -1,114 +1,109 @@
 # Versions and source releases
 
 Android Hub releases are **source tags plus release notes** in the private
-`ducntvt/android-hub` repository. Invited users build locally. No `.app`, DMG,
-SDK/image or device data is uploaded as a release asset.
-
-This is a manual workflow. There is currently no `.github/workflows` release or
-CI automation. No tag is created merely by changing documentation or Cargo version.
+`ducntvt/android-hub` repository. Invited users build locally. The workflows never
+upload an app, DMG, SDK/image or device data. GitHub supplies source archives.
 
 ## Version policy
 
-Use `MAJOR.MINOR.PATCH`, with prereleases such as `0.2.0-beta.1` when appropriate.
+Use `MAJOR.MINOR.PATCH`, optionally followed by a prerelease such as `-beta.1`.
+Build metadata (`+...`) is not supported by this project's release convention.
 During `0.x`, use patch increments for compatible fixes and minor increments for
-feature batches or incompatible changes; document data/SDK compatibility explicitly.
-Reserve `1.0.0` for a declared stable compatibility baseline. See [SemVer](https://semver.org/).
+feature batches or incompatible changes. Document data/SDK compatibility explicitly.
+The initial source declares `0.1.0`; it has not been released simply because that
+version appears in Cargo. Never move or reuse a published version tag.
 
-The initial source declares `0.1.0`; that does not mean it has been released yet.
-The tag is `v` plus the exact Cargo version, for example `v0.1.0`.
-Never move/reuse a published version tag to replace a release. Publish a new version.
-
-| Location | Role today |
+| Location | Role |
 | --- | --- |
-| Root `Cargo.toml`, `[workspace.package].version` | Product version inherited by the three app crates |
+| Root `Cargo.toml`, `[workspace.package].version` | Product version inherited by all three app crates |
 | Root `Cargo.lock` | Resolved versions, including workspace package versions |
-| `scripts/build-android-hub.sh` | Currently hardcodes macOS bundle version/build number; update them in the same PR |
-| `tools/metrics/Cargo.toml` and its lockfile | Separate internal tool version; bump only for changes to that tool |
-| `CHANGELOG.md` | User-facing changes and compatibility notes |
+| App `Info.plist` | Both version fields derive automatically from Cargo's numeric `MAJOR.MINOR.PATCH` |
+| `tools/metrics/Cargo.toml` and its lockfile | Separate internal tool; bump only for tool changes |
+| `CHANGELOG.md` | Release notes, compatibility changes and known limitations |
 
-The bundle's `CFBundleShortVersionString` is the numeric product version (for
-example `0.2.0`); `CFBundleVersion` is a positive build number increased when
-packaging a new release candidate. Keep prerelease labels in Cargo/tag/release
-notes. Current local packaging does not distinguish a beta label in its bundle
-short-version field. Deriving bundle metadata automatically is future build work.
+Prerelease labels remain in Cargo, tags and release notes; local bundle fields use
+only the numeric version. Packaging is an optimized development build with an
+ad-hoc signature, not a notarized distribution or a distinct beta build number.
+
+## CI
+
+[CI workflow](../.github/workflows/ci.yml) runs on PRs targeting `develop`/`main`,
+pushes to those branches, manual dispatch, and calls from the release workflow.
+It uses `macos-15` ARM64, the pinned `rust-toolchain.toml`, Python 3.12 and locked
+Cargo dependencies. CI disables debug symbols and limits compilation to two jobs
+to fit the hosted runner; local builds retain their default profile. It runs the shared checks (fmt, tests, Clippy, Python,
+documentation, shell syntax), then packages the app and verifies its signature,
+plist and version. No GUI, SDK install, guest boot or ignored integration tests run.
+
+Actions are pinned to commit SHAs. Cargo caches are keyed by runner, toolchain,
+lockfiles and manifests; only successful pushes to `main`/`develop` save caches.
+Obsolete checks on the same PR/ref are cancelled. Private macOS runners consume
+Actions allowance; no billing settings are changed by these workflows.
 
 ## Prepare on develop
 
-1. Start from current `develop`; finish the intended feature/fix PRs.
-2. Open a small version/changelog PR into `develop` if a bump is needed. Update
-   Cargo version, bundle fields and changelog together. Refresh the lockfile with
-   `cargo metadata --no-deps --format-version 1`; inspect the diff and reject
-   unrelated dependency changes.
-3. Move the relevant Unreleased notes to a version section when preparing the
-   release. Record the actual publication date at release time.
-4. Run:
+1. Finish the intended feature/fix PRs. Update the root Cargo version when needed.
+   Refresh workspace package versions using `cargo metadata --no-deps --format-version 1`
+   and inspect the lockfile diff; avoid unrelated dependency changes.
+2. Move relevant Unreleased notes into exactly one nonempty section such as
+   `## [0.1.0] - 2026-11-18`, using the actual release date. A future date, duplicate
+   section, missing version or empty notes blocks publishing. Keep an Unreleased
+   section for subsequent work.
+3. Run local checks and, for app changes, a focused smoke check on disposable data:
 
    ```bash
    bash scripts/check.sh
-   PYTHONDONTWRITEBYTECODE=1 python3 scripts/check-docs.py
    bash scripts/build-android-hub.sh
    codesign --verify --deep --strict 'Android Hub.app'
-   plutil -p 'Android Hub.app/Contents/Info.plist'
+   python3 scripts/release.py verify-bundle 'Android Hub.app/Contents/Info.plist'
    ```
 
-5. For app changes, do a focused smoke check on disposable data. Record any skipped
-   integration/gameplay/SDK checks. The local packaging script currently builds the
-   optimized development profile, not `cargo build --release`.
-6. Open the release PR from `develop` to `main`. Include the intended tag, summary,
-   checks, data compatibility and known limitations. Merge preserving branch history.
+4. Open a release PR from `develop` to `main`. Include the intended tag, changes,
+   checks, compatibility and known limits. Wait for CI and merge preserving history.
+   The workflow files themselves must be merged before first use.
 
-## Tag the verified main commit
+## Publish by tag
 
-Use a clean working tree. These are maintainer commands to run when explicitly
-publishing a release, not part of ordinary development:
+Pushing a `v*` tag is the explicit publish action. Do this only when ready to
+release; ordinary implementation work must not create tags automatically.
+Use a clean working tree and tag the intended commit already merged to `main`:
 
 ```bash
 git switch main
 git pull --ff-only origin main
 git status --short
-# Confirm the intended version and absence of unrelated changes before continuing.
-cargo metadata --offline --locked --no-deps --format-version 1
-
-# Example only: substitute the exact intended Cargo version.
+# Example only: replace with the exact intended Cargo version.
 git tag -a v0.1.0 -m 'Android Hub v0.1.0'
+python3 scripts/release.py validate v0.1.0
 git push origin v0.1.0
 ```
 
-Tag the commit actually merged to `main`, not an unmerged feature commit. Annotated
-tags are the default convention. Never delete an existing remote tag just to make
-a failed command succeed.
+[Source release workflow](../.github/workflows/release.yml) then:
 
-## GitHub release notes
+1. Requires an exact Cargo/tag match, checkout at that tag, main ancestry and dated notes.
+2. Runs the same macOS checks/build against the tagged source.
+3. Revalidates the tag, extracts only that changelog section and creates the release
+   with `--verify-tag`. A prerelease tag gets `--prerelease --latest=false`.
 
-Create a draft release from the existing tag, review its notes, then publish:
+Only the publish job receives `contents: write`; the rest have read-only access.
+The built app is discarded with the runner. No PAT, signing certificate or extra
+secret is required: publishing uses the repository's `GITHUB_TOKEN`.
+See [GitHub release CLI](https://cli.github.com/manual/gh_release_create).
 
-```bash
-gh release create v0.1.0 --repo ducntvt/android-hub --verify-tag --draft \
-  --title 'Android Hub v0.1.0' --notes-file /path/to/release-notes.md
-```
+## Failures, reruns and rollback
 
-For a beta/RC, use the exact prerelease tag and add `--prerelease`. The notes file
-should contain the relevant changelog section, build instructions, compatibility
-changes and known limits. Do not attach the app or personal logs. GitHub provides
-source archives from tags; private repository access still applies.
-See [GitHub releases](https://docs.github.com/en/repositories/releasing-projects-on-github/about-releases).
+Check the failed job in Actions. A transient infrastructure failure can be rerun
+for the same unchanged tag. An existing release is never overwritten, including a
+draft created manually. If the source needs a fix, merge the fix with a new version
+and changelog section, then publish a new tag; don't force-move the old tag.
+A validation failure creates no release. Cancelling CI prevents its dependent
+publish job from running. Tag pushes are serialized per tag.
 
-After publication, merge `main` back into `develop` and keep an empty Unreleased
-section for the next work. Hotfixes start from `main`, receive a new version/tag,
-and must also be merged back into `develop`.
+After publication, merge `main` back into `develop`. Hotfixes start from `main`,
+receive a new version/tag, and also merge back into `develop`.
 
-## Rollback and data compatibility
-
-A source rollback means checking out an earlier tag and rebuilding. It does not
-roll back Android disks, preferences, SDK installs or database/schema changes.
-Back up stopped devices before an incompatible change. Release notes must describe
-any migration and whether downgrading is supported; never promise downgrade safety
-solely because an old binary builds.
-
-## Later automation
-
-A future CI workflow can run checks/build on PRs and `main`/`develop`; a tag workflow
-can verify tag/version/main ancestry and draft source-only release notes. It need
-not upload binaries. Protect shared branches and published tags where the repo's
-GitHub plan supports rulesets. Solo maintenance need not require another reviewer.
-None of those remote settings is implied to be enabled by this document.
+A source rollback means checking out an earlier tag and rebuilding; it does not
+roll back Android disks, preferences, SDK installs or schemas. Back up stopped
+devices before incompatible changes and document whether downgrading is supported.
+Branch/tag protection depends on the private repository's GitHub plan and must be
+configured separately; workflow files alone do not enforce branch protection.

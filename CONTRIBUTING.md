@@ -24,8 +24,9 @@ branch promotion. Feature PRs may use squash merge. Remove merged short-lived
 branches when no longer needed. Do not force-push shared branches or release tags.
 
 For a solo maintainer, PRs still record intent/checks, but another reviewer's
-approval is not a requirement. CI/rulesets are not yet configured in this initial
-source baseline; run the documented checks manually until automation is installed.
+approval is not a requirement. CI runs the shared checks and app packaging on PRs and pushes to `main`/`develop`.
+Wait for the macOS ARM64 check before merging. Branch protection/rulesets are
+configured separately; workflow files do not enable those settings.
 
 ## Code conventions
 
@@ -44,7 +45,6 @@ files. Required DEX, SDK manifest, logo and protocol files are source/build inpu
 
 ```bash
 bash scripts/check.sh
-PYTHONDONTWRITEBYTECODE=1 python3 scripts/check-docs.py
 ```
 
 For app changes, also package and verify:

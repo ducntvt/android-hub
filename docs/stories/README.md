@@ -140,3 +140,5 @@ If you want automation, a 10-line bash script can parse and run them — but the
 - [US-045 — App-owned data and experiments cleanup](US-045-retire-experiments-runtime.md) — implemented
 
 - [US-046 — Private source repository documentation](US-046-private-repository-documentation.md) — implemented
+
+- [US-047 — CI and source releases](US-047-ci-and-source-releases.md) — implemented

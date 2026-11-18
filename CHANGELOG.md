@@ -8,6 +8,8 @@ publication date or release tag is claimed by this file.
 
 ### Added
 
+- macOS ARM64 CI and guarded source releases from version tags.
+
 - Rust/Iced desktop workspace with independent Android devices and one/two embedded displays.
 - Device creation/configuration, lifecycle management, confirmed deletion and existing archives.
 - Android navigation, rotation, pointer/scroll input, explicit clipboard transfer and APK installation.
@@ -16,6 +18,9 @@ publication date or release tag is claimed by this file.
 - English/Vietnamese build/setup entry points and private source-release documentation.
 
 ### Changed
+
+- Pinned Rust toolchain; app bundle versions now derive from Cargo automatically.
+- Build scripts require Python 3.11+ for standard-library TOML metadata parsing.
 
 - App data now lives directly in Application Support, independently of the source checkout.
 - Metrics source moved to `tools/metrics`; the experimental runtime/bootstrap tools were retired.
