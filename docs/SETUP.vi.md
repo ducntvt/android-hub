@@ -66,6 +66,12 @@ Luồng SDK có download/resume/recovery và xoay log engine đã triển khai. 
 
 ## Nếu tạo máy bị gián đoạn
 
+Bản v0.1.0 có thể báo cấu hình AVD mâu thuẫn với image khi `config.ini` thiếu
+`target`, dù đường dẫn image, ABI và loại Google Play hợp lệ. Bản 0.1.1
+chấp nhận trường này bị thiếu, vẫn xác minh image. Sau khi cài bản build
+có bản sửa, mở lại Hub rồi tạo máy mới. File tạo dở của lần lỗi vẫn được giữ,
+không tự đăng ký hay xóa. Không cần reset SDK hoặc xóa toàn bộ dữ liệu Hub.
+
 Hub báo ID và hai đường dẫn có thể còn dữ liệu dở (`ID.avd`, `ID.ini`) khi avdmanager/configuration/ghi registry thất bại. Các file được giữ lại để kiểm tra. US-019 đã có journal recovery: máy đã chuẩn bị xong được hoàn tất đăng ký khi registry/data còn khớp; file tạo dở chưa sẵn sàng được giữ và ghi biên nhận incomplete. Chưa tự thu hồi file dở. Không xóa toàn bộ runtime hoặc chạy avdmanager với tùy chọn ghi đè để thử lại.
 
 Nếu registry đã ghi thành công nhưng refresh thất bại, thông báo sẽ ghi “Đã tạo máy … nhưng chưa đọc lại được trạng thái”. Khi đó làm mới/mở lại Hub để xem máy, không cần tạo lại. Hub từ chối tạo vào tên có directory, registration hoặc symlink đã tồn tại.

@@ -1,5 +1,5 @@
 Android Hub third-party notices
-Cargo.lock SHA-256: cacad173dabaae05fca9310e869c135f15e0c8480172245301803d8e7b791b2f
+Cargo.lock SHA-256: ef7afec731f09bf06b737d172c5acb3e886694c5dada5f756101d09c4bb0b10f
 
 Dependency notice snapshot for the resolved macOS ARM64 Cargo graph, including
 build/test dependencies conservatively. License text retains its original wording.

@@ -140,3 +140,5 @@ Skip an ADR for: bug fixes, refactors that preserve behavior, dependency bumps w
 - [0056 — Immutable Android image per device](0056-immutable-android-image-per-device.md) — Accepted
 
 - [0057 — Ad-hoc app ZIP and DMG distribution](0057-ad-hoc-app-distribution.md) — Accepted
+
+- [0058 — Optional AVD target with verified image identity](0058-optional-avd-target.md) — Accepted

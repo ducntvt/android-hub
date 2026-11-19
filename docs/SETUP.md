@@ -153,6 +153,13 @@ recovery if it still matches; incomplete files are retained. If creation succeed
 but refresh failed, refresh/reopen Hub rather than immediately creating a duplicate.
 Do not force-overwrite AVD metadata.
 
+In v0.1.0, creation can report an AVD/image conflict when `config.ini` omits
+`target`, even with a valid image path, ABI and flavor. Version 0.1.1
+accepts this omission while retaining image validation. After installing a build
+containing the fix, reopen Hub and create a new device. Incomplete files from the
+failed attempt remain retained, not automatically registered or deleted. Do not
+reset the SDK or remove the whole app data directory to work around this error.
+
 Before starting an engine, a log of at least 8 MiB rotates to `.log.1`; Hub keeps up
 to three rotated logs. It does not truncate a running session's log, which can grow
 beyond that size. Copy logs you need before subsequent launches rotate them away.

@@ -20,6 +20,7 @@ DOCS = [
     ROOT / 'docs/decisions/0055-source-release-automation.md',
     ROOT / 'docs/decisions/0056-immutable-android-image-per-device.md',
     ROOT / 'docs/decisions/0057-ad-hoc-app-distribution.md',
+    ROOT / 'docs/decisions/0058-optional-avd-target.md',
     ROOT / 'docs/stories/US-054-app-and-dmg-release.md',
     *ROOT.joinpath('docs/stories/epics').rglob('*.md'),
     ROOT / 'tools/metrics/README.md',

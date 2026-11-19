@@ -49,7 +49,9 @@ Fresh-machine SDK installation and game performance remain separately qualified.
 
 1. Synchronize with `main`, finish the changes and set the intended Cargo version.
    If changing version, refresh workspace entries with
-   `cargo metadata --no-deps --format-version 1` and inspect the lockfile diff.
+   `cargo metadata --format-version 1` and inspect the lockfile diff. A version-only
+   bump changes the three first-party packages; verify the third-party graph is
+   unchanged before updating the notice snapshot's lockfile digest.
 2. Move release notes from Unreleased into exactly one nonempty dated section,
    e.g. `## [0.1.0] - 2026-11-19`. Keep Unreleased for later changes. Future dates,
    duplicate sections, empty notes and a Cargo/tag mismatch block publishing.
