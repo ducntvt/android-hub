@@ -35,3 +35,8 @@ opt-level = 1
 
 [profile.dev.package."*"]
 opt-level = 2
+
+# Rust 1.96's debuginfo stripping can misalign proc-macro dylibs on macOS 27.
+# Build-time macros are not shipped in the app (rust-lang/rust#157750).
+[profile.release.build-override]
+strip = "none"

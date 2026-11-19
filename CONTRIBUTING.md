@@ -6,7 +6,7 @@ running device operations. Repository access does not authorize public redistrib
 
 ## Branches and pull requests
 
-- `main`: reviewed baseline for source releases.
+- `main`: reviewed baseline for releases.
 - `develop`: integration branch for the next release.
 - `feature/<short-name>` and `fix/<short-name>`: short-lived branches from `develop`.
 - `hotfix/<short-name>`: urgent fix from `main`; bring it back into `develop` too.

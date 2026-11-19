@@ -138,3 +138,5 @@ Skip an ADR for: bug fixes, refactors that preserve behavior, dependency bumps w
 - [0055 — Reuse macOS checks for source tag releases](0055-source-release-automation.md) — Accepted
 
 - [0056 — Immutable Android image per device](0056-immutable-android-image-per-device.md) — Accepted
+
+- [0057 — Ad-hoc app ZIP and DMG distribution](0057-ad-hoc-app-distribution.md) — Accepted
