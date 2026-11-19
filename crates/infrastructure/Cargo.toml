@@ -7,6 +7,7 @@ publish.workspace = true
 [dependencies]
 android-hub-domain.workspace = true
 serde_json.workspace = true
+serde.workspace = true
 sha2.workspace = true
 fs2.workspace = true
 libc.workspace = true

@@ -1,11 +1,19 @@
 use super::*;
 use iced::widget::column;
 
-fn review(hub: &Hub) -> Element<'_, Message> {
+pub(super) fn review(hub: &Hub) -> Element<'_, Message> {
     let lang = hub.language;
-    let mut content = column![muted(
-        "macOS Apple Silicon · Google Play · Android 16 (API 36)"
-    ),]
+    let image = hub.sdk_plan.as_ref().and_then(|p| p.image_version());
+    let mut content = column![
+        text(match image {
+            Some(version) => format!("macOS Apple Silicon · Google Play · {version}"),
+            None => lang
+                .tr("Công cụ SDK dùng chung · macOS Apple Silicon")
+                .into(),
+        })
+        .size(CAPTION)
+        .style(secondary_text)
+    ]
     .spacing(GAP);
     if let Some(error) = &hub.sdk_plan_error {
         content = content.push(text(lang.diagnostic(error)));
@@ -82,16 +90,18 @@ fn review(hub: &Hub) -> Element<'_, Message> {
                     })),
                 );
         }
-        content = content
-            .push(muted(
-                lang.tr("Java home (Java 17+ ARM64, đã cài trên máy)"),
-            ))
-            .push(path_field(
-                &hub.java_draft,
-                "/…/Contents/Home",
-                !hub.busy,
-                Message::JavaPath,
-            ));
+        if image.is_none() {
+            content = content
+                .push(muted(
+                    lang.tr("Java home (Java 17+ ARM64, đã cài trên máy)"),
+                ))
+                .push(path_field(
+                    &hub.java_draft,
+                    "/…/Contents/Home",
+                    !hub.busy,
+                    Message::JavaPath,
+                ));
+        }
         if let Some(control) = &hub.sdk_setup {
             use android_hub_infrastructure::SdkSetupStage;
             let status = match control.stage() {
@@ -100,8 +110,9 @@ fn review(hub: &Hub) -> Element<'_, Message> {
                 SdkSetupStage::CheckingSpace => lang.tr("Kiểm tra dung lượng…").into(),
                 SdkSetupStage::Downloading(index) => localized_format!(
                     lang,
-                    "Tải và kiểm tra gói {index}/4",
-                    "Downloading and verifying package {index}/4"
+                    "Tải và kiểm tra gói {index}/{}",
+                    "Downloading and verifying package {index}/{}",
+                    plan.summaries().len()
                 ),
                 SdkSetupStage::Assembling => lang.tr("Giải nén, ghép và kiểm tra SDK…").into(),
                 SdkSetupStage::Complete => lang.tr("Đã hoàn tất").into(),
@@ -128,21 +139,34 @@ fn review(hub: &Hub) -> Element<'_, Message> {
                 );
         } else {
             content = content.push(
-                button(text(lang.tr("Tải và chuẩn bị SDK")).size(13))
-                    .style(primary)
-                    .padding(10)
-                    .on_press_maybe(
-                        (!hub.busy
-                            && hub.sdk_cache_reset.is_none()
-                            && plan.approved_packages(&hub.accepted_licenses).is_ok())
-                        .then_some(Message::StartSdkSetup),
-                    ),
+                button(
+                    text(lang.tr(if hub.creation_image_review() {
+                        "Tải và tạo máy"
+                    } else if image.is_some() {
+                        "Tải và cài image"
+                    } else {
+                        "Tải và chuẩn bị SDK"
+                    }))
+                    .size(13),
+                )
+                .style(primary)
+                .padding(10)
+                .on_press_maybe(
+                    (!hub.busy
+                        && hub.sdk_cache_reset.is_none()
+                        && plan.approved_packages(&hub.accepted_licenses).is_ok())
+                    .then_some(Message::StartSdkSetup),
+                ),
             );
         }
         if let Some(result) = &hub.sdk_setup_result {
             content = content.push(text(lang.diagnostic(result)).size(CAPTION));
         }
-        content = content.push(muted(lang.tr("Cần thêm tối thiểu 6 GiB trống để giải nén, ngoài archive tải xuống. SDK mới không được chọn tự động. Nếu hủy/lỗi, có thể thử lại từ cache; đóng màn hình sẽ xóa lựa chọn điều khoản.")));
+        content = content.push(muted(lang.tr(if image.is_some() {
+            "Cài vào SDK hiện tại. Ước tính thêm 6 GiB staging và 12 GiB cho máy mới, ngoài archive. Hub kiểm tra dung lượng trước tải và trước giải nén; không cập nhật engine hoặc thay image đã có."
+        } else {
+            "Cần thêm tối thiểu 6 GiB trống để giải nén, ngoài archive tải xuống. SDK mới không được chọn tự động. Nếu hủy/lỗi, có thể thử lại từ cache; đóng màn hình sẽ xóa lựa chọn điều khoản."
+        })));
     }
     let back = hint(
         icon_tool(Icon::Back, Message::CloseSdkReview)
@@ -152,7 +176,14 @@ fn review(hub: &Hub) -> Element<'_, Message> {
         iced::widget::tooltip::Position::Bottom,
     );
     side_panel(
-        panel_header(lang.tr("Chuẩn bị SDK mới"), back),
+        panel_header(
+            lang.tr(if image.is_some() {
+                "Cài image Android"
+            } else {
+                "Chuẩn bị SDK mới"
+            }),
+            back,
+        ),
         content,
         520.,
     )
@@ -160,7 +191,7 @@ fn review(hub: &Hub) -> Element<'_, Message> {
 
 pub(super) fn view(hub: &Hub) -> Element<'_, Message> {
     let lang = hub.language;
-    if hub.sdk_review_open {
+    if hub.sdk_review_open && !hub.creation_image_review() {
         return review(hub);
     }
     let overridden = std::env::var_os("ANDROID_SDK_ROOT").is_some();
@@ -169,6 +200,120 @@ pub(super) fn view(hub: &Hub) -> Element<'_, Message> {
     let stopped = hub.state.as_ref().is_some_and(|s| s.runtime.is_empty());
     let editable = !hub.busy && !overridden;
     let mut content = column![].spacing(14);
+    let mut images = column![
+        tool(
+            lang.tr(if hub.images_loading {
+                "Đang đọc…"
+            } else {
+                "Làm mới danh sách"
+            }),
+            Message::RefreshImages
+        )
+        .on_press_maybe((!hub.busy && !hub.images_loading).then_some(Message::RefreshImages))
+    ]
+    .spacing(10);
+    match &hub.images {
+        Err(error) => {
+            images = images.push(text(lang.diagnostic(error)).size(CAPTION).style(error_text))
+        }
+        Ok(items) => {
+            for item in items {
+                let mut details = column![
+                    text(format!("{} · API {}", item.version, item.version.api())).size(BODY)
+                ]
+                .spacing(6);
+                if let Some(error) = &item.error {
+                    details =
+                        details.push(text(lang.diagnostic(error)).size(CAPTION).style(error_text));
+                } else if let Some([major, minor, micro]) = item.revision {
+                    details = details.push(
+                        text(format!(
+                            "{} · r{major}.{minor}.{micro}",
+                            lang.tr("Image đã sẵn sàng")
+                        ))
+                        .size(CAPTION)
+                        .style(secondary_text),
+                    );
+                } else {
+                    details = details
+                        .push(
+                            text(localized_format!(
+                                lang,
+                                "Chưa cài · Tải {:.2} GB",
+                                "Not installed · Download {:.2} GB",
+                                item.download_bytes as f64 / 1_000_000_000.
+                            ))
+                            .size(CAPTION)
+                            .style(secondary_text),
+                        )
+                        .push(
+                            tool(
+                                lang.tr("Cài image Android"),
+                                Message::OpenImageReview(item.version),
+                            )
+                            .on_press_maybe(
+                                (!hub.busy && !hub.images_loading)
+                                    .then_some(Message::OpenImageReview(item.version)),
+                            ),
+                        );
+                }
+                if item.revision.is_some() || item.usage.removal_pending || item.error.is_some() {
+                    details = details.push(
+                        text(match item.usage.allocated_bytes {
+                            Some(bytes) => localized_format!(
+                                lang,
+                                "Đang chiếm {:.2} GiB",
+                                "Allocated {:.2} GiB",
+                                bytes as f64 / 1073741824.
+                            ),
+                            None => lang.tr("Chưa xác định dung lượng").to_owned(),
+                        })
+                        .size(CAPTION)
+                        .style(secondary_text),
+                    );
+                    if !item.usage.references.is_empty() {
+                        details =
+                            details.push(text(lang.tr("Đang được tham chiếu bởi:")).size(CAPTION));
+                        for reference in &item.usage.references {
+                            details = details.push(
+                                text(lang.image_reference(reference))
+                                    .size(CAPTION)
+                                    .style(secondary_text),
+                            );
+                        }
+                    }
+                    if let Some(reason) = &item.usage.blocked {
+                        details = details.push(
+                            text(lang.diagnostic(reason).into_owned())
+                                .size(CAPTION)
+                                .style(secondary_text),
+                        );
+                    } else {
+                        details = details.push(
+                            tool(
+                                lang.tr(if item.usage.removal_pending {
+                                    "Tiếp tục gỡ image"
+                                } else {
+                                    "Gỡ image"
+                                }),
+                                Message::AskImageRemoval(item.version),
+                            )
+                            .style(danger)
+                            .on_press_maybe(
+                                (!hub.busy && !hub.images_loading)
+                                    .then_some(Message::AskImageRemoval(item.version)),
+                            ),
+                        );
+                    }
+                }
+                images = images.push(details).push(horizontal_rule(1));
+            }
+        }
+    }
+    images = images.push(muted(lang.tr(
+        "Image đã cài tách biệt với cache tải. Hub không tự gỡ image khi xóa máy.",
+    )));
+    content = content.push(section(lang.tr("Phiên bản Android"), images));
     if !stopped {
         content = content.push(
             text(lang.tr("Dừng tất cả máy trước khi lưu SDK hoặc Java."))
@@ -291,7 +436,7 @@ pub(super) fn view(hub: &Hub) -> Element<'_, Message> {
     );
     if hub.sdk_details {
         content = content.push(section(lang.tr("Thông tin thiết lập"), column![
-            muted(lang.tr("Cần Emulator, Platform-Tools, Command-line Tools, Google Play ARM64 API 36 và Java. Đây là chọn SDK có sẵn; chưa tải hoặc cài SDK.")),
+            muted(lang.tr("Cần Emulator, Platform-Tools, Command-line Tools và Java. Cài riêng image Google Play ARM64 cho phiên bản Android muốn dùng.")),
             muted(lang.tr("Đường dẫn được lưu cho những lần mở Hub sau.")),
             muted(lang.tr("Chọn thư mục chứa bin/java. Kiểm tra Java và công cụ SDK hiện tại trước khi lưu; có thể mất khoảng một phút.")),
         ].spacing(10)));

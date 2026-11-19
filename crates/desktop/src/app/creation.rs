@@ -1,10 +1,12 @@
 //! Form lifetime and a single explicit creation submission.
 use super::*;
-use android_hub_domain::CreateRequest;
+use android_hub_domain::{AndroidVersion, CreateRequest, ImageIdentity};
 use android_hub_infrastructure::{CreatedDevice, CreationEnvironment, CreationFailure};
 
 pub(super) struct Editor {
     pub request: CreateRequest,
+    pub image_review: bool,
+    pub create_after_image: bool,
     pub advanced: bool,
     pub start_after: bool,
     pub environment: Option<CreationEnvironment>,
@@ -15,6 +17,7 @@ pub(super) struct Editor {
 
 #[derive(Clone, Debug)]
 pub(super) enum Edit {
+    Version(AndroidVersion),
     Name(String),
     Ram(u32),
     Cpus(u32),
@@ -30,6 +33,7 @@ impl Editor {
             return;
         }
         match edit {
+            Edit::Version(value) => self.request.android_version = value,
             Edit::Name(value) => self.request.name = value,
             Edit::Ram(value) => self.request.ram_mb = value,
             Edit::Cpus(value) => self.request.cpus = value,
@@ -62,6 +66,8 @@ impl Hub {
                     .map(|s| s.profiles.as_slice())
                     .unwrap_or(&[]),
             ),
+            image_review: false,
+            create_after_image: false,
             advanced: false,
             start_after: false,
             environment: None,
@@ -83,12 +89,14 @@ impl Hub {
         self.creation_epoch = self.creation_epoch.wrapping_add(1);
         let epoch = self.creation_epoch;
         let backend = self.backend.clone();
+        let version = editor.request.android_version;
         Task::perform(
             async move {
-                tokio::task::spawn_blocking(move || backend.creation_environment())
+                tokio::task::spawn_blocking(move || backend.creation_environment_for(version))
                     .await
                     .unwrap_or_else(|e| CreationEnvironment {
                         components: Err(e.to_string()),
+                        image: Err(e.to_string()),
                         available_bytes: Err(e.to_string()),
                         minimum_bytes: 12 * 1024 * 1024 * 1024,
                     })
@@ -118,16 +126,46 @@ impl Hub {
             && self.creation_validation().is_none()
             && self.creation.as_ref().is_some_and(|e| {
                 !e.retry_blocked
+                    && !e.image_review
                     && e.environment
                         .as_ref()
                         .is_some_and(CreationEnvironment::ready)
             })
     }
+    pub(super) fn creation_image_review(&self) -> bool {
+        self.creation
+            .as_ref()
+            .is_some_and(|editor| editor.image_review)
+    }
+    pub(super) fn can_download_create(&self) -> bool {
+        !self.busy
+            && !self.stale
+            && self.creation_validation().is_none()
+            && self.creation.as_ref().is_some_and(|editor| {
+                !editor.retry_blocked
+                    && !editor.image_review
+                    && editor
+                        .environment
+                        .as_ref()
+                        .is_some_and(CreationEnvironment::downloadable)
+            })
+    }
     pub(super) fn submit_creation(&mut self) -> Task<Message> {
+        if self.can_download_create() {
+            let editor = self.creation.as_mut().unwrap();
+            editor.image_review = true;
+            let version = editor.request.android_version;
+            return self.update_sdk(Message::OpenImageReview(version));
+        }
         if !self.can_create() {
             return Task::none();
         }
+        self.launch_creation(None)
+    }
+    pub(super) fn launch_creation(&mut self, expected: Option<ImageIdentity>) -> Task<Message> {
         let editor = self.creation.as_mut().unwrap();
+        editor.image_review = false;
+        editor.create_after_image = false;
         editor.error = None;
         let request = editor.request.clone();
         let start = editor.start_after;
@@ -139,7 +177,10 @@ impl Hub {
         let backend = self.backend.clone();
         Task::perform(
             async move {
-                tokio::task::spawn_blocking(move || backend.create_with(request)).await
+                tokio::task::spawn_blocking(move || match expected {
+                    Some(image) => backend.create_with_image(request, image),
+                    None => backend.create_with(request),
+                }).await
                 .unwrap_or_else(|e| Err(CreationFailure {
                     message: format!("Tác vụ tạo máy kết thúc không rõ kết quả: {e}. Kiểm tra lịch sử trước khi tạo lại."),
                     retained_profile: None,
@@ -156,13 +197,18 @@ impl Hub {
     ) -> Task<Message> {
         self.creation_in_flight = None;
         self.busy = false;
-        match result {
+        let images = if self.sdk_open && !self.quit_requested {
+            self.update_sdk(Message::RefreshImages)
+        } else {
+            Task::none()
+        };
+        let completion = match result {
             Err(error) => {
                 if let Some(editor) = &mut self.creation {
                     editor.error = Some(error.message.clone());
                     editor.retry_blocked =
                         error.outcome_unknown || error.retained_profile.is_some();
-                    editor.retained = error.retained_profile;
+                    editor.retained = error.retained_profile.map(|profile| *profile);
                     editor.environment = None; // Recheck prerequisites before an explicit retry.
                 }
                 self.stale = true;
@@ -203,7 +249,8 @@ impl Hub {
                 };
                 Task::batch([refresh, receipts, launch])
             }
-        }
+        };
+        Task::batch([completion, images])
     }
 }
 
@@ -232,6 +279,7 @@ mod tests {
             hub.creation_epoch,
             CreationEnvironment {
                 components: Ok(()),
+                image: Ok(Some([9, 0, 0])),
                 available_bytes: Ok(50 * 1024 * 1024 * 1024),
                 minimum_bytes: 12 * 1024 * 1024 * 1024,
             },
@@ -284,6 +332,7 @@ mod tests {
             old,
             CreationEnvironment {
                 components: Ok(()),
+                image: Ok(Some([9, 0, 0])),
                 available_bytes: Ok(u64::MAX),
                 minimum_bytes: 1,
             },
@@ -319,6 +368,7 @@ mod tests {
     #[test]
     fn submission_is_single_and_starts_only_the_returned_id() {
         let mut hub = hub();
+        hub.sdk_open = true;
         let epoch = submit(&mut hub, true);
         let command = hub.command_epoch;
         let _ = hub.update(Message::ConfirmCreate);
@@ -329,6 +379,7 @@ mod tests {
         let _ = hub.update(Message::Created(epoch, true, Ok(outcome())));
         assert!(hub.creation.is_none());
         assert_eq!(hub.selected.as_deref(), Some("hub-new"));
+        assert!(hub.images_loading);
         assert_eq!(hub.lifecycle_action.as_ref().unwrap().id, "hub-new");
         let _ = hub.update(Message::Loaded(
             Err("start failed".into()),
@@ -354,7 +405,7 @@ mod tests {
                 false,
                 Err(CreationFailure {
                     message: "Interrupted create; inspect retained data".into(),
-                    retained_profile: retained,
+                    retained_profile: retained.map(Box::new),
                     outcome_unknown: unknown,
                 }),
             ));
@@ -394,5 +445,143 @@ mod tests {
         assert!(hub.quitting && !hub.busy);
         assert!(hub.lifecycle_action.is_none());
         assert_eq!(hub.state.as_ref().unwrap().profiles.len(), 2);
+    }
+
+    fn missing_image(hub: &mut Hub) {
+        ready(hub);
+        hub.creation
+            .as_mut()
+            .unwrap()
+            .environment
+            .as_mut()
+            .unwrap()
+            .image = Ok(None);
+    }
+    fn installed(
+        version: AndroidVersion,
+    ) -> Result<android_hub_infrastructure::ImageInstallResult, String> {
+        Ok(android_hub_infrastructure::ImageInstallResult {
+            identity: ImageIdentity {
+                version,
+                revision: [9, 0, 0],
+                fingerprint: "a".repeat(64),
+            },
+            reused: false,
+        })
+    }
+    #[test]
+    fn version_selection_invalidates_readiness_and_review_preserves_the_form() {
+        let mut hub = hub();
+        let _ = hub.update(Message::Create);
+        assert_eq!(
+            hub.creation.as_ref().unwrap().request.android_version,
+            AndroidVersion::Android16
+        );
+        ready(&mut hub);
+        let old = hub.creation_epoch;
+        let _ = hub.update(Message::EditCreation(Edit::Name("My Android 12".into())));
+        let _ = hub.update(Message::EditCreation(Edit::Ram(4096)));
+        let _ = hub.update(Message::EditCreation(Edit::Version(
+            AndroidVersion::Android12,
+        )));
+        assert!(!hub.can_create() && hub.creation_epoch != old);
+        let _ = hub.update(Message::CreationEnvironment(
+            old,
+            CreationEnvironment {
+                components: Ok(()),
+                image: Ok(Some([9, 0, 0])),
+                available_bytes: Ok(u64::MAX),
+                minimum_bytes: 1,
+            },
+        ));
+        assert!(hub.creation.as_ref().unwrap().environment.is_none());
+        missing_image(&mut hub);
+        assert!(hub.can_download_create() && !hub.can_create());
+        let request = hub.creation.as_ref().unwrap().request.clone();
+        let _ = hub.update(Message::ConfirmCreate);
+        assert!(hub.creation_image_review());
+        assert_eq!(
+            hub.sdk_plan.as_ref().unwrap().image_version(),
+            Some(AndroidVersion::Android12)
+        );
+        let _ = hub.update(Message::StartSdkSetup);
+        assert!(!hub.busy); // Consent is required even for the combined flow.
+        let _ = hub.update(Message::EditCreation(Edit::Version(
+            AndroidVersion::Android16,
+        )));
+        let _ = hub.update(Message::CloseSdkReview);
+        assert_eq!(hub.creation.as_ref().unwrap().request, request);
+        assert!(!hub.creation_image_review() && hub.creation_in_flight.is_none());
+        let _ = hub.update(Message::CancelModal);
+        assert!(hub.creation.is_none() && hub.accepted_licenses.is_empty());
+    }
+
+    #[test]
+    fn download_create_freezes_target_rejects_stale_completion_and_submits_once() {
+        let mut hub = hub();
+        let _ = hub.update(Message::Create);
+        let _ = hub.update(Message::EditCreation(Edit::Version(
+            AndroidVersion::Android13,
+        )));
+        missing_image(&mut hub);
+        let _ = hub.update(Message::ConfirmCreate);
+        let _ = hub.update(Message::AcceptLicense(0, true));
+        let _ = hub.update(Message::StartSdkSetup);
+        let epoch = hub.command_epoch;
+        assert!(hub.busy);
+        let _ = hub.update(Message::ImageSetupFinished(
+            epoch.wrapping_sub(1),
+            installed(AndroidVersion::Android13),
+        ));
+        assert!(hub.busy && hub.creation_in_flight.is_none());
+        let _ = hub.update(Message::StartSdkSetup);
+        let _ = hub.update(Message::EditCreation(Edit::Version(
+            AndroidVersion::Android12,
+        )));
+        assert_eq!(hub.command_epoch, epoch);
+        assert_eq!(
+            hub.creation.as_ref().unwrap().request.android_version,
+            AndroidVersion::Android13
+        );
+        let _ = hub.update(Message::ImageSetupFinished(
+            epoch,
+            installed(AndroidVersion::Android13),
+        ));
+        assert!(hub.busy && hub.creation_in_flight.is_some() && hub.sdk_setup.is_none());
+        let submitted = hub.command_epoch;
+        let _ = hub.update(Message::ImageSetupFinished(
+            epoch,
+            installed(AndroidVersion::Android13),
+        ));
+        assert_eq!(hub.command_epoch, submitted);
+    }
+
+    #[test]
+    fn cancel_after_image_publish_keeps_image_without_creating_and_failure_can_retry() {
+        let mut hub = hub();
+        let _ = hub.update(Message::Create);
+        missing_image(&mut hub);
+        let _ = hub.update(Message::ConfirmCreate);
+        let _ = hub.update(Message::AcceptLicense(0, true));
+        let _ = hub.update(Message::StartSdkSetup);
+        let failed_epoch = hub.command_epoch;
+        let _ = hub.update(Message::ImageSetupFinished(
+            failed_epoch,
+            Err("fixture network failure".into()),
+        ));
+        assert!(!hub.busy && hub.creation_image_review());
+        assert_eq!(hub.creation.as_ref().unwrap().request.name, "Android 2");
+        let _ = hub.update(Message::StartSdkSetup);
+        let epoch = hub.command_epoch;
+        assert!(epoch != failed_epoch && hub.busy);
+        let _ = hub.update(Message::CancelSdkSetup);
+        // Publication can win a late cancel, but device creation must still be canceled.
+        let _ = hub.update(Message::ImageSetupFinished(
+            epoch,
+            installed(AndroidVersion::Android16),
+        ));
+        assert!(!hub.busy && !hub.creation_image_review() && hub.creation_in_flight.is_none());
+        assert!(hub.accepted_licenses.is_empty());
+        assert_eq!(hub.state.as_ref().unwrap().profiles.len(), 1);
     }
 }

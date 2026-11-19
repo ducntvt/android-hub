@@ -212,6 +212,13 @@ fn dialog(hub: &Hub) -> Option<Element<'_, Message>> {
             "Sao chép lỗi",
             false,
         )
+    } else if let Some(p) = &hub.image_removal {
+        (
+            localized_format!(lang, "Gỡ {}?", "Remove {}?", p.identity.version),
+            lang.tr("Gỡ image không dùng khỏi SDK do Hub quản lý. Muốn tạo máy sau này cần tải lại image.").to_owned(),
+            Some(localized_format!(lang, "Dung lượng đang chiếm: {:.2} GiB", "Allocated size: {:.2} GiB", p.allocated_bytes as f64 / 1073741824.)),
+            "Gỡ image", true,
+        )
     } else if let Some(p) = &hub.pending_stop {
         (
             localized_format!(lang, "Dừng {}?", "Stop {}?", p.name),

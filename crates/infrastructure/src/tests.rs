@@ -178,3 +178,39 @@ fn fresh_data_root_starts_empty_without_importing_p0_devices() {
     assert_eq!(backend.read_profiles().unwrap(), vec![profile]);
     fs::remove_dir_all(root).unwrap();
 }
+
+#[test]
+fn launcher_uses_selected_sdk_instead_of_inherited_android_home() {
+    let root = std::env::temp_dir().join(format!(
+        "hub-sdk-launch-{}-{}",
+        std::process::id(),
+        SEQUENCE.fetch_add(1, Ordering::Relaxed)
+    ));
+    let backend = Backend {
+        root: root.clone(),
+        sdk: root.join("selected SDK's files"),
+    };
+    let executable = backend.sdk.join("emulator/emulator");
+    fs::create_dir_all(executable.parent().unwrap()).unwrap();
+    fs::write(&executable, b"#!/bin/bash\nprintf '%s\\n' \"$ANDROID_HOME\" \"$ANDROID_SDK_ROOT\" \"$ANDROID_AVD_HOME\" \"$ANDROID_USER_HOME\"\n").unwrap();
+    fs::set_permissions(&executable, fs::Permissions::from_mode(0o755)).unwrap();
+    let profile = Profile::standard("hub-sdk-env".into(), "QA".into(), 5650);
+    let app = backend.launcher(&profile).unwrap();
+    let status = Command::new("/bin/bash")
+        .arg(app.join("Contents/MacOS/engine"))
+        .env("ANDROID_HOME", "/wrong/sdk/home")
+        .env("ANDROID_SDK_ROOT", "/another/wrong/sdk")
+        .status()
+        .unwrap();
+    assert!(status.success());
+    let output = fs::read_to_string(root.join("hub-sdk-env.log")).unwrap();
+    let expected = [
+        &backend.sdk,
+        &backend.sdk,
+        &backend.avds(),
+        &root.join("emulator-user"),
+    ]
+    .map(|path| path.to_string_lossy().into_owned());
+    assert_eq!(output.lines().collect::<Vec<_>>(), expected);
+    fs::remove_dir_all(root).unwrap();
+}

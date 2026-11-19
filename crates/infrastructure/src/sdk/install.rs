@@ -33,7 +33,7 @@ pub struct SdkInstallControl {
     canceled: Arc<AtomicBool>,
     started: Arc<AtomicBool>,
     completed_packages: Arc<AtomicUsize>,
-    extraction: [SdkExtractionControl; 4],
+    pub(super) extraction: [SdkExtractionControl; 8],
 }
 impl Default for SdkInstallControl {
     fn default() -> Self {
@@ -61,7 +61,7 @@ impl SdkInstallControl {
             .map(SdkExtractionControl::written_bytes)
             .sum()
     }
-    fn check(&self) -> Result<(), String> {
+    pub(super) fn check(&self) -> Result<(), String> {
         if self.canceled.load(Ordering::Acquire) {
             Err("Đã hủy ghép SDK".into())
         } else {
@@ -75,7 +75,7 @@ pub struct ManagedSdk {
     pub java_home: PathBuf,
 }
 
-fn private_directory(path: &Path) -> Result<(), String> {
+pub(super) fn private_directory(path: &Path) -> Result<(), String> {
     match fs::DirBuilder::new().mode(0o700).create(path) {
         Ok(()) => Ok(()),
         Err(e)
@@ -87,7 +87,7 @@ fn private_directory(path: &Path) -> Result<(), String> {
         Err(e) => Err(err(e)),
     }
 }
-fn sync_tree(
+pub(super) fn sync_tree(
     path: &Path,
     remaining: &mut usize,
     control: &SdkInstallControl,
@@ -108,7 +108,7 @@ fn sync_tree(
 }
 
 impl Backend {
-    /// Requires all four archives already downloaded with their reviewed plan/digests.
+    /// Requires common tools and any optional images already downloaded and reviewed.
     /// Returns a new published SDK directory; caller must separately select it.
     pub fn assemble_sdk(
         &self,
@@ -120,15 +120,15 @@ impl Backend {
             return Err("Mỗi control chỉ dùng cho một lượt ghép SDK".into());
         }
         control.check()?;
-        if packages.len() != 4
+        if !(3..=8).contains(&packages.len())
             || packages
                 .iter()
                 .map(|p| p.kind)
                 .collect::<BTreeSet<_>>()
                 .len()
-                != 4
+                != packages.len()
         {
-            return Err("Cần đúng bốn package SDK khác nhau".into());
+            return Err("Cần công cụ SDK chung và các package khác nhau".into());
         }
         for package in packages {
             package.archive.validate(&package.accepted_license_sha256)?;
@@ -151,8 +151,7 @@ impl Backend {
             .map_err(err)?;
         // Probe subprocesses have completed before this guard drops. Explicit
         // unlock also releases transient descriptors inherited by unrelated forks.
-        let _lock =
-            super::cache_lock::SdkCacheLock::acquire(lock, "Một lượt ghép SDK khác đang chạy")?;
+        let _lock = crate::file_lock::FileLock::acquire(lock, "Một lượt ghép SDK khác đang chạy")?;
         let id = format!(
             "{}-{}-{}",
             SystemTime::now()
@@ -363,7 +362,7 @@ mod tests {
                     ],
                 ),
                 (
-                    SdkPackage::PlayImage36,
+                    SdkPackage::PlayImage(android_hub_domain::AndroidVersion::Android16),
                     "arm64-v8a",
                     "7",
                     "AndroidVersion.ApiLevel=36\nSystemImage.Abi=arm64-v8a\nSystemImage.TagId=google_apis_playstore\nAddon.VendorId=google\nPkg.Dependencies=emulator#35.4.9\n",
@@ -476,6 +475,28 @@ mod tests {
                 .assemble_sdk(&fixture.packages, &fixture.java, &control)
                 .is_err()
         );
+    }
+    #[test]
+    fn managed_catalog_keeps_common_tools_after_optional_bundled_image_removal() {
+        let fixture = Fixture::new();
+        let result = fixture
+            .backend
+            .assemble_sdk(
+                &fixture.packages,
+                &fixture.java,
+                &SdkInstallControl::default(),
+            )
+            .unwrap();
+        let mut backend = fixture.backend.clone();
+        backend.sdk = result.path.clone();
+        let plan = backend
+            .prepare_image_removal(android_hub_domain::AndroidVersion::Android16)
+            .unwrap();
+        backend.remove_android_image(&plan).unwrap();
+        let catalog = backend.managed_sdk_catalog().unwrap();
+        assert_eq!(catalog.sdks.len(), 1);
+        assert_eq!(catalog.sdks[0].path, result.path);
+        assert_eq!(catalog.skipped, 0);
     }
     #[test]
     fn failed_probe_does_not_publish_and_retry_uses_cached_archives() {
@@ -825,7 +846,7 @@ mod tests {
                         SdkPackage::CommandLineTools,
                         SdkPackage::PlatformTools,
                         SdkPackage::Emulator,
-                        SdkPackage::PlayImage36,
+                        SdkPackage::PlayImage(android_hub_domain::AndroidVersion::Android16),
                     ]
                     .into_iter()
                     .find(|k| Some(k.destination()) == p["destination"].as_str())

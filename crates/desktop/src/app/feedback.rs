@@ -206,7 +206,8 @@ impl Hub {
             .map(|p| p.name.clone())
     }
     pub(super) fn modal_open(&self) -> bool {
-        self.creation.is_some()
+        self.image_removal.is_some()
+            || self.creation.is_some()
             || self.apk_request.is_some()
             || self.pending_stop.is_some()
             || self.pending_apk.is_some()
@@ -220,6 +221,11 @@ impl Hub {
     pub(super) fn cancel_modal(&mut self) {
         if self.creation.is_some() && self.busy && !self.quit_requested {
             return;
+        }
+        if self.creation_image_review() {
+            self.sdk_review_open = false;
+            self.sdk_cache_reset = None;
+            self.accepted_licenses.clear();
         }
         self.creation = None;
         self.apk_request = None;
@@ -237,6 +243,7 @@ impl Hub {
         self.delete_backup = None;
         self.pending_undo = None;
         self.pending_purge = None;
+        self.image_removal = None;
         if let Some(id) = self.detail_id.take() {
             self.feedback.close_details(id);
         }
@@ -251,7 +258,9 @@ impl Hub {
         if self.busy || self.stale {
             return None;
         }
-        if self.pending_stop.is_some() {
+        if self.image_removal.is_some() {
+            Some(Message::ConfirmImageRemoval)
+        } else if self.pending_stop.is_some() {
             Some(Message::Stop)
         } else if self.pending_apk.is_some() {
             Some(Message::ConfirmApk)
@@ -322,9 +331,14 @@ impl Hub {
                 | Message::BackupsLoaded(..)
                 | Message::StorageLoaded(..)
                 | Message::ManagedSdksLoaded(..)
+                | Message::ImagesLoaded(..)
                 | Message::BackupFinished(..)
                 | Message::RestoreFinished(..)
                 | Message::SdkSetupFinished(..)
+                | Message::ImageSetupFinished(..)
+                | Message::ImageRemovalPrepared(..)
+                | Message::ImageRemovalFinished(..)
+                | Message::ConfirmImageRemoval
                 | Message::SdkCacheResetFinished(..)
                 | Message::ManagedSdkSaved(..)
                 | Message::JavaSaved(..)

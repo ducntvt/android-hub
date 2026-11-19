@@ -52,7 +52,7 @@ fn safe_relative(value: &str) -> Result<PathBuf, String> {
     }
     Ok(path)
 }
-const IMAGE_FILES: [&str; 6] = [
+pub(crate) const IMAGE_FILES: [&str; 6] = [
     "source.properties",
     "system.img",
     "vendor.img",
@@ -60,6 +60,21 @@ const IMAGE_FILES: [&str; 6] = [
     "kernel-ranchu",
     "encryptionkey.img",
 ];
+
+/// AVD managers may append a slash to the same SDK-relative directory. Preserve
+/// manifest spelling for legacy restore comparisons, but hash its normalized path.
+pub(crate) fn image_fingerprint(inventory: &Value) -> Result<String, String> {
+    let mut normalized = inventory.clone();
+    let directory = safe_relative(
+        inventory["directory"]
+            .as_str()
+            .ok_or("Image inventory thiếu directory")?,
+    )?;
+    normalized["directory"] = json!(directory.components().collect::<PathBuf>());
+    Ok(crate::images::digest(
+        &serde_json::to_vec(&normalized).map_err(err)?,
+    ))
+}
 
 impl Backend {
     fn image_directory(&self, avd: &Path) -> Result<PathBuf, String> {
@@ -76,7 +91,17 @@ impl Backend {
     }
     fn image_identity(&self, avd: &Path) -> Result<Value, String> {
         let relative = self.image_directory(avd)?;
-        let image = self.sdk.join(&relative);
+        self.image_inventory(&relative)
+    }
+    pub(crate) fn image_inventory(&self, relative: &Path) -> Result<Value, String> {
+        let image = self.sdk.join(relative);
+        self.image_inventory_at(&image, relative)
+    }
+    pub(crate) fn image_inventory_at(
+        &self,
+        image: &Path,
+        relative: &Path,
+    ) -> Result<Value, String> {
         let mut entries = BTreeMap::new();
         for name in IMAGE_FILES {
             let path = image.join(name);
@@ -103,7 +128,7 @@ impl Backend {
         if manifest["schema"] != 2 {
             return Err("Backup cũ chưa ghi fingerprint image; hãy tạo backup mới trước khi khôi phục tự động".into());
         }
-        let profile: android_hub_domain::Profile =
+        let mut profile: android_hub_domain::Profile =
             serde_json::from_value(manifest["profile"].clone()).map_err(err)?;
         let current = self.existing(id)?;
         if profile.id != current.id || profile.port != current.port {
@@ -127,6 +152,20 @@ impl Backend {
         }
         if self.image_identity(&directory.join("payload"))? != manifest["image"] {
             return Err("SDK image đã thay đổi hoặc checksum image không khớp backup".into());
+        }
+        if let Some(expected) = &current.image {
+            self.verify_profile_image(&current)?;
+            if profile
+                .image
+                .as_ref()
+                .is_some_and(|saved| saved != expected)
+            {
+                return Err("Image identity backup không khớp máy hiện tại".into());
+            }
+            // Legacy schema-2 backups reached the same full fingerprint/path gates above.
+            profile.image = Some(expected.clone());
+        } else if profile.image.is_some() {
+            return Err("Cần xác định image máy hiện tại trước khi khôi phục".into());
         }
         Ok(profile)
     }
@@ -223,6 +262,13 @@ impl Backend {
         fs::create_dir_all(&base).map_err(err)?;
         crate::storage::ensure_copy_space(&source, &base)?;
         let image = self.image_identity(&source)?;
+        if let Some(expected) = &profile.image
+            && (self.image_version_at(&source)? != expected.version
+                || self.installed_image_revision(expected.version)? != expected.revision
+                || image_fingerprint(&image)? != expected.fingerprint)
+        {
+            return Err("Image Android đã thay đổi; không tạo backup với identity cũ".into());
+        }
         let baseline = self.inventory(&source)?;
         if !baseline.contains_key("config.ini")
             || !baseline.keys().any(|p| p.starts_with("userdata"))
@@ -274,6 +320,52 @@ impl Backend {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn legacy_backup_inherits_verified_binding_but_different_binding_is_rejected() {
+        let fixture = crate::images::tests::Fixture::new();
+        let b = &fixture.0;
+        let version = android_hub_domain::AndroidVersion::Android12;
+        fixture.image(version);
+        let mut p = fixture.device(version, "hub-image-backup", 5664);
+        p.image = Some(b.installed_image_identity(version).unwrap());
+        b.write_profiles(&[p.clone()]).unwrap();
+        let directory = b.root.join("backup");
+        let payload = directory.join("payload");
+        fs::create_dir_all(&payload).unwrap();
+        for name in ["config.ini", "userdata.img"] {
+            fs::copy(b.data(&p).join(name), payload.join(name)).unwrap();
+        }
+        let mut legacy = p.clone();
+        legacy.image = None;
+        let mut manifest = json!({"schema":2,"complete":true,"profile":legacy,
+            "sdk_root":b.sdk.canonicalize().unwrap(), "avd_path":b.data(&p).canonicalize().unwrap(),
+            "image":b.image_identity(&payload).unwrap(), "files":b.inventory(&payload).unwrap()});
+        let path = directory.join("manifest.json");
+        fs::write(&path, serde_json::to_vec(&manifest).unwrap()).unwrap();
+        assert_eq!(
+            b.verify_restore_backup(&p.id, &directory).unwrap().image,
+            p.image
+        );
+        let original = fs::read(b.data(&p).join("userdata.img")).unwrap();
+        manifest["profile"]["image"] = serde_json::to_value(&p.image).unwrap();
+        manifest["profile"]["image"]["revision"] = json!([99, 0, 0]);
+        fs::write(&path, serde_json::to_vec(&manifest).unwrap()).unwrap();
+        assert!(
+            b.verify_restore_backup(&p.id, &directory)
+                .unwrap_err()
+                .contains("identity")
+        );
+        manifest["profile"] = serde_json::to_value(&legacy).unwrap();
+        fs::write(&path, serde_json::to_vec(&manifest).unwrap()).unwrap();
+        fs::write(
+            b.sdk.join(version.directory()).join("system.img"),
+            "changed image",
+        )
+        .unwrap();
+        assert!(b.verify_restore_backup(&p.id, &directory).is_err());
+        assert_eq!(fs::read(b.data(&p).join("userdata.img")).unwrap(), original);
+        assert_eq!(b.existing(&p.id).unwrap(), p);
+    }
     use std::os::unix::fs::symlink;
 
     #[test]

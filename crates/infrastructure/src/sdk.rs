@@ -1,11 +1,12 @@
 //! SDK planning, selection, download, installation and recovery.
 mod cache;
-mod cache_lock;
 mod catalog;
 mod download;
 mod extract;
+pub(crate) mod image_install;
 mod install;
-mod package;
+pub use image_install::{ImageInstallResult, ImageInstallSpace};
+pub(crate) mod package;
 mod plan;
 mod probe;
 mod registration;

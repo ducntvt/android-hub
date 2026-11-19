@@ -564,6 +564,27 @@ mod tests {
         (b, p)
     }
     #[test]
+    fn archive_and_undo_preserve_the_exact_image_binding() {
+        let (b, mut p) = fixture();
+        p.image = Some(android_hub_domain::ImageIdentity {
+            version: android_hub_domain::AndroidVersion::Android12,
+            revision: [9, 0, 0],
+            fingerprint: "a".repeat(64),
+        });
+        b.write_profiles(&[p.clone()]).unwrap();
+        let archive = b.commit_removal(&p, |_| Ok(())).unwrap();
+        assert_eq!(
+            b.read_removal(&archive.join("removed.json"))
+                .unwrap()
+                .profile
+                .image,
+            p.image
+        );
+        b.commit_undo_removal(&archive, &p, |_| Ok(())).unwrap();
+        assert_eq!(b.existing(&p.id).unwrap(), p);
+        fs::remove_dir_all(b.root).unwrap();
+    }
+    #[test]
     fn interruption_at_every_step_rolls_back_or_preserves_commit() {
         for step in [
             Step::Journal,

@@ -14,12 +14,22 @@ import java.util.Locale;
 
 /** One adb shell session; stdin EOF terminates it. Never opens a network socket. */
 public final class ScrollBridge {
+    private static Class<?> inputManagerClass() throws ClassNotFoundException {
+        // Android 14+ moved the shell-accessible singleton to InputManagerGlobal.
+        // Android 12/13 expose the same injection contract on InputManager.
+        try {
+            return Class.forName("android.hardware.input.InputManagerGlobal");
+        } catch (ClassNotFoundException unavailableOnOlderAndroid) {
+            return Class.forName("android.hardware.input.InputManager");
+        }
+    }
+
     public static void main(String[] args) throws Exception {
         if (args.length != 1) throw new IllegalArgumentException("boot identity required");
         try (BufferedReader boot = new BufferedReader(new FileReader("/proc/sys/kernel/random/boot_id"))) {
             if (!args[0].equals(boot.readLine())) throw new IllegalStateException("guest restarted");
         }
-        Class<?> managerClass = Class.forName("android.hardware.input.InputManagerGlobal");
+        Class<?> managerClass = inputManagerClass();
         Object manager = managerClass.getMethod("getInstance").invoke(null);
         Method inject = managerClass.getMethod("injectInputEvent", InputEvent.class, int.class);
         Class<?> displaysClass = Class.forName("android.hardware.display.DisplayManagerGlobal");

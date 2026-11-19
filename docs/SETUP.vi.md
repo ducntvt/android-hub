@@ -15,7 +15,7 @@ Trong SDK Manager của Android Studio, chuẩn bị:
 - Android Emulator (`emulator/emulator`).
 - Android SDK Platform-Tools (`platform-tools/adb`).
 - Android SDK Command-line Tools (latest), cung cấp `cmdline-tools/latest/bin/avdmanager`.
-- Google Play ARM64 cho Android API 36, package `system-images;android-36;google_apis_playstore;arm64-v8a`.
+- Google Play ARM64 của phiên bản muốn dùng: Android 12/13/14/15/16 tương ứng API 31/33/34/35/36; package `system-images;android-<API>;google_apis_playstore;arm64-v8a`.
 
 Tạo máy ưu tiên `ANDROID_HUB_JAVA_HOME`, rồi biến tương thích cũ `P0_JAVA_HOME` trong môi trường khởi chạy Hub, sau đó Java home đã lưu trong Thiết lập SDK, cuối cùng JBR mặc định tại `/Applications/Android Studio.app/Contents/jbr/Contents/Home`. Mở máy đã tạo không cần avdmanager/Java.
 
@@ -33,6 +33,33 @@ Dữ liệu nằm trực tiếp tại `~/Library/Application Support/Android Hub
 
 Backup/restore cần máy đã dừng, SDK image tương thích và dung lượng cho bản sao. Backup nằm ở `backups/` trong thư mục dữ liệu; dữ liệu trước restore được giữ trong `.previous-*`. Chưa có giao diện dọn các bản dữ liệu cũ.
 
+## Chọn phiên bản và quản lý image
+
+Bấm **+**, chọn Android 12–16 (mặc định 16). Android 12/13/14/15/16 tương ứng
+API 31/33/34/35/36; không gồm 12L, preview, x86 hoặc Android 17+. Chỉ tải image
+cần dùng. Các máy chia sẻ công cụ/image nhưng có disk ghi riêng.
+
+Image sẵn sàng thì **Tạo máy**; nếu thiếu, chọn **Tải và tạo máy**, xem package,
+dung lượng và tự xác nhận điều khoản. Hủy giữ form/cache để thử lại, không tạo
+máy trùng. Cài image cần phần archive còn thiếu + 6 GiB giải nén + 12 GiB dành
+cho máy mới + 256 MiB dự phòng; Hub kiểm tra lại trước publish/tạo máy.
+
+Phiên bản, revision và fingerprint cố định theo máy, kể cả sau restart/restore.
+Muốn Android khác hãy tạo máy mới; không nâng/hạ OS tại chỗ. Registry cũ được
+sao lưu rồi migration metadata; image chưa xác định không bị tự gán Android 16.
+
+**Cài đặt Hub → Thiết lập SDK → Phiên bản Android** hiển thị image đã cài,
+dung lượng và tham chiếu. Chỉ gỡ image do Hub quản lý, đã xác minh và không còn
+máy, backup, archive hoặc thao tác dở tham chiếu. Máy đã dừng vẫn giữ tham chiếu.
+SDK ngoài chỉ đọc trong mục này. Gỡ image giữ archive tải về, không xóa disk máy
+hay công cụ SDK dùng chung. Nếu gián đoạn, cần chủ động tiếp tục gỡ; không tự xóa
+khi mở lại. Không chia sẻ SDK riêng do Hub quản lý giữa các data root độc lập hoặc
+sửa bằng công cụ khác.
+
+Hub không tự nâng engine/thay revision. Nếu SDK ngoài bị thay image, hãy phục hồi
+đúng image/revision đã gắn với máy; sửa trường version không phải cách phục hồi.
+Play Store mở được không bảo đảm mọi game/dịch vụ đều tương thích.
+
 ## Những phần còn đang kiểm chứng
 
 Luồng SDK có download/resume/recovery và xoay log engine đã triển khai. Cài SDK candidate trên máy sạch và benchmark hai game dài hạn còn thiếu. Backup/restore và wheel đã có smoke riêng; giới hạn cụ thể nằm trong story tương ứng, không suy ra gameplay hay hiệu năng từ unit tests.
@@ -45,7 +72,7 @@ Nếu registry đã ghi thành công nhưng refresh thất bại, thông báo s�
 
 ## Dung lượng tạo máy
 
-Hub yêu cầu ít nhất 12 GiB trống trên filesystem chứa AVD trước khi tạo máy mới. Đây là ngưỡng tối thiểu cho profile Pixel 5/API 36 hiện tại, không phải dung lượng cấp phát ngay hoặc cam kết đủ chỗ cho game về sau. Hub không xóa dữ liệu để lấy chỗ. Máy cũ không bị đổi kích thước disk bởi kiểm tra này.
+Hub yêu cầu ít nhất 12 GiB trống trên filesystem chứa AVD trước khi tạo máy mới. Đây là ngưỡng tối thiểu cho cấu hình máy hiện tại, không phải dung lượng cấp phát ngay hoặc cam kết đủ chỗ cho game về sau. Hub không xóa dữ liệu để lấy chỗ. Máy cũ không bị đổi kích thước disk bởi kiểm tra này.
 
 ## Log engine
 
@@ -53,7 +80,7 @@ Hub ghi stdout/stderr engine vào data-root/<id>.log. Trước lần khởi đ�
 
 ## Chọn SDK trong Hub
 
-Mở **Thiết lập SDK**, nhập đường dẫn tuyệt đối tới SDK đã cài, rồi bấm **Kiểm tra và lưu SDK** khi tất cả máy đã dừng. Hub kiểm tra Emulator, Platform-Tools, Command-line Tools, Google Play ARM64 API 36 và Java hiện có; không tải hay cài thành phần mới.
+Mở **Thiết lập SDK**, nhập đường dẫn tuyệt đối tới SDK đã cài, rồi bấm **Kiểm tra và lưu SDK** khi tất cả máy đã dừng. Hub kiểm tra Emulator, Platform-Tools, Command-line Tools, metadata image đã chọn và Java hiện có; không tải hay cài thành phần mới.
 
 Lựa chọn lưu trong data-root/hub-settings.json, áp dụng lần mở sau. ANDROID_SDK_ROOT được ưu tiên cao hơn; nếu biến này đang đặt, bỏ override và mở lại app trước khi lưu từ UI. Khi runtime còn AVD/archive, chỉ chọn lại đúng SDK hiện tại: migration sang SDK khác chưa được hỗ trợ. File cấu hình lỗi cần phục hồi đúng SDK cũ nếu đã có dữ liệu; runtime trống có thể lưu lại từ panel.
 
@@ -71,7 +98,7 @@ Cần dừng mọi máy và bỏ environment overrides trước khi chọn. Nế
 
 ## Xem bản kê SDK và điều khoản
 
-**Thiết lập SDK → Xem bản kê cài SDK** hiển thị bốn package pinned, tổng download và nguyên văn hai bộ điều khoản. Xem và tự chấp nhận từng bộ điều khoản, nhập Java home đã cài, rồi bấm **Tải và chuẩn bị SDK**. Checkbox không chọn sẵn và không lưu qua đóng/mở review. Chỉ mở màn hình không tải gì.
+**Thiết lập SDK → Xem bản kê cài SDK** hiển thị ba package công cụ dùng chung đã cố định, tổng download và nguyên văn hai bộ điều khoản. Xem và tự chấp nhận từng bộ điều khoản, nhập Java home đã cài, rồi bấm **Tải và chuẩn bị SDK**. Checkbox không chọn sẵn và không lưu qua đóng/mở review. Chỉ mở màn hình không tải gì.
 
 Trong lúc chuẩn bị SDK, panel hiển thị phase và số bytes, có nút **Hủy chuẩn bị SDK**. Hủy chờ thao tác hiện tại kết thúc; archive/partial được giữ. Có thể bấm bắt đầu lại để retry từ cache. Nếu cache checksum sai hoặc thiếu validator resume, chọn **Tải lại cache gói này** ở đúng package rồi xác nhận. Hub giữ cache cũ trong quarantine; bấm bắt đầu setup riêng để tải lại. Cache cũ vẫn chiếm dung lượng, không tự xóa.
 

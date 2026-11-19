@@ -4,7 +4,7 @@ use crate::{
     restore::{sync_dir, write_json},
     validate_registry,
 };
-use android_hub_domain::{CreateRequest, Profile};
+use android_hub_domain::{AndroidVersion, CreateRequest, ImageIdentity, Profile};
 use serde_json::{Value, json};
 use std::{
     fs,
@@ -19,11 +19,19 @@ use std::{
 #[derive(Clone, Debug)]
 pub struct CreationEnvironment {
     pub components: Result<(), String>,
+    /// None means absent; an invalid existing image is an error, never a download target.
+    pub image: Result<Option<[u32; 3]>, String>,
     pub available_bytes: Result<u64, String>,
     pub minimum_bytes: u64,
 }
 impl CreationEnvironment {
     pub fn ready(&self) -> bool {
+        self.prerequisites_ready() && self.image.as_ref().is_ok_and(Option::is_some)
+    }
+    pub fn downloadable(&self) -> bool {
+        self.prerequisites_ready() && matches!(self.image, Ok(None))
+    }
+    fn prerequisites_ready(&self) -> bool {
         self.components.is_ok()
             && self
                 .available_bytes
@@ -44,7 +52,7 @@ pub struct CreatedDevice {
 pub struct CreationFailure {
     pub message: String,
     /// Journal publication was attempted; recovery may register this device later.
-    pub retained_profile: Option<Profile>,
+    pub retained_profile: Option<Box<Profile>>,
     pub outcome_unknown: bool,
 }
 impl From<String> for CreationFailure {
@@ -86,8 +94,12 @@ fn identity(path: &Path, directory: bool) -> Result<Value, String> {
 impl Backend {
     /// No writes, SDK execution, license acceptance or installation.
     pub fn creation_environment(&self) -> CreationEnvironment {
+        self.creation_environment_for(AndroidVersion::default())
+    }
+    pub fn creation_environment_for(&self, version: AndroidVersion) -> CreationEnvironment {
         CreationEnvironment {
-            components: self.ensure_sdk(true),
+            components: self.ensure_creation_tools(),
+            image: self.available_image_revision(version),
             available_bytes: available_at_destination(&self.avds()),
             minimum_bytes: crate::storage::CREATE_MINIMUM,
         }
@@ -95,7 +107,7 @@ impl Backend {
 
     /// Compatibility for existing callers; desktop forms use `create_with`.
     pub fn create(&self) -> Result<crate::Snapshot, String> {
-        let outcome = self.create_requested(None).map_err(|e| e.message)?;
+        let outcome = self.create_requested(None, None).map_err(|e| e.message)?;
         if let Some(warning) = outcome.warning {
             return Err(format!(
                 "Đã tạo máy {} ({}). {warning}. Không tạo lại; làm mới hoặc mở lại Hub.",
@@ -109,12 +121,23 @@ impl Backend {
     }
 
     pub fn create_with(&self, request: CreateRequest) -> Result<CreatedDevice, CreationFailure> {
-        self.create_requested(Some(request))
+        self.create_requested(Some(request), None)
+    }
+
+    /// A download-and-create transaction must use exactly the image it just verified.
+    pub fn create_with_image(
+        &self,
+        request: CreateRequest,
+        expected: ImageIdentity,
+    ) -> Result<CreatedDevice, CreationFailure> {
+        expected.validate()?;
+        self.create_requested(Some(request), Some(expected))
     }
 
     fn create_requested(
         &self,
         request: Option<CreateRequest>,
+        expected: Option<ImageIdentity>,
     ) -> Result<CreatedDevice, CreationFailure> {
         if let Some(request) = &request {
             request.validate()?; // Invalid input must not create even a lock or runtime directory.
@@ -122,8 +145,16 @@ impl Backend {
         let _guard = self.lock()?;
         let mut all = self.read_profiles()?;
         let request = request.unwrap_or_else(|| CreateRequest::suggested(&all));
-        let p = allocate_profile(&request, &all)?;
-        self.ensure_sdk(true)?;
+        let mut p = allocate_profile(&request, &all)?;
+        self.ensure_creation_tools()?;
+        p.image = Some(self.installed_image_identity(request.android_version)?);
+        if expected.is_some() && p.image != expected {
+            return Err(
+                "Image đã thay đổi sau khi tải. Kiểm tra lại trước khi tạo máy."
+                    .to_owned()
+                    .into(),
+            );
+        }
         self.ensure_new_avd(&p)?;
         self.ensure_stopped(&p)?;
         // avdmanager otherwise falls back to ANDROID_USER_HOME/avd.
@@ -132,13 +163,15 @@ impl Backend {
         fs::create_dir_all(self.runtime().join("emulator-user")).map_err(err)?;
         let mut cmd = Command::new(self.sdk.join("cmdline-tools/latest/bin/avdmanager"));
         cmd.env("JAVA_HOME", self.java_home()?)
+            .env("ANDROID_HOME", &self.sdk)
+            .env("ANDROID_SDK_ROOT", &self.sdk)
             .env("ANDROID_AVD_HOME", self.avds())
             .env("ANDROID_USER_HOME", self.runtime().join("emulator-user"))
             .args(["create", "avd", "--name", &p.id, "--path"])
             .arg(self.data(&p))
             .args([
                 "--package",
-                "system-images;android-36;google_apis_playstore;arm64-v8a",
+                &request.android_version.package(),
                 "--device",
                 "pixel_5",
             ]);
@@ -146,12 +179,13 @@ impl Backend {
             .begin_creation(&p, &all)
             .map_err(|error| CreationFailure {
                 message: self.creation_failure(&p, &error),
-                retained_profile: Some(p.clone()),
+                retained_profile: Some(Box::new(p.clone())),
                 outcome_unknown: false,
             })?;
         let prepare = (|| -> Result<(), String> {
             self.command(cmd, 120)?;
             self.configure(&p)?;
+            self.verify_profile_image(&p)?;
             self.prepare_creation(&p, &mut journal)?;
             all.push(p.clone());
             self.write_profiles(&all)
@@ -159,7 +193,7 @@ impl Backend {
         if let Err(error) = prepare {
             return Err(CreationFailure {
                 message: self.creation_failure(&p, &error),
-                retained_profile: Some(p),
+                retained_profile: Some(Box::new(p)),
                 outcome_unknown: false,
             });
         }
@@ -475,6 +509,52 @@ mod tests {
     }
 
     #[test]
+    fn creation_rechecks_downloaded_identity_before_any_avd_or_journal() {
+        use std::os::unix::fs::PermissionsExt;
+        let fixture = crate::images::tests::Fixture::new();
+        let b = &fixture.0;
+        let version = AndroidVersion::Android13;
+        fixture.image(version);
+        let java = b.root.join("java");
+        fs::create_dir_all(java.join("bin")).unwrap();
+        fs::write(java.join("bin/java"), b"fixture").unwrap();
+        fs::set_permissions(java.join("bin/java"), fs::Permissions::from_mode(0o700)).unwrap();
+        fs::write(
+            b.root.join("hub-settings.json"),
+            serde_json::to_vec(&json!({"schema":1,"sdk":b.sdk,"java_home":java})).unwrap(),
+        )
+        .unwrap();
+        let expected = b.installed_image_identity(version).unwrap();
+        let mut request = CreateRequest::suggested(&[]);
+        request.android_version = version;
+        assert!(b.creation_environment_for(version).ready());
+        assert!(
+            b.creation_environment_for(AndroidVersion::Android12)
+                .downloadable()
+        );
+        fs::write(
+            b.sdk.join(version.directory()).join("system.img"),
+            b"changed image",
+        )
+        .unwrap();
+        let result = b.create_with_image(request, expected).unwrap_err();
+        assert!(
+            result.message.contains("Image đã thay đổi"),
+            "{}",
+            result.message
+        );
+        assert!(result.retained_profile.is_none() && !result.outcome_unknown);
+        assert!(b.read_profiles().unwrap().is_empty() && !b.avds().exists());
+        assert!(!fs::read_dir(b.runtime()).unwrap().any(|entry| {
+            entry
+                .unwrap()
+                .file_name()
+                .to_string_lossy()
+                .starts_with("create-pending-")
+        }));
+    }
+
+    #[test]
     fn registered_result_survives_receipt_and_snapshot_failures() {
         let (b, p) = fixture();
         let mut journal = b.begin_creation(&p, &[]).unwrap();
@@ -491,9 +571,12 @@ mod tests {
         assert!(outcome.warning.unwrap().contains("Journal"));
         assert!(b.creation_path(&p).is_file());
         assert!(b.data(&p).join("config.ini").is_file());
-        let committed: Vec<Profile> =
+        let committed: Value =
             serde_json::from_slice(&fs::read(b.root.join("committed-registry.json")).unwrap())
                 .unwrap();
+        assert_eq!(committed["schema"], 1);
+        let committed: Vec<Profile> =
+            serde_json::from_value(committed["profiles"].clone()).unwrap();
         assert_eq!(committed, vec![p]);
         fs::remove_dir_all(b.root).unwrap();
     }

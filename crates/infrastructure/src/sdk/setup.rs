@@ -5,7 +5,6 @@ use std::{
     os::unix::fs::PermissionsExt,
     path::{Path, PathBuf},
 };
-const IMAGE: &str = "system-images/android-36/google_apis_playstore/arm64-v8a";
 
 fn usable(path: &Path, executable: bool) -> bool {
     fs::metadata(path).is_ok_and(|m| {
@@ -30,9 +29,6 @@ fn missing(sdk: &Path, java: Option<&Path>) -> Vec<String> {
         if !usable(&sdk.join("emulator/lib/hardware-properties.ini"), false) {
             result.push("Android Emulator: thiếu lib/hardware-properties.ini".into());
         }
-        if let Err(error) = super::package::require_userdata_source(&sdk.join(IMAGE)) {
-            result.push(format!("Google Play ARM64 API 36: {error}"));
-        }
         for (path, label) in [
             (
                 sdk.join("cmdline-tools/latest/bin/avdmanager"),
@@ -46,22 +42,6 @@ fn missing(sdk: &Path, java: Option<&Path>) -> Vec<String> {
             if !usable(&path, true) {
                 result.push(format!(
                     "{label}: {} (thiếu hoặc không thực thi được)",
-                    path.display()
-                ));
-            }
-        }
-        for name in [
-            "source.properties",
-            "system.img",
-            "vendor.img",
-            "ramdisk.img",
-            "kernel-ranchu",
-            "encryptionkey.img",
-        ] {
-            let path = sdk.join(IMAGE).join(name);
-            if !usable(&path, false) {
-                result.push(format!(
-                    "Google Play ARM64 API 36: {} (thiếu hoặc rỗng)",
                     path.display()
                 ));
             }
@@ -291,6 +271,9 @@ impl Backend {
         self.write_sdk_settings(&sdk, Some(&probe.java_home))?;
         Ok((sdk, probe.java_home))
     }
+    pub(crate) fn ensure_creation_tools(&self) -> Result<(), String> {
+        self.ensure_sdk(true)
+    }
     pub(crate) fn ensure_sdk(&self, creating: bool) -> Result<(), String> {
         if std::env::var_os("ANDROID_SDK_ROOT").is_none()
             && let Some(saved) = self.saved_sdk()?
@@ -505,7 +488,7 @@ mod tests {
         ));
         let java = root.join("jbr");
         assert_eq!(missing(&root, None).len(), 2);
-        assert_eq!(missing(&root, Some(&java)).len(), 12);
+        assert_eq!(missing(&root, Some(&java)).len(), 5);
         for relative in [
             "emulator/emulator",
             "emulator/lib/hardware-properties.ini",
@@ -519,31 +502,15 @@ mod tests {
             fs::set_permissions(path, fs::Permissions::from_mode(0o700)).unwrap();
         }
         assert!(missing(&root, None).is_empty());
-        assert_eq!(missing(&root, Some(&java)).len(), 7);
-        for name in [
-            "source.properties",
-            "system.img",
-            "vendor.img",
-            "ramdisk.img",
-            "kernel-ranchu",
-            "encryptionkey.img",
-            "data/empty_data_disk",
-        ] {
-            let path = root.join(IMAGE).join(name);
-            fs::create_dir_all(path.parent().unwrap()).unwrap();
-            fs::write(path, b"fixture only").unwrap();
-        }
         assert!(missing(&root, Some(&java)).is_empty());
         fs::set_permissions(
             root.join("platform-tools/adb"),
             fs::Permissions::from_mode(0o600),
         )
         .unwrap();
-        fs::write(root.join(IMAGE).join("system.img"), b"").unwrap();
         let issues = missing(&root, Some(&java));
-        assert_eq!(issues.len(), 2);
+        assert_eq!(issues.len(), 1);
         assert!(issues.iter().any(|v| v.contains("Platform-Tools")));
-        assert!(issues.iter().any(|v| v.contains("system.img")));
         fs::remove_dir_all(root).unwrap();
     }
     #[test]

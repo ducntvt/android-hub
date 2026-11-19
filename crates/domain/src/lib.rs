@@ -1,4 +1,6 @@
 use serde::{Deserialize, Serialize};
+mod android;
+pub use android::{AndroidVersion, ImageIdentity};
 mod creation;
 pub use creation::CreateRequest;
 
@@ -15,9 +17,15 @@ pub struct Profile {
     pub width: u32,
     pub height: u32,
     pub fps: u32,
+    /// None means an unresolved legacy binding, never an implicit Android 16.
+    #[serde(default)]
+    pub image: Option<ImageIdentity>,
 }
 impl Profile {
     pub fn validate(&self) -> Result<(), String> {
+        if let Some(image) = &self.image {
+            image.validate()?;
+        }
         if !self.id.starts_with("p0-google-") && !self.id.starts_with("hub-") {
             return Err("Tên kỹ thuật không thuộc Hub".into());
         }
@@ -68,6 +76,7 @@ impl Profile {
             width: 720,
             height: 1280,
             fps: DEFAULT_FPS,
+            image: None,
         }
     }
 }

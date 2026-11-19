@@ -69,3 +69,26 @@ jobs:
             target
             tools/metrics/target
           key: ${{ steps.cache.outputs.cache-primary-key }}
+
+  android-helpers:
+    name: Android helper reproducibility
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Rebuild API 31-compatible helpers using preinstalled tools
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: |
+          export ANDROID_HUB_JAVA_HOME="$JAVA_HOME_25_X64"
+          test -x "$ANDROID_SDK_ROOT/build-tools/35.0.1/d8"
+          test -f "$ANDROID_SDK_ROOT/platforms/android-35/android.jar"
+          bash scripts/build-scroll-bridge.sh
+          bash scripts/build-connectivity-probe.sh
+          git diff --exit-code -- crates/infrastructure/android/scroll-bridge.dex crates/infrastructure/android/connectivity-probe.dex
+          bash scripts/build-input-qa-apk.sh "$RUNNER_TEMP/hub-input-qa"
+      - name: Remove disposable fixture
+        if: always()
+        run: rm -rf "$RUNNER_TEMP/hub-input-qa"

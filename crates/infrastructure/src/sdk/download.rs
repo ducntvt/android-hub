@@ -67,7 +67,7 @@ fn hex(value: &str, length: usize) -> bool {
             .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b))
 }
 impl SdkArchive {
-    pub(super) fn validate(&self, accepted_license_sha256: &str) -> Result<(), String> {
+    pub(crate) fn validate(&self, accepted_license_sha256: &str) -> Result<(), String> {
         let relative = self
             .url
             .strip_prefix("https://dl.google.com/android/repository/")
@@ -219,8 +219,7 @@ impl Backend {
             .mode(0o600)
             .open(lock_path)
             .map_err(err)?;
-        let lock =
-            super::cache_lock::SdkCacheLock::acquire(lock, "Một lượt tải SDK khác đang chạy")?;
+        let lock = crate::file_lock::FileLock::acquire(lock, "Một lượt tải SDK khác đang chạy")?;
         self.recover_sdk_cache_reset_locked(&directory)?;
         let key = format!("{}-{}", archive.checksum_algorithm, archive.checksum);
         let complete = directory.join(format!("{key}.zip"));
@@ -683,6 +682,82 @@ mod tests {
         )
         .unwrap();
         assert_eq!(strong_etag(&path).unwrap(), "\"strong\"");
+        fs::remove_dir_all(b.root).unwrap();
+    }
+    #[test]
+    #[ignore = "requires localhost HTTP fixture for interrupted transfer and Range retry"]
+    fn interrupted_transfer_resumes_only_the_matching_archive() {
+        use std::{
+            io::{Read, Write},
+            net::TcpListener,
+        };
+        let b = fixture();
+        let a = archive();
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        listener.set_nonblocking(true).unwrap();
+        let url = format!("http://{}/fixture.zip", listener.local_addr().unwrap());
+        let server = std::thread::spawn(move || {
+            for attempt in 0..2 {
+                let deadline = Instant::now() + Duration::from_secs(10);
+                let mut stream = loop {
+                    match listener.accept() {
+                        Ok((stream, _)) => break stream,
+                        Err(e)
+                            if e.kind() == std::io::ErrorKind::WouldBlock
+                                && Instant::now() < deadline =>
+                        {
+                            std::thread::sleep(Duration::from_millis(10))
+                        }
+                        Err(e) => panic!("fixture accept: {e}"),
+                    }
+                };
+                stream.set_nonblocking(false).unwrap();
+                stream
+                    .set_read_timeout(Some(Duration::from_secs(3)))
+                    .unwrap();
+                let mut request = Vec::new();
+                let mut buffer = [0; 1024];
+                while !request.windows(4).any(|w| w == b"\r\n\r\n") {
+                    let n = stream.read(&mut buffer).unwrap();
+                    assert!(n > 0 && request.len() < 8192);
+                    request.extend_from_slice(&buffer[..n]);
+                }
+                if attempt == 0 {
+                    stream.write_all(b"HTTP/1.1 200 OK\r\nContent-Length: 6\r\nETag: \"v1\"\r\nConnection: close\r\n\r\nabc").unwrap();
+                    // Close with half the declared payload, simulating a broken connection.
+                } else {
+                    let request = String::from_utf8(request).unwrap().to_ascii_lowercase();
+                    assert!(
+                        request.contains("range: bytes=3-") && request.contains("if-range: \"v1\"")
+                    );
+                    stream.write_all(b"HTTP/1.1 206 Partial Content\r\nContent-Length: 3\r\nContent-Range: bytes 3-5/6\r\nETag: \"v1\"\r\nConnection: close\r\n\r\ndef").unwrap();
+                }
+            }
+        });
+        let first = b.download_archive_controlled(
+            &a,
+            &a.license_sha256,
+            Some(&url),
+            &SdkDownloadControl::default(),
+        );
+        assert!(first.unwrap_err().contains("chưa hoàn tất"));
+        let cache = b.runtime().join("sdk-downloads");
+        assert!(!cache.join(format!("sha256-{}.zip", a.checksum)).exists());
+        assert_eq!(
+            fs::read(cache.join(format!("sha256-{}.part", a.checksum))).unwrap(),
+            b"abc"
+        );
+        let complete = b
+            .download_archive_controlled(
+                &a,
+                &a.license_sha256,
+                Some(&url),
+                &SdkDownloadControl::default(),
+            )
+            .unwrap();
+        server.join().unwrap();
+        assert_eq!(fs::read(complete).unwrap(), b"abcdef");
+        assert!(!b.sdk.exists());
         fs::remove_dir_all(b.root).unwrap();
     }
     #[test]

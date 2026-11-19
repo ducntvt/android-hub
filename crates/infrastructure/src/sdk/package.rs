@@ -14,7 +14,7 @@ pub enum SdkPackage {
     CommandLineTools,
     PlatformTools,
     Emulator,
-    PlayImage36,
+    PlayImage(android_hub_domain::AndroidVersion),
 }
 impl SdkPackage {
     fn archive_root(self) -> &'static str {
@@ -22,7 +22,7 @@ impl SdkPackage {
             Self::CommandLineTools => "cmdline-tools",
             Self::PlatformTools => "platform-tools",
             Self::Emulator => "emulator",
-            Self::PlayImage36 => "arm64-v8a",
+            Self::PlayImage(_) => "arm64-v8a",
         }
     }
     pub fn destination(self) -> &'static str {
@@ -30,7 +30,7 @@ impl SdkPackage {
             Self::CommandLineTools => "cmdline-tools/latest",
             Self::PlatformTools => "platform-tools",
             Self::Emulator => "emulator",
-            Self::PlayImage36 => "system-images/android-36/google_apis_playstore/arm64-v8a",
+            Self::PlayImage(version) => version.directory(),
         }
     }
 }
@@ -51,9 +51,12 @@ impl VerifiedSdkPackage {
     pub fn revision(&self) -> [u32; 3] {
         self.revision
     }
+    pub(crate) fn minimum_emulator(&self) -> Option<[u32; 3]> {
+        self.minimum_emulator
+    }
 }
 
-pub(super) fn revision(value: &str) -> Result<[u32; 3], String> {
+pub(crate) fn revision(value: &str) -> Result<[u32; 3], String> {
     let mut result = [0; 3];
     let parts: Vec<_> = value.split('.').collect();
     if parts.is_empty() || parts.len() > 3 {
@@ -67,7 +70,7 @@ pub(super) fn revision(value: &str) -> Result<[u32; 3], String> {
     }
     Ok(result)
 }
-fn properties(path: &Path) -> Result<BTreeMap<String, String>, String> {
+pub(crate) fn properties(path: &Path) -> Result<BTreeMap<String, String>, String> {
     regular(path, false)?;
     let mut text = String::new();
     fs::File::open(path)
@@ -165,7 +168,7 @@ pub fn verify_sdk_package(
     }
     verify_sdk_package_root(&stage.join(kind.archive_root()), kind, expected_revision)
 }
-pub(super) fn verify_sdk_package_root(
+pub(crate) fn verify_sdk_package_root(
     root: &Path,
     kind: SdkPackage,
     expected_revision: &str,
@@ -199,9 +202,10 @@ pub(super) fn verify_sdk_package_root(
                 required(root, name, true)?;
             }
         }
-        SdkPackage::PlayImage36 => {
+        SdkPackage::PlayImage(version) => {
+            let api = version.api().to_string();
             for (key, value) in [
-                ("AndroidVersion.ApiLevel", "36"),
+                ("AndroidVersion.ApiLevel", api.as_str()),
                 ("SystemImage.Abi", "arm64-v8a"),
                 ("SystemImage.TagId", "google_apis_playstore"),
                 ("Addon.VendorId", "google"),
@@ -242,14 +246,26 @@ pub fn verify_sdk_package_set(packages: &[VerifiedSdkPackage]) -> Result<(), Str
             return Err("SDK có package trùng".into());
         }
     }
-    if kinds.len() != 4 {
-        return Err("SDK chưa có đủ bốn package".into());
-    }
-    let image = kinds[&SdkPackage::PlayImage36];
-    if kinds[&SdkPackage::Emulator].revision
-        < image.minimum_emulator.ok_or("Thiếu image dependency")?
+    if kinds.len() < 3
+        || [
+            SdkPackage::CommandLineTools,
+            SdkPackage::PlatformTools,
+            SdkPackage::Emulator,
+        ]
+        .iter()
+        .any(|kind| !kinds.contains_key(kind))
     {
-        return Err("Emulator thấp hơn phiên bản image yêu cầu".into());
+        return Err("SDK thiếu công cụ chung".into());
+    }
+    for image in packages
+        .iter()
+        .filter(|p| matches!(p.kind, SdkPackage::PlayImage(_)))
+    {
+        if kinds[&SdkPackage::Emulator].revision
+            < image.minimum_emulator.ok_or("Thiếu image dependency")?
+        {
+            return Err("Emulator thấp hơn phiên bản image yêu cầu".into());
+        }
     }
     Ok(())
 }
@@ -284,7 +300,7 @@ mod tests {
                 SdkPackage::CommandLineTools => "Pkg.Path=cmdline-tools;23.0\n",
                 SdkPackage::PlatformTools => "",
                 SdkPackage::Emulator => "Pkg.Path=emulator\n",
-                SdkPackage::PlayImage36 => {
+                SdkPackage::PlayImage(_) => {
                     "AndroidVersion.ApiLevel=36\nSystemImage.Abi=arm64-v8a\nSystemImage.TagId=google_apis_playstore\nAddon.VendorId=google\nPkg.Dependencies=emulator#35.4.9\n"
                 }
             };
@@ -300,7 +316,7 @@ mod tests {
                 }
                 SdkPackage::PlatformTools => &["adb"],
                 SdkPackage::Emulator => &["emulator", "qemu/darwin-aarch64/qemu-system-aarch64"],
-                SdkPackage::PlayImage36 => &[
+                SdkPackage::PlayImage(_) => &[
                     "system.img",
                     "vendor.img",
                     "ramdisk.img",
@@ -314,7 +330,7 @@ mod tests {
             if kind == SdkPackage::Emulator {
                 self.file(kind, "lib/hardware-properties.ini", b"fixture", 0o600);
             }
-            if kind == SdkPackage::PlayImage36 {
+            if kind == SdkPackage::PlayImage(android_hub_domain::AndroidVersion::Android16) {
                 self.file(kind, "data/empty_data_disk", b"fixture", 0o600);
             }
             if kind == SdkPackage::CommandLineTools {
@@ -336,7 +352,10 @@ mod tests {
         assert!(
             verify_sdk_package(&fixture.stage(emulator.kind), emulator.kind, "37.2.13").is_err()
         );
-        let image = fixture.package(SdkPackage::PlayImage36, "7");
+        let image = fixture.package(
+            SdkPackage::PlayImage(android_hub_domain::AndroidVersion::Android16),
+            "7",
+        );
         let marker = image.root.join("data/empty_data_disk");
         fs::remove_file(&marker).unwrap();
         assert!(verify_sdk_package(&fixture.stage(image.kind), image.kind, "7").is_err());
@@ -360,7 +379,10 @@ mod tests {
             fixture.package(SdkPackage::CommandLineTools, "23.0"),
             fixture.package(SdkPackage::PlatformTools, "37.0.1"),
             fixture.package(SdkPackage::Emulator, "35.4.8"),
-            fixture.package(SdkPackage::PlayImage36, "7"),
+            fixture.package(
+                SdkPackage::PlayImage(android_hub_domain::AndroidVersion::Android16),
+                "7",
+            ),
         ];
         assert!(
             verify_sdk_package_set(&packages)
@@ -369,7 +391,7 @@ mod tests {
         );
         packages[2] = fixture.package(SdkPackage::Emulator, "35.4.9");
         verify_sdk_package_set(&packages).unwrap();
-        assert!(verify_sdk_package_set(&packages[..3]).is_err());
+        verify_sdk_package_set(&packages[..3]).unwrap();
         packages.push(fixture.package(SdkPackage::PlatformTools, "37.0.1"));
         assert!(
             verify_sdk_package_set(&packages)
@@ -380,7 +402,7 @@ mod tests {
     #[test]
     fn rejects_wrong_revision_image_metadata_and_duplicate_properties() {
         let fixture = Fixture::new();
-        let kind = SdkPackage::PlayImage36;
+        let kind = SdkPackage::PlayImage(android_hub_domain::AndroidVersion::Android16);
         let package = fixture.package(kind, "7");
         assert!(verify_sdk_package(&fixture.stage(kind), kind, "8").is_err());
         let path = package.root.join("source.properties");
