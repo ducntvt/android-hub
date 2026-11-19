@@ -22,6 +22,12 @@ impl std::fmt::Display for DeviceChoice {
 }
 
 pub(super) fn view(hub: &Hub) -> Element<'_, Message> {
+    if matches!(
+        hub.selected,
+        Some(android_hub_domain::DeviceId::Physical(_))
+    ) {
+        return super::physical::workspace(hub);
+    }
     responsive(move |size| {
         let lang = hub.language;
         if hub.state.as_ref().is_none_or(|s| s.profiles.is_empty()) {
@@ -54,7 +60,7 @@ pub(super) fn view(hub: &Hub) -> Element<'_, Message> {
             cards = cards.push(card(
                 hub,
                 hub.slots.active,
-                hub.selected.as_deref(),
+                hub.selected_avd_id(),
                 slot_size,
             ));
         }
@@ -214,17 +220,20 @@ fn card<'a>(hub: &'a Hub, slot: usize, id: Option<&str>, size: Size) -> Element<
             container(
                 column![
                     text("ANDROID").size(SECTION).style(secondary_text),
-                    tool(
-                        if hub.busy {
+                    button(
+                        text(if hub.busy {
                             lang.tr("Đang xử lý…")
                         } else {
                             lang.tr("Khởi động")
-                        },
-                        Message::StartDevice(p.id.clone())
+                        })
+                        .size(13)
                     )
+                    .padding([8, 12])
                     .style(primary)
                     .on_press_maybe(
-                        (available && !running).then(|| Message::StartDevice(p.id.clone()))
+                        (available && !running)
+                            .then(|| Message::for_avd(&p.id, Message::StartDevice))
+                            .flatten()
                     )
                 ]
                 .spacing(16)

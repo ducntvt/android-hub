@@ -28,7 +28,7 @@ fn delete_menu_targets_its_row_and_cancellation_ignores_late_preparation() {
     let target = hub.state.as_ref().unwrap().profiles[1].id.clone();
     let _ = hub.update(Message::ToggleDeviceMenu(target.clone()));
     assert_eq!(hub.device_menu.as_ref(), Some(&target));
-    let _ = hub.update(Message::AskDelete(target.clone()));
+    let _ = hub.update(Message::for_avd(&target, Message::AskDelete).unwrap());
     assert_eq!(hub.pending_delete.as_ref().unwrap().id, target);
     assert_eq!(hub.selected, original);
     assert!(hub.device_menu.is_none());
@@ -196,7 +196,7 @@ fn modal_releases_inputs_blocks_background_commands_and_defaults_to_cancel() {
     ));
     hub.input_focus = Some("hub-test".into());
     let epoch = hub.input_epoch;
-    let _ = hub.update(Message::AskDelete("hub-test".into()));
+    let _ = hub.update(Message::for_avd("hub-test", Message::AskDelete).unwrap());
     let _ = hub.update(Message::DeletePrepared(
         hub.delete_epoch,
         Err("fixture has no disk data".into()),
@@ -205,8 +205,8 @@ fn modal_releases_inputs_blocks_background_commands_and_defaults_to_cancel() {
     assert!(hub.input_focus.is_none());
     assert!(hub.input_epoch > epoch);
     for message in [
-        Message::StartDevice("second".into()),
-        Message::Select("second".into()),
+        Message::for_avd("hub-second", Message::StartDevice).unwrap(),
+        Message::for_avd("hub-second", Message::Select).unwrap(),
         Message::Search("changed".into()),
         Message::Name("changed".into()),
         Message::Create,
@@ -214,7 +214,7 @@ fn modal_releases_inputs_blocks_background_commands_and_defaults_to_cancel() {
         Message::SendClipboard("hub-test".into()),
         Message::ClipboardRead("hub-test".into(), 42, epoch, 1, Some("secret".into())),
         Message::DeviceInput(
-            "second".into(),
+            "hub-second".into(),
             hub.input_epoch,
             Some(1),
             Input::Key("Enter".into()),
@@ -223,7 +223,7 @@ fn modal_releases_inputs_blocks_background_commands_and_defaults_to_cancel() {
         let _ = hub.update(message);
         assert!(!hub.busy);
         assert!(hub.modal_open());
-        assert_eq!(hub.selected.as_deref(), Some("hub-test"));
+        assert_eq!(hub.selected_avd_id(), Some("hub-test"));
         assert_eq!(hub.draft.as_ref().unwrap().name, "A");
         assert!(hub.search.is_empty());
         assert!(hub.input_focus.is_none());
@@ -231,7 +231,7 @@ fn modal_releases_inputs_blocks_background_commands_and_defaults_to_cancel() {
     }
     let _ = hub.update(Message::ModalKey(Named::Enter));
     assert!(!hub.busy && !hub.modal_open()); // Enter initially selects Cancel.
-    let _ = hub.update(Message::AskDelete("hub-test".into()));
+    let _ = hub.update(Message::for_avd("hub-test", Message::AskDelete).unwrap());
     let _ = hub.update(Message::DeletePrepared(
         hub.delete_epoch,
         Err("fixture has no disk data".into()),
@@ -304,10 +304,10 @@ fn three_stopped_devices() -> Snapshot {
     let mut state = stopped_snapshot("A");
     state
         .profiles
-        .push(Profile::standard("second".into(), "B".into(), 5586));
+        .push(Profile::standard("hub-second".into(), "B".into(), 5586));
     state
         .profiles
-        .push(Profile::standard("third".into(), "C".into(), 5588));
+        .push(Profile::standard("hub-third".into(), "C".into(), 5588));
     state
 }
 
@@ -319,9 +319,9 @@ fn explicit_pair_keeps_stopped_slots_and_survives_poll_and_single_mode() {
         Work::Initialize,
     ));
     let _ = hub.update(Message::SetSplit(true));
-    let _ = hub.update(Message::PickSlot(0, "third".into()));
-    let _ = hub.update(Message::PickSlot(1, "second".into()));
-    let pair = [Some("third".into()), Some("second".into())];
+    let _ = hub.update(Message::PickSlot(0, "hub-third".into()));
+    let _ = hub.update(Message::PickSlot(1, "hub-second".into()));
+    let pair = [Some("hub-third".into()), Some("hub-second".into())];
     assert_eq!(hub.slots.ids, pair);
     assert!(hub.displays.is_empty()); // selecting a stopped slot never boots it
     let _ = hub.update(Message::Loaded(
@@ -331,15 +331,18 @@ fn explicit_pair_keeps_stopped_slots_and_survives_poll_and_single_mode() {
     assert_eq!(hub.slots.ids, pair);
     let _ = hub.update(Message::ToggleSidebar);
     let _ = hub.update(Message::SetSplit(false));
-    assert_eq!(hub.selected.as_deref(), Some("second"));
+    assert_eq!(hub.selected_avd_id(), Some("hub-second"));
     let _ = hub.update(Message::SetSplit(true));
     assert_eq!(hub.slots.ids, pair);
-    let _ = hub.update(Message::PickSlot(0, "second".into()));
-    assert_eq!(hub.slots.ids, [Some("second".into()), Some("third".into())]);
+    let _ = hub.update(Message::PickSlot(0, "hub-second".into()));
+    assert_eq!(
+        hub.slots.ids,
+        [Some("hub-second".into()), Some("hub-third".into())]
+    );
     let mut state = three_stopped_devices();
-    state.profiles.retain(|p| p.id != "third");
+    state.profiles.retain(|p| p.id != "hub-third");
     let _ = hub.update(Message::Loaded(Ok(state), Work::Poll(hub.command_epoch)));
-    assert_eq!(hub.slots.ids, [Some("second".into()), None]);
+    assert_eq!(hub.slots.ids, [Some("hub-second".into()), None]);
 }
 
 #[test]
@@ -349,9 +352,9 @@ fn canvas_selection_keeps_gesture_epoch_and_cancels_old_action_target() {
         Ok(three_stopped_devices()),
         Work::Initialize,
     ));
-    let _ = hub.update(Message::PickSlot(1, "second".into()));
+    let _ = hub.update(Message::PickSlot(1, "hub-second".into()));
     hub.pending_stop = Some(PendingStop {
-        id: "second".into(),
+        id: "hub-second".into(),
         name: "B".into(),
         pid: 42,
     });
@@ -361,7 +364,7 @@ fn canvas_selection_keeps_gesture_epoch_and_cancels_old_action_target() {
     hub.activate_visible("hub-test".into());
     assert_eq!(hub.input_epoch, epoch);
     assert_eq!(hub.slots.active, 0);
-    assert_eq!(hub.selected.as_deref(), Some("hub-test"));
+    assert_eq!(hub.selected_avd_id(), Some("hub-test"));
     assert_eq!(hub.draft.as_ref().unwrap().id, "hub-test");
     assert!(hub.catalog_epoch > catalog_epoch);
     assert!(hub.pending_stop.is_none() && hub.pending_delete.is_none());
@@ -376,19 +379,19 @@ fn workspace_navigation_and_start_preserve_unsaved_settings() {
     ));
     let _ = hub.update(Message::Ram(4096));
     for message in [
-        Message::Select("hub-test".into()),
+        Message::for_avd("hub-test", Message::Select).unwrap(),
         Message::PickSlot(1, "hub-test".into()),
-        Message::PickSlot(0, "second".into()),
-        Message::StartDevice("hub-test".into()),
+        Message::PickSlot(0, "hub-second".into()),
+        Message::for_avd("hub-test", Message::StartDevice).unwrap(),
     ] {
         let _ = hub.update(message);
         assert_eq!(hub.draft.as_ref().unwrap().ram_mb, 4096);
-        assert_eq!(hub.selected.as_deref(), Some("hub-test"));
+        assert_eq!(hub.selected_avd_id(), Some("hub-test"));
         assert!(!hub.busy);
     }
     let notice = hub.notice.clone();
     let _ = hub.update(Message::DeviceInput(
-        "second".into(),
+        "hub-second".into(),
         hub.input_epoch.wrapping_sub(1),
         Some(0),
         Input::Mouse {
@@ -418,7 +421,7 @@ fn quit_waits_for_inflight_work_and_blocks_new_commands() {
     let (mut hub, _) = Hub::new();
     let _ = hub.update(Message::RequestQuit);
     assert!(hub.quit_requested && hub.busy && !hub.quitting);
-    let _ = hub.update(Message::StartDevice("hub-test".into()));
+    let _ = hub.update(Message::for_avd("hub-test", Message::StartDevice).unwrap());
     assert!(!hub.quitting);
     let _ = hub.update(Message::Loaded(Ok(stopped_snapshot("A")), Work::Initialize));
     assert!(hub.quitting && !hub.busy);
@@ -792,7 +795,7 @@ fn stale_or_dismissed_history_cannot_replace_newer_results() {
 fn deletion_confirmation_rejects_changed_saved_profile() {
     let (mut hub, _) = Hub::new();
     let _ = hub.update(Message::Loaded(Ok(stopped_snapshot("A")), Work::Initialize));
-    let _ = hub.update(Message::AskDelete("hub-test".into()));
+    let _ = hub.update(Message::for_avd("hub-test", Message::AskDelete).unwrap());
     let _ = hub.update(Message::DeletePrepared(
         hub.delete_epoch,
         Err("fixture has no disk data".into()),
@@ -811,7 +814,7 @@ fn deletion_confirmation_rejects_changed_saved_profile() {
             .title
             .contains("Máy đã thay đổi")
     );
-    let _ = hub.update(Message::AskDelete("hub-test".into()));
+    let _ = hub.update(Message::for_avd("hub-test", Message::AskDelete).unwrap());
     let _ = hub.update(Message::DeletePrepared(
         hub.delete_epoch,
         Err("fixture has no disk data".into()),
@@ -866,13 +869,13 @@ fn polls_and_save_keep_nonfirst_selection_and_unsaved_orientation() {
     let snapshot = || Snapshot {
         android_versions: BTreeMap::new(),
         profiles: vec![
-            Profile::standard("first".into(), "First".into(), 5584),
-            Profile::standard("third".into(), "Third".into(), 5588),
+            Profile::standard("hub-first".into(), "First".into(), 5584),
+            Profile::standard("hub-third".into(), "Third".into(), 5588),
         ],
         runtime: BTreeMap::new(),
     };
     let _ = hub.update(Message::Loaded(Ok(snapshot()), Work::Initialize));
-    let _ = hub.update(Message::Select("third".into()));
+    let _ = hub.update(Message::for_avd("hub-third", Message::Select).unwrap());
     let _ = hub.update(Message::Orientation(Orientation::Landscape));
     let _ = hub.update(Message::Resolution(Resolution::Small));
     for _ in 0..3 {
@@ -880,7 +883,7 @@ fn polls_and_save_keep_nonfirst_selection_and_unsaved_orientation() {
             Ok(snapshot()),
             Work::Poll(hub.command_epoch),
         ));
-        assert_eq!(hub.selected.as_deref(), Some("third"));
+        assert_eq!(hub.selected_avd_id(), Some("hub-third"));
         let draft = hub.draft.as_ref().unwrap();
         assert_eq!((draft.width, draft.height), (854, 480));
     }
@@ -891,7 +894,7 @@ fn polls_and_save_keep_nonfirst_selection_and_unsaved_orientation() {
         Ok(refreshed),
         Work::Save(saved, hub.draft_base.clone().unwrap()),
     ));
-    assert_eq!(hub.selected.as_deref(), Some("third"));
+    assert_eq!(hub.selected_avd_id(), Some("hub-third"));
     assert_eq!(hub.draft.as_ref().unwrap().width, 854);
 }
 
@@ -1100,7 +1103,7 @@ fn appearance_and_preferences_keep_guest_identity_and_protect_unsaved_settings()
 fn tab_traversal_releases_android_focus_and_modal_blocks_background_traversal() {
     let (mut hub, _) = Hub::new();
     let _ = hub.update(Message::Loaded(Ok(stopped_snapshot("A")), Work::Initialize));
-    hub.input_focus = hub.selected.clone();
+    hub.input_focus = hub.selected_avd_id().map(str::to_owned);
     let epoch = hub.input_epoch;
     let _ = hub.update(Message::FocusNext(false));
     assert!(hub.input_focus.is_none());
@@ -1115,7 +1118,7 @@ fn tab_traversal_releases_android_focus_and_modal_blocks_background_traversal() 
 fn data_catalog_failures_are_not_successful_empty_lists_and_retries_clear_errors() {
     let (mut hub, _) = Hub::new();
     let _ = hub.update(Message::Loaded(Ok(stopped_snapshot("A")), Work::Initialize));
-    let id = hub.selected.clone().unwrap();
+    let id = hub.selected_avd_id().unwrap().to_owned();
     let _ = hub.update(Message::LoadBackups);
     let epoch = hub.catalog_epoch;
     let _ = hub.update(Message::BackupsLoaded(

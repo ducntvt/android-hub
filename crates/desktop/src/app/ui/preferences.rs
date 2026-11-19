@@ -20,6 +20,7 @@ pub(super) fn view(hub: &Hub) -> Element<'_, Message> {
         );
     }
     let content = column![
+        super::physical::setup(hub),
         section(lang.tr("Ngôn ngữ"), row![
             tool("Tiếng Việt", Message::SetLanguage(Language::Vi))
                 .style(if lang == Language::Vi { primary } else { pill }),

@@ -22,6 +22,7 @@ DOCS = [
     ROOT / 'docs/decisions/0057-ad-hoc-app-distribution.md',
     ROOT / 'docs/decisions/0058-optional-avd-target.md',
     ROOT / 'docs/decisions/0059-confirmed-app-uninstall.md',
+    ROOT / 'docs/decisions/0060-physical-device-sessions.md',
     ROOT / 'docs/stories/US-055-uninstall-android-hub.md',
     ROOT / 'docs/stories/US-054-app-and-dmg-release.md',
     *ROOT.joinpath('docs/stories/epics').rglob('*.md'),

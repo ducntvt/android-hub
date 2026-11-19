@@ -62,10 +62,10 @@ fn dirty_navigation_defaults_to_stay_and_discard_uses_latest_saved_profile() {
     let _ = hub.update(Message::ModalKey(iced::keyboard::key::Named::Enter));
     assert!(!hub.modal_open());
     assert!(hub.has_unsaved_settings());
-    assert_eq!(hub.selected.as_deref(), Some("hub-draft-a"));
-    let _ = hub.update(Message::Select("hub-draft-b".into()));
+    assert_eq!(hub.selected_avd_id(), Some("hub-draft-a"));
+    let _ = hub.update(Message::for_avd("hub-draft-b", Message::Select).unwrap());
     let _ = hub.update(Message::DiscardAndContinue);
-    assert_eq!(hub.selected.as_deref(), Some("hub-draft-b"));
+    assert_eq!(hub.selected_avd_id(), Some("hub-draft-b"));
     assert!(!hub.has_unsaved_settings());
     assert_eq!(hub.draft.as_ref().unwrap().name, "B");
 }
@@ -77,10 +77,10 @@ fn saving_then_navigation_waits_for_success_and_failure_keeps_draft() {
         edit(&mut hub);
         let expected = hub.draft_base.clone().unwrap();
         let saved = hub.draft.clone().unwrap();
-        let _ = hub.update(Message::Select("hub-draft-b".into()));
+        let _ = hub.update(Message::for_avd("hub-draft-b", Message::Select).unwrap());
         let _ = hub.update(Message::SaveAndContinue);
         assert!(hub.busy && !hub.modal_open());
-        assert_eq!(hub.selected.as_deref(), Some("hub-draft-a"));
+        assert_eq!(hub.selected_avd_id(), Some("hub-draft-a"));
         let result = if succeed {
             let mut state = snapshot();
             state.profiles[0] = saved.clone();
@@ -91,10 +91,10 @@ fn saving_then_navigation_waits_for_success_and_failure_keeps_draft() {
         let _ = hub.update(Message::Loaded(result, Work::Save(saved, expected)));
         assert!(!hub.busy && hub.saving_navigation.is_none());
         if succeed {
-            assert_eq!(hub.selected.as_deref(), Some("hub-draft-b"));
+            assert_eq!(hub.selected_avd_id(), Some("hub-draft-b"));
             assert!(!hub.has_unsaved_settings());
         } else {
-            assert_eq!(hub.selected.as_deref(), Some("hub-draft-a"));
+            assert_eq!(hub.selected_avd_id(), Some("hub-draft-a"));
             assert_eq!(hub.draft.as_ref().unwrap().name, "My draft");
             assert!(hub.has_unsaved_settings() && hub.settings_open);
             assert!(!hub.quit_requested);
@@ -133,7 +133,7 @@ fn polls_preserve_dirty_base_detect_conflicts_and_refresh_clean_drafts() {
 fn external_removal_keeps_orphan_draft_and_missing_navigation_target_is_rejected() {
     let mut hub = hub();
     edit(&mut hub);
-    let _ = hub.update(Message::Select("hub-draft-b".into()));
+    let _ = hub.update(Message::for_avd("hub-draft-b", Message::Select).unwrap());
     let mut removed = snapshot();
     removed.profiles.clear();
     let _ = hub.update(Message::Loaded(Ok(removed), Work::Poll(hub.command_epoch)));
@@ -155,8 +155,8 @@ fn close_create_start_and_quit_all_resolve_dirty_settings_first() {
         (Message::ToggleSettings, Navigation::CloseSettings),
         (Message::Create, Navigation::Create),
         (
-            Message::StartDevice("hub-draft-a".into()),
-            Navigation::Start("hub-draft-a".into()),
+            Message::for_avd("hub-draft-a", Message::StartDevice).unwrap(),
+            Navigation::Start(DeviceId::Emulator(EmulatorId::new("hub-draft-a").unwrap())),
         ),
         (Message::RequestQuit, Navigation::Quit),
     ] {
@@ -186,7 +186,7 @@ fn failed_save_does_not_quit_and_saved_start_uses_the_new_profile() {
         let _ = hub.update(if quit {
             Message::RequestQuit
         } else {
-            Message::StartDevice("hub-draft-a".into())
+            Message::for_avd("hub-draft-a", Message::StartDevice).unwrap()
         });
         let _ = hub.update(Message::SaveAndContinue);
         if quit {
@@ -214,7 +214,7 @@ fn quit_during_save_supersedes_navigation_and_stay_cancels_both_intents() {
         edit(&mut hub);
         let original = hub.draft_base.clone().unwrap();
         let saved = hub.draft.clone().unwrap();
-        let _ = hub.update(Message::Select("hub-draft-b".into()));
+        let _ = hub.update(Message::for_avd("hub-draft-b", Message::Select).unwrap());
         let _ = hub.update(Message::SaveAndContinue);
         let _ = hub.update(Message::RequestQuit);
         assert_eq!(hub.pending_navigation, Some(Navigation::Quit));
@@ -226,7 +226,7 @@ fn quit_during_save_supersedes_navigation_and_stay_cancels_both_intents() {
         let mut state = snapshot();
         state.profiles[0] = saved.clone();
         let _ = hub.update(Message::Loaded(Ok(state), Work::Save(saved, original)));
-        assert_eq!(hub.selected.as_deref(), Some("hub-draft-a"));
+        assert_eq!(hub.selected_avd_id(), Some("hub-draft-a"));
         assert_eq!(hub.quit_requested, !stay);
         assert!(hub.pending_navigation.is_none() && hub.saving_navigation.is_none());
     }

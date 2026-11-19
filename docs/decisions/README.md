@@ -144,3 +144,5 @@ Skip an ADR for: bug fixes, refactors that preserve behavior, dependency bumps w
 - [0058 — Optional AVD target with verified image identity](0058-optional-avd-target.md) — Accepted
 
 - [0059 — Confirmed app uninstall](0059-confirmed-app-uninstall.md) — Accepted
+
+- [0060 — Physical device sessions and ownership](0060-physical-device-sessions.md) — Accepted; scrcpy v5.0.1, production renderer still requires qualification

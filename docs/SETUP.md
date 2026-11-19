@@ -217,3 +217,31 @@ last, but a failure during that step can also leave a partial bundle. If a crash
 leaves `uninstall-pending.json`, normal mutations remain blocked for inspection;
 do not delete unrelated paths or restart the helper blindly. Deleting the app in
 Finder does not trigger this workflow and leaves its data behind.
+
+## USB phones (feature branch, US-058–059)
+
+Available in source on `feature/physical-devices`; not yet released.
+USB discovery needs an existing Android SDK Platform-Tools installation, not Java,
+Emulator or an Android system image.
+
+1. Download and extract [Platform-Tools from Google](https://developer.android.com/tools/releases/platform-tools), reviewing its license yourself.
+2. In **Hub settings → Phones via USB**, enter the absolute path to `platform-tools/adb` and choose **Verify and save ADB**.
+3. If the shared server is not running, run the displayed `'<absolute adb path>' start-server` command in Terminal. Hub reads the default loopback server on port 5037. It never stops/replaces the server or supports custom server endpoints in this version.
+4. Connect a data-capable USB cable. Unlock the phone, enable **Developer options → USB debugging**, and accept its RSA authorization prompt yourself.
+5. Select the phone under **Connected devices**. Hub shows model, Android version and authorization/connection state. Unplugging and reconnecting updates automatically. **Refresh USB devices** retries failed metadata/discovery.
+
+Network and unidentified transports are labeled separately; known external
+emulators are not imported as phones. Discovery does not start a stream or change
+phone settings. To view an authorized USB phone, choose 30/60 FPS and a maximum
+long edge (720/1280/1920px), then **View display**. Stop before changing stream
+caps. Fit/zoom and rotation preserve the image aspect ratio. The caps do not
+guarantee delivered FPS or change the phone's system resolution.
+
+The bundled scrcpy 5.0.1 server is uploaded to a unique temporary phone path for
+this view-only session and cleaned on stop/quit. VideoToolbox hardware H.264 decode
+is required. Lock/protected content may appear blank; Hub does not bypass capture
+restrictions. No input, audio, APK installation or clipboard control is available
+for phones yet. Viewing must be restarted explicitly after a connection failure.
+Only the ADB executable path is saved; phone metadata stays in memory. On version
+conflicts, coordinate Platform-Tools versions with other ADB applications instead
+of stopping their server from Hub.

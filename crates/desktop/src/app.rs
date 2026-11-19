@@ -6,10 +6,13 @@ mod deletion;
 mod feedback;
 mod lifecycle;
 mod message;
+mod physical;
 mod runtime;
 mod sdk;
 use message::Message;
 pub(crate) use runtime::run;
+#[cfg(test)]
+mod device_tests;
 mod screen;
 mod settings;
 #[cfg(test)]
@@ -23,7 +26,7 @@ mod update;
 mod workspace;
 
 use crate::{appearance, data_root, i18n::Language};
-use android_hub_domain::Profile;
+use android_hub_domain::{DeviceId, DeviceOperation, EmulatorId, Profile};
 use android_hub_infrastructure::display::{Input, Session};
 use android_hub_infrastructure::{
     Backend, BackupCatalog, BackupInfo, DeletePlan, DiskUsage, PurgePlan, RemovedCatalog,
@@ -87,7 +90,7 @@ struct PendingApk {
     path: PathBuf,
     bytes: u64,
     epoch: u64,
-    selection: Option<String>,
+    selection: Option<DeviceId>,
 }
 #[derive(Clone, Debug)]
 struct PendingRestore {
@@ -110,6 +113,7 @@ struct DisplayState {
     input_generation: Option<u64>,
 }
 struct Hub {
+    physical: physical::Discovery,
     uninstall: Option<uninstall::Dialog>,
     connectivity: Option<connectivity::Check>,
     connectivity_epoch: u64,
@@ -158,7 +162,7 @@ struct Hub {
     input_epoch: u64,
     backend: Backend,
     state: Option<Snapshot>,
-    selected: Option<String>,
+    selected: Option<DeviceId>,
     draft: Option<Profile>,
     draft_base: Option<Profile>,
     pending_navigation: Option<settings::Navigation>,
@@ -231,6 +235,12 @@ impl Hub {
         let task = Self::task(backend.clone(), Work::Initialize);
         (
             Self {
+                physical: physical::Discovery::new(
+                    backend
+                        .physical_adb_path()
+                        .map(|p| p.to_string_lossy().into_owned())
+                        .unwrap_or_default(),
+                ),
                 uninstall: None,
                 connectivity: None,
                 connectivity_epoch: 0,
@@ -348,14 +358,14 @@ impl Hub {
                 tokio::task::spawn_blocking(move || match work {
                     Work::Initialize => backend.initialize(),
                     Work::Poll(_) => backend.snapshot(),
-                    Work::Start(id) => backend.start(&id),
-                    Work::Stop(id, pid) => backend.stop_session(&id, pid),
-                    Work::Save(p, expected) => backend.save_if_unchanged(&expected, p),
+                    Work::Start(id) => backend.emulator(&id)?.start(),
+                    Work::Stop(id, pid) => backend.emulator(&id)?.stop(pid),
+                    Work::Save(p, expected) => backend.emulator(&expected.id)?.save(&expected, p),
                     Work::InstallApk(p) => backend.install_apk(&p.id, p.pid, &p.path),
-                    Work::Delete(plan) => backend.delete_device(&plan),
-                    Work::Purge(plan) => backend.purge_device(&plan),
+                    Work::Delete(plan) => backend.emulator(&plan.profile.id)?.delete(&plan),
+                    Work::Purge(plan) => backend.emulator(&plan.device.profile.id)?.purge(&plan),
                     Work::UndoRemove(info) => {
-                        backend.undo_remove_device(&info.archive, &info.profile)
+                        backend.emulator(&info.profile.id)?.undo_archive(&info)
                     }
                 })
                 .await
@@ -412,15 +422,43 @@ impl Hub {
         )
     }
     fn choose(&mut self, id: String) {
+        if let Ok(id) = EmulatorId::new(id) {
+            self.choose_device(DeviceId::Emulator(id));
+        }
+    }
+    fn choose_device(&mut self, target: DeviceId) {
         self.release_inputs();
-        self.slots.select(id.clone());
-        self.select_metadata(id);
+        if let Some(id) = target.as_emulator() {
+            self.slots.select(id.as_str().to_owned());
+        }
+        self.select_device_metadata(target);
         self.sync_displays();
     }
     // A successful pointer-down already belongs to the current input epoch.
     // Updating its inspector must not invalidate the matching drag/release.
+    fn selected_avd_id(&self) -> Option<&str> {
+        match self.selected.as_ref()? {
+            DeviceId::Emulator(id) => Some(id.as_str()),
+            DeviceId::Physical(_) => None,
+        }
+    }
+    fn selected_allows(&self, operation: DeviceOperation) -> bool {
+        self.selected
+            .as_ref()
+            .is_some_and(|id| id.capabilities().allows(operation))
+    }
     fn select_metadata(&mut self, id: String) {
-        let preserve_draft = self.selected.as_ref() == Some(&id) && self.draft.is_some();
+        let Ok(id) = EmulatorId::new(id) else {
+            return;
+        };
+        self.select_device_metadata(DeviceId::Emulator(id));
+    }
+    fn select_device_metadata(&mut self, target: DeviceId) {
+        let preserve_draft = self.selected.as_ref() == Some(&target) && self.draft.is_some();
+        let id = match &target {
+            DeviceId::Emulator(id) => Some(id.as_str()),
+            DeviceId::Physical(_) => None,
+        };
         self.removed_open = false;
         self.clear_backup_selection();
         self.pending_apk = None;
@@ -436,11 +474,12 @@ impl Hub {
             self.draft = self
                 .state
                 .as_ref()
-                .and_then(|s| s.profiles.iter().find(|p| p.id == id))
+                .and_then(|s| s.profiles.iter().find(|p| Some(p.id.as_str()) == id))
                 .cloned();
             self.draft_base = self.draft.clone();
         }
-        self.selected = Some(id);
+        self.selected = Some(target);
+        self.reconcile_physical_preview();
         self.pending_stop = None;
     }
     fn has_unsaved_settings(&self) -> bool {
@@ -469,8 +508,7 @@ impl Hub {
         }
     }
     fn running(&self) -> bool {
-        self.selected
-            .as_ref()
+        self.selected_avd_id()
             .and_then(|id| self.state.as_ref()?.runtime.get(id))
             .is_some_and(|r| r.pid.is_some())
     }
@@ -512,7 +550,10 @@ impl Hub {
         let visible = if self.split {
             self.slots.ids.iter().flatten().cloned().collect::<Vec<_>>()
         } else {
-            self.selected.iter().cloned().collect()
+            self.selected_avd_id()
+                .map(str::to_owned)
+                .into_iter()
+                .collect()
         };
         let desired: Vec<_> = self
             .state

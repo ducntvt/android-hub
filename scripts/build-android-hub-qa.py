@@ -43,6 +43,11 @@ def package(destination, source, window_size=None):
     binary_dir.mkdir(parents=True)
     (destination / 'data').mkdir()
     shutil.copy2(source, binary_dir / 'android-hub')
+    resources = app / 'Contents/Resources'
+    resources.mkdir()
+    server_assets = Path(__file__).resolve().parents[1] / 'crates/infrastructure/assets/scrcpy'
+    for source_name, bundle_name in [('LICENSE', 'SCRCPY-LICENSE.txt'), ('README.md', 'SCRCPY-PROVENANCE.md')]:
+        shutil.copy2(server_assets / source_name, resources / bundle_name)
     launcher = binary_dir / 'qa'
     launcher.write_text(launcher_text)
     launcher.chmod(0o755)

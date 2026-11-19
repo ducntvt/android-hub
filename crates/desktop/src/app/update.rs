@@ -25,11 +25,89 @@ impl Hub {
             return Task::none();
         }
         match message {
+            Message::StartPhysicalPreview => return self.start_physical_preview(),
+            Message::StopPhysicalPreview => {
+                self.physical.preview = None;
+                return Task::none();
+            }
+            Message::PhysicalStreamFps(fps) => {
+                if self.physical.preview.is_none()
+                    && android_hub_infrastructure::physical::stream::Options::FPS.contains(&fps)
+                {
+                    self.physical.stream_options.fps = fps;
+                }
+                return Task::none();
+            }
+            Message::PhysicalStreamSize(size) => {
+                if self.physical.preview.is_none()
+                    && android_hub_infrastructure::physical::stream::Options::SIZES.contains(&size)
+                {
+                    self.physical.stream_options.max_size = size;
+                }
+                return Task::none();
+            }
+            Message::PhysicalFrame(frame) => {
+                self.physical_frame(frame);
+                return Task::none();
+            }
+            Message::PhysicalAdbPath(path) => {
+                if !self.physical.configuring {
+                    self.physical.adb_path = path;
+                    self.physical.setup_result = None;
+                }
+                return Task::none();
+            }
+            Message::SavePhysicalAdb => {
+                if self.physical.configuring
+                    || self.quit_requested
+                    || self.busy
+                    || self.modal_open()
+                {
+                    return Task::none();
+                }
+                self.physical.configuring = true;
+                let backend = self.backend.clone();
+                let path = PathBuf::from(self.physical.adb_path.trim());
+                return Task::perform(
+                    async move {
+                        tokio::task::spawn_blocking(move || backend.configure_physical_adb(&path))
+                            .await
+                            .unwrap_or_else(|e| Err(e.to_string()))
+                    },
+                    Message::PhysicalAdbSaved,
+                );
+            }
+            Message::PhysicalAdbSaved(result) => {
+                self.physical.configuring = false;
+                if let Ok(path) = &result {
+                    self.physical.adb_path = path.to_string_lossy().into_owned();
+                }
+                self.physical.setup_result = Some(result.map(|_| ()));
+                return self.begin_shutdown_if_ready();
+            }
+            Message::PhysicalDiscovered(epoch, result) => {
+                return self.physical_update(epoch, result);
+            }
+            Message::PhysicalMetadata(token, result) => {
+                if !self.quit_requested {
+                    self.physical.metadata(&token, result);
+                    self.reconcile_physical_preview();
+                }
+                return Task::none();
+            }
+            Message::RetryPhysical => {
+                self.physical.apply(Err(
+                    android_hub_infrastructure::physical::DiscoveryError::Unavailable,
+                ));
+                self.physical.epoch += 1;
+                return Task::none();
+            }
             Message::RequestQuit => {
                 if self.quitting || self.uninstall.as_ref().is_some_and(|u| u.confirmed) {
                     return Task::none();
                 }
                 self.quit_requested = true;
+                self.physical.invalidate();
                 self.connectivity = None;
                 self.cancel_modal();
                 self.modal_return_focus = None;
@@ -144,7 +222,12 @@ impl Hub {
         self.begin_shutdown_if_ready()
     }
     fn begin_shutdown_if_ready(&mut self) -> Task<Message> {
-        if !self.quit_requested || self.busy || self.quitting || self.quit_error.is_some() {
+        if !self.quit_requested
+            || self.busy
+            || self.physical.configuring
+            || self.quitting
+            || self.quit_error.is_some()
+        {
             return Task::none();
         }
         self.quitting = true;
@@ -369,9 +452,11 @@ impl Hub {
                     let backend = self.backend.clone();
                     return Task::perform(
                         async move {
-                            tokio::task::spawn_blocking(move || backend.prepare_purge(&info))
-                                .await
-                                .unwrap_or_else(|e| Err(e.to_string()))
+                            tokio::task::spawn_blocking(move || {
+                                backend.emulator(&info.profile.id)?.prepare_purge(&info)
+                            })
+                            .await
+                            .unwrap_or_else(|e| Err(e.to_string()))
                         },
                         move |result| Message::PurgePrepared(epoch, result),
                     );
@@ -425,7 +510,7 @@ impl Hub {
                 }
             }
             Message::LoadBackups if !self.busy && !self.stale && !self.catalog_loading => {
-                if let Some(id) = self.selected.clone() {
+                if let Some(id) = self.selected_avd_id().map(str::to_owned) {
                     self.clear_backup_selection();
                     self.catalog_loading = true;
                     let epoch = self.catalog_epoch;
@@ -444,7 +529,7 @@ impl Hub {
                 }
             }
             Message::BackupsLoaded(id, epoch, result)
-                if self.selected.as_ref() == Some(&id) && epoch == self.catalog_epoch =>
+                if self.selected_avd_id() == Some(id.as_str()) && epoch == self.catalog_epoch =>
             {
                 self.catalog_loading = false;
                 self.catalog_loaded = true;
@@ -467,7 +552,7 @@ impl Hub {
                     && let Some(profile) = self.state.as_ref().and_then(|s| {
                         s.profiles
                             .iter()
-                            .find(|p| Some(&p.id) == self.selected.as_ref())
+                            .find(|p| Some(p.id.as_str()) == self.selected_avd_id())
                     })
                     && profile.id == backup.profile_id
                 {
@@ -488,7 +573,7 @@ impl Hub {
                         .as_ref()
                         .and_then(|s| s.profiles.iter().find(|p| p.id == pending.profile.id));
                     if current != Some(&pending.profile)
-                        || self.selected.as_ref() != Some(&pending.profile.id)
+                        || self.selected_avd_id() != Some(pending.profile.id.as_str())
                         || self.running()
                     {
                         self.notify(
@@ -505,8 +590,7 @@ impl Hub {
                         return Task::perform(
                             async move {
                                 tokio::task::spawn_blocking(move || {
-                                    backend.restore(
-                                        &pending.profile.id,
+                                    backend.emulator(&pending.profile.id)?.restore(
                                         &pending.backup.path,
                                         &pending.backup.manifest_sha256,
                                     )
@@ -526,7 +610,7 @@ impl Hub {
                         self.state = Some(outcome.snapshot);
                         self.stale = false;
                         self.refresh_draft = false;
-                        if let Some(id) = self.selected.clone() {
+                        if let Some(id) = self.selected_avd_id().map(str::to_owned) {
                             self.draft = None;
                             self.choose(id);
                         }
@@ -599,7 +683,7 @@ impl Hub {
                 self.history_open = false;
             }
             Message::Backup if !self.busy && !self.stale && !self.running() => {
-                if let Some(id) = self.selected.clone() {
+                if let Some(id) = self.selected_avd_id().map(str::to_owned) {
                     self.command_epoch = self.command_epoch.wrapping_add(1);
                     self.busy = true;
                     self.clear_backup_selection();
@@ -608,7 +692,7 @@ impl Hub {
                     let backend = self.backend.clone();
                     return Task::perform(
                         async move {
-                            tokio::task::spawn_blocking(move || backend.backup(&id))
+                            tokio::task::spawn_blocking(move || backend.emulator(&id)?.backup())
                                 .await
                                 .unwrap_or_else(|e| Err(format!("Backup thất bại: {e}")))
                         },
@@ -716,7 +800,10 @@ impl Hub {
                 self.sidebar_collapsed = false;
                 return iced::widget::text_input::focus("device-search");
             }
-            Message::ToggleSettings => {
+            Message::ToggleSettings
+                if self.selected.is_none()
+                    || self.selected_allows(DeviceOperation::ConfigureAvd) =>
+            {
                 self.preferences_open = false;
                 self.history_open = false;
                 self.sdk_open = false;
@@ -747,7 +834,11 @@ impl Hub {
                     self.sync_displays();
                 }
             }
-            Message::StartDevice(id) if !self.busy && !self.stale => {
+            Message::StartDevice(target) if !self.busy && !self.stale => {
+                let Some(id) = target.as_emulator() else {
+                    return Task::none();
+                };
+                let id = id.as_str().to_owned();
                 if self.has_unsaved_settings() {
                     self.notify(Kind::Error, "Lưu cấu hình trước khi khởi động máy.", None);
                     return Task::none();
@@ -777,7 +868,7 @@ impl Hub {
                         && let Some(profile) = state
                             .profiles
                             .iter()
-                            .filter(|p| self.selected.as_ref() != Some(&p.id))
+                            .filter(|p| self.selected_avd_id() != Some(p.id.as_str()))
                             .max_by_key(|p| {
                                 state.runtime.get(&p.id).is_some_and(|r| r.pid.is_some())
                             })
@@ -895,7 +986,7 @@ impl Hub {
                 }
                 if matches!(input, Input::Mouse { down: true, .. })
                     && self.busy
-                    && self.selected.as_ref() != Some(&id)
+                    && self.selected_avd_id() != Some(id.as_str())
                 {
                     return Task::none();
                 }
@@ -909,7 +1000,7 @@ impl Hub {
                     match d.session.send_in_generation(input, generation) {
                         Ok(()) if pressed => {
                             self.input_focus = Some(id.clone());
-                            if !self.busy && self.selected.as_ref() != Some(&id) {
+                            if !self.busy && self.selected_avd_id() != Some(id.as_str()) {
                                 self.activate_visible(id);
                             }
                         }
@@ -962,7 +1053,7 @@ impl Hub {
                         self.reconcile_boot_checks();
                         if self.refresh_draft {
                             self.refresh_draft = false;
-                            if let Some(id) = self.selected.clone() {
+                            if let Some(id) = self.selected_avd_id().map(str::to_owned) {
                                 self.draft = None;
                                 self.choose(id);
                             }
@@ -974,14 +1065,14 @@ impl Hub {
                             self.feedback.setup_notice(note.clone());
                         }
                         if !self.has_unsaved_settings()
-                            && self.selected.as_ref().is_some_and(|id| {
+                            && self.selected_avd_id().is_some_and(|id| {
                                 !self
                                     .state
                                     .as_ref()
                                     .unwrap()
                                     .profiles
                                     .iter()
-                                    .any(|p| &p.id == id)
+                                    .any(|p| p.id == id)
                             })
                         {
                             self.selected = None;
@@ -1000,7 +1091,7 @@ impl Hub {
                                 self.choose(p.id.clone());
                             }
                         } else if matches!(work, Work::Save(..))
-                            && let Some(id) = self.selected.clone()
+                            && let Some(id) = self.selected_avd_id().map(str::to_owned)
                         {
                             self.draft = None;
                             self.choose(id);
@@ -1058,7 +1149,7 @@ impl Hub {
                 }
             }
             Message::Select(id) if !self.busy => {
-                self.choose(id);
+                self.choose_device(id);
             }
             Message::Create if !self.busy && !self.stale => return self.open_creation(),
             Message::RefreshCreation if !self.busy => return self.probe_creation(),
@@ -1099,13 +1190,13 @@ impl Hub {
                 self.pending_undo = None;
                 self.pending_restore = None;
                 self.pending_apk = None;
-                if let Some(id) = &self.selected
+                if let Some(id) = self.selected_avd_id()
                     && let Some(state) = &self.state
-                    && let Some(profile) = state.profiles.iter().find(|p| &p.id == id)
+                    && let Some(profile) = state.profiles.iter().find(|p| p.id == id)
                     && let Some(pid) = state.runtime.get(id).and_then(|r| r.pid)
                 {
                     self.pending_stop = Some(PendingStop {
-                        id: id.clone(),
+                        id: id.to_owned(),
                         name: profile.name.clone(),
                         pid,
                     });
@@ -1118,7 +1209,7 @@ impl Hub {
                         .as_ref()
                         .and_then(|s| s.runtime.get(&pending.id))
                         .and_then(|r| r.pid);
-                    if self.selected.as_ref() == Some(&pending.id)
+                    if self.selected_avd_id() == Some(pending.id.as_str())
                         && current_pid == Some(pending.pid)
                     {
                         return self.launch(Work::Stop(pending.id, pending.pid));
@@ -1127,32 +1218,62 @@ impl Hub {
                 }
             }
             Message::Save => return self.save_settings(false),
-            Message::Name(v) if !self.busy && !self.stale && !self.running() => {
+            Message::Name(v)
+                if self.selected_allows(DeviceOperation::ConfigureAvd)
+                    && !self.busy
+                    && !self.stale
+                    && !self.running() =>
+            {
                 if let Some(p) = &mut self.draft {
                     p.name = v;
                 }
             }
-            Message::Ram(v) if !self.busy && !self.stale && !self.running() => {
+            Message::Ram(v)
+                if self.selected_allows(DeviceOperation::ConfigureAvd)
+                    && !self.busy
+                    && !self.stale
+                    && !self.running() =>
+            {
                 if let Some(p) = &mut self.draft {
                     p.ram_mb = v;
                 }
             }
-            Message::Cpus(v) if !self.busy && !self.stale && !self.running() => {
+            Message::Cpus(v)
+                if self.selected_allows(DeviceOperation::ConfigureAvd)
+                    && !self.busy
+                    && !self.stale
+                    && !self.running() =>
+            {
                 if let Some(p) = &mut self.draft {
                     p.cpus = v;
                 }
             }
-            Message::Fps(v) if !self.busy && !self.stale && !self.running() => {
+            Message::Fps(v)
+                if self.selected_allows(DeviceOperation::ConfigureAvd)
+                    && !self.busy
+                    && !self.stale
+                    && !self.running() =>
+            {
                 if let Some(p) = &mut self.draft {
                     p.fps = v;
                 }
             }
-            Message::Orientation(v) if !self.busy && !self.stale && !self.running() => {
+            Message::Orientation(v)
+                if self.selected_allows(DeviceOperation::ConfigureAvd)
+                    && !self.busy
+                    && !self.stale
+                    && !self.running() =>
+            {
                 if let Some(p) = &mut self.draft {
                     (p.width, p.height) = p.dimensions_for_orientation(v == Orientation::Landscape);
                 }
             }
-            Message::Resolution(v) if !self.busy && !self.stale && !self.running() => {
+            Message::Resolution(v)
+                if self.selected_allows(DeviceOperation::ConfigureAvd)
+                    && !self.busy
+                    && !self.stale
+                    && !self.running() =>
+            {
                 if let Some(p) = &mut self.draft {
                     let landscape = p.width > p.height;
                     (p.width, p.height) = v.dimensions(landscape);

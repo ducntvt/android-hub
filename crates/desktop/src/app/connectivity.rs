@@ -16,9 +16,9 @@ impl Hub {
         if self.stale || self.busy || self.quit_requested || !self.settings_open {
             return None;
         }
-        let id = self.selected.as_ref()?;
+        let id = self.selected_avd_id()?;
         let state = self.state.as_ref()?;
-        let profile = state.profiles.iter().find(|p| &p.id == id)?.clone();
+        let profile = state.profiles.iter().find(|p| p.id == id)?.clone();
         let pid = state.runtime.get(id)?.pid?;
         let check = self.boot_checks.get(id)?;
         let boot = check.result.as_ref()?.as_ref().ok()?;

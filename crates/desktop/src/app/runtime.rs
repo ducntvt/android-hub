@@ -67,6 +67,8 @@ pub(crate) fn run() -> iced::Result {
             });
             Subscription::batch(displays.chain(boots).chain([
                 hub.connectivity_subscription(),
+                hub.physical_subscription(),
+                hub.physical_frame_subscription(),
                 iced::time::every(Duration::from_secs(3)).map(|_| Message::Tick),
                 Subscription::run_with_id(
                     "native-quit",

@@ -378,7 +378,7 @@ mod tests {
         assert_eq!(hub.creation.as_ref().unwrap().request.name, "Android 2");
         let _ = hub.update(Message::Created(epoch, true, Ok(outcome())));
         assert!(hub.creation.is_none());
-        assert_eq!(hub.selected.as_deref(), Some("hub-new"));
+        assert_eq!(hub.selected_avd_id(), Some("hub-new"));
         assert!(hub.images_loading);
         assert_eq!(hub.lifecycle_action.as_ref().unwrap().id, "hub-new");
         let _ = hub.update(Message::Loaded(

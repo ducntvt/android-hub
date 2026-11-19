@@ -148,10 +148,10 @@ async fn main() -> Result<(), String> {
                 .find(|p| &p.id == id)
                 .ok_or("Unknown profile")?
                 .clone();
-            let backup = backend.backup(id)?;
+            let backup = backend.emulator(id)?.backup()?;
             println!("Backup verified: {}", backup.display());
             let digest = backend.backup_manifest_digest(&backup)?;
-            let outcome = backend.restore(id, &backup, &digest)?;
+            let outcome = backend.emulator(id)?.restore(&backup, &digest)?;
             let restored = outcome
                 .snapshot
                 .profiles
@@ -176,9 +176,9 @@ async fn main() -> Result<(), String> {
             }
             return Ok(());
         }
-        "start" => snapshot = backend.start(id)?,
+        "start" => snapshot = backend.emulator(id)?.start()?,
         "stop" => {
-            backend.stop(id)?;
+            backend.emulator(id)?.stop_current()?;
             println!("Stopped {id}");
             return Ok(());
         }

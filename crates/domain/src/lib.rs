@@ -1,3 +1,8 @@
+mod device;
+pub use device::{
+    DeviceCapabilities, DeviceId, DeviceKind, DeviceOperation, EmulatorId, PhysicalId,
+    PhysicalSession, PhysicalSessions, UnsupportedOperation,
+};
 use serde::{Deserialize, Serialize};
 mod android;
 pub use android::{AndroidVersion, ImageIdentity};
@@ -26,17 +31,7 @@ impl Profile {
         if let Some(image) = &self.image {
             image.validate()?;
         }
-        if !self.id.starts_with("p0-google-") && !self.id.starts_with("hub-") {
-            return Err("Tên kỹ thuật không thuộc Hub".into());
-        }
-        if self.id.len() > 48
-            || !self
-                .id
-                .bytes()
-                .all(|c| c.is_ascii_lowercase() || c.is_ascii_digit() || c == b'-')
-        {
-            return Err("ID máy không hợp lệ".into());
-        }
+        validate_profile_id(&self.id)?;
         if self.name.trim().is_empty()
             || self.name.chars().count() > 48
             || self.name.chars().any(char::is_control)
@@ -86,6 +81,21 @@ pub struct Runtime {
     pub cpu_percent: Option<f32>,
     pub rss_kib: Option<u64>,
 }
+
+fn validate_profile_id(id: &str) -> Result<(), String> {
+    if !id.starts_with("p0-google-") && !id.starts_with("hub-") {
+        return Err("Tên kỹ thuật không thuộc Hub".into());
+    }
+    if id.len() > 48
+        || !id
+            .bytes()
+            .all(|c| c.is_ascii_lowercase() || c.is_ascii_digit() || c == b'-')
+    {
+        return Err("ID máy không hợp lệ".into());
+    }
+    Ok(())
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

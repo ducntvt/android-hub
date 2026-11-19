@@ -62,6 +62,8 @@ expected = 'Cargo.lock SHA-256: ' + hashlib.sha256((root / 'Cargo.lock').read_by
 if expected not in notices.read_text().splitlines()[:3]:
     raise SystemExit('Review third-party notices for the current Cargo.lock before release packaging')
 (app / 'Contents/Resources/THIRD-PARTY-NOTICES.txt').write_bytes(notices.read_bytes())
+for source_name, bundle_name in [('LICENSE', 'SCRCPY-LICENSE.txt'), ('README.md', 'SCRCPY-PROVENANCE.md')]:
+    (app / 'Contents/Resources' / bundle_name).write_bytes((root / 'crates/infrastructure/assets/scrcpy' / source_name).read_bytes())
 NOTICES
     /usr/libexec/PlistBuddy -c 'Add :LSMinimumSystemVersion string 15.0' "$app/Contents/Info.plist"
 fi

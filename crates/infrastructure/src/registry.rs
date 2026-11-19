@@ -114,6 +114,25 @@ mod tests {
     use android_hub_domain::{AndroidVersion, ImageIdentity};
 
     #[test]
+    fn device_namespaces_do_not_change_legacy_or_schema_one_profile_storage() {
+        let raw = serde_json::json!({"id":"hub-existing", "name":"Existing", "port":5584,
+            "ram_mb":3072, "cpus":2, "width":720, "height":1280, "fps":30});
+        let legacy = serde_json::to_vec(&serde_json::json!([raw.clone()])).unwrap();
+        let schema = serde_json::to_vec(&serde_json::json!({"schema":1,"profiles":[raw]})).unwrap();
+        let (old, a) = decode(&legacy).unwrap();
+        let (new, b) = decode(&schema).unwrap();
+        assert!(old && !new);
+        assert_eq!(a, b);
+        assert_eq!(a[0].id, "hub-existing");
+        let encoded = serde_json::to_value(&a[0]).unwrap();
+        assert_eq!(encoded.as_object().unwrap().len(), 9);
+        assert!(encoded.get("device_kind").is_none());
+        assert!(encoded.get("serial").is_none());
+        assert!(encoded.get("transport").is_none());
+        assert_eq!(encoded["id"], "hub-existing");
+    }
+
+    #[test]
     fn migration_is_local_idempotent_and_keeps_original_registry_and_guest_bytes() {
         let fixture = Fixture::new();
         let b = &fixture.0;

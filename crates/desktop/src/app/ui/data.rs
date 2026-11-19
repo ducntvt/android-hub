@@ -252,10 +252,9 @@ pub(super) fn device_data(hub: &Hub, editable: bool, dirty: bool) -> Element<'_,
                 .padding(12)
                 .width(Length::Fill)
                 .on_press_maybe(
-                    hub.selected
-                        .as_ref()
+                    hub.selected_avd_id()
                         .filter(|_| editable && !dirty)
-                        .map(|id| Message::AskDelete(id.clone())),
+                        .and_then(|id| Message::for_avd(id, Message::AskDelete)),
                 ),
         )
         .push(muted(lang.tr(

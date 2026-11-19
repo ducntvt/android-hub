@@ -159,3 +159,22 @@ If you want automation, a 10-line bash script can parse and run them — but the
 - [US-054 — App ZIP and DMG releases](US-054-app-and-dmg-release.md) — implemented
 
 - [US-055 — Uninstall Android Hub and owned data](US-055-uninstall-android-hub.md) — implemented
+
+## Physical devices — planned
+
+[Epic E02: USB trước, engine spike và backlog tương lai](epics/E02-physical-devices/README.md).
+Nhánh `feature/physical-devices`; US-056 đã chốt scrcpy v5.0.1; US-057 đã triển khai ranh giới loại thiết bị; US-058 đã triển khai nhận diện USB; US-059 đã nhúng màn hình chỉ xem; tiếp theo US-060.
+
+- [US-056 — So sánh stream trên thiết bị thật](epics/E02-physical-devices/US-056-physical-device-streaming-spike.md) — implemented; camera waived, latency unmeasured
+- [US-057 — Phân biệt máy ảo và thiết bị thật](epics/E02-physical-devices/US-057-device-types-and-capabilities.md) — implemented; typed identity/capability boundary
+- [US-058 — Nhận diện USB và thiết lập ADB tối thiểu](epics/E02-physical-devices/US-058-usb-discovery-and-adb-setup.md) — implemented; USB discovery + standalone ADB setup
+- [US-059 — Nhúng màn hình điện thoại vào Hub](epics/E02-physical-devices/US-059-embedded-physical-display.md) — implemented; embedded hardware-decoded video, view-only
+- [US-060 — Điều khiển điện thoại và navigation](epics/E02-physical-devices/US-060-physical-input-and-navigation.md) — planned; MVP USB
+- [US-061 — Cài APK và clipboard đúng điện thoại](epics/E02-physical-devices/US-061-physical-apk-and-clipboard.md) — planned; MVP USB
+- [US-062 — Workspace chung cho điện thoại và máy ảo](epics/E02-physical-devices/US-062-mixed-device-workspace.md) — planned; MVP USB
+- [US-063 — Vòng đời kết nối, cleanup và đóng gói](epics/E02-physical-devices/US-063-physical-session-lifecycle-and-packaging.md) — planned; MVP USB
+- [US-064 — Nghiệm thu USB và hiệu năng workspace hỗn hợp](epics/E02-physical-devices/US-064-physical-device-qualification.md) — planned; MVP USB
+- [US-065 — Ghép đôi điện thoại qua Wi-Fi](epics/E02-physical-devices/US-065-wireless-device-pairing.md) — planned; future, ngoài MVP USB
+- [US-066 — Nghe âm thanh từ điện thoại](epics/E02-physical-devices/US-066-physical-device-audio.md) — planned; future, ngoài MVP USB
+- [US-067 — Chụp ảnh và ghi màn hình điện thoại](epics/E02-physical-devices/US-067-physical-screen-capture.md) — planned; future, ngoài MVP USB
+- [US-068 — Truyền file có xác nhận với điện thoại](epics/E02-physical-devices/US-068-physical-file-transfer.md) — planned; future, ngoài MVP USB

@@ -30,6 +30,79 @@ impl Language {
             return value;
         }
         match value {
+            "VideoToolbox · H.264 · Phần cứng" => "VideoToolbox · H.264 · Hardware",
+            "Đang mở màn hình điện thoại…" => "Opening phone display…",
+            "Không mở được màn hình. Kiểm tra kết nối, mở khóa điện thoại và thử lại." => {
+                "Could not open display. Check the connection, unlock the phone and try again."
+            }
+            "Dừng xem màn hình" => "Stop viewing",
+            "Cạnh dài" => "Long edge",
+            "Giới hạn stream yêu cầu; không đổi độ phân giải điện thoại hay cam kết FPS thực." => {
+                "Requested stream limits; does not change phone resolution or guarantee actual FPS."
+            }
+            "Xem màn hình" => "View display",
+            "Chỉ xem màn hình. Màn hình khóa hoặc nội dung được bảo vệ có thể trống; Hub không vượt bảo vệ." => {
+                "View only. Locked screens or protected content may be blank; Hub does not bypass protection."
+            }
+
+            "Thiết bị kết nối" => "Connected device",
+            "Đang đọc thông tin…" => "Reading device information…",
+            "Chưa đọc được thông tin" => "Could not read device information",
+            "Đã kết nối USB" => "Connected via USB",
+            "Đã kết nối · chưa hỗ trợ transport này" => {
+                "Connected · transport not supported yet"
+            }
+            "Chờ cấp quyền USB debugging" => "USB debugging authorization required",
+            "Ngoại tuyến" => "Offline",
+            "Đã ngắt kết nối" => "Disconnected",
+            "Trạng thái chưa xác định" => "Unknown state",
+            "Mạng · không phải USB" => "Network · not USB",
+            "Chưa xác định loại kết nối" => "Unknown connection type",
+            "Máy ảo bên ngoài Hub" => "Emulator outside Hub",
+            "ADB server chưa chạy. Chọn ADB và xem hướng dẫn trong Cài đặt Hub." => {
+                "ADB server is not running. Select ADB and see instructions in Hub settings."
+            }
+            "ADB server khác phiên bản. Đóng công cụ đang dùng ADB và đồng bộ Platform-Tools; Hub không tự khởi động lại server." => {
+                "ADB server version mismatch. Close tools using ADB and align Platform-Tools versions; Hub does not restart the server."
+            }
+            "ADB quá thời gian phản hồi. Kiểm tra cáp USB và thử lại." => {
+                "ADB timed out. Check the USB cable and try again."
+            }
+            "Mất kết nối hoặc phản hồi ADB không hợp lệ. Kiểm tra ADB và thử lại." => {
+                "ADB disconnected or returned an invalid response. Check ADB and try again."
+            }
+            "THIẾT BỊ KẾT NỐI" => "CONNECTED DEVICES",
+            "Cắm điện thoại bằng cáp USB để bắt đầu." => {
+                "Connect a phone with a USB cable to begin."
+            }
+            "Kiểm tra lại USB" => "Refresh USB devices",
+            "Mở khóa điện thoại, bật USB debugging trong Tùy chọn nhà phát triển và tự chấp nhận hộp thoại RSA trên điện thoại." => {
+                "Unlock your phone, enable USB debugging in Developer options, and accept the RSA prompt on the phone yourself."
+            }
+            "Đã nhận diện thiết bị. Hiển thị và điều khiển sẽ có ở bước triển khai tiếp theo." => {
+                "Device detected. Display and control will be added in the next implementation steps."
+            }
+            "Chỉ cần Android SDK Platform-Tools; không cần Java, Emulator hay system image." => {
+                "Only Android SDK Platform-Tools is needed; no Java, Emulator or system image."
+            }
+            "Kiểm tra và lưu ADB" => "Verify and save ADB",
+            "Tải Platform-Tools từ developer.android.com/tools/releases/platform-tools, giải nén rồi chọn file adb. Hub không tải hoặc chấp nhận license tự động." => {
+                "Download Platform-Tools from developer.android.com/tools/releases/platform-tools, extract it and select the adb executable. Hub does not download or accept licenses automatically."
+            }
+            "Nếu ADB server chưa chạy, mở Terminal và chạy lệnh dưới đây. Hub dùng server tại localhost:5037, không tự dừng server dùng chung." => {
+                "If the ADB server is not running, open Terminal and run the command below. Hub uses localhost:5037 and does not stop the shared server."
+            }
+            "Đã lưu ADB" => "ADB saved",
+            "Điện thoại qua USB" => "Phones via USB",
+            "Đường dẫn ADB phải tuyệt đối" => "ADB path must be absolute",
+            "Chọn file thực thi adb từ Platform-Tools" => {
+                "Select the adb executable from Platform-Tools"
+            }
+            "ADB không tương thích; cần protocol 1.0.41" => {
+                "Incompatible ADB; protocol 1.0.41 is required"
+            }
+            "Đường dẫn ADB không hợp lệ" => "Invalid ADB path",
+
             "Đang chuẩn bị gỡ cài đặt Android Hub…" => {
                 "Preparing to uninstall Android Hub…"
             }

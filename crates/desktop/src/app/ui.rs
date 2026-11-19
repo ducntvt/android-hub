@@ -3,6 +3,7 @@ mod apk;
 mod connectivity;
 mod creation;
 mod data;
+mod physical;
 use data::{removed_devices, storage_usage};
 mod feedback;
 mod focus;
@@ -162,7 +163,7 @@ pub fn view(hub: &Hub) -> Element<'_, Message> {
             .filter(|p| p.name.to_lowercase().contains(&query))
         {
             found = true;
-            let selected = hub.selected.as_ref() == Some(&p.id);
+            let selected = hub.selected_avd_id() == Some(p.id.as_str());
             let device_icon = container(icon(Icon::Device))
                 .center_x(38)
                 .center_y(44)
@@ -190,7 +191,11 @@ pub fn view(hub: &Hub) -> Element<'_, Message> {
             .width(Length::Fill)
             .padding(12)
             .style(quiet)
-            .on_press_maybe((!hub.busy).then(|| Message::Select(p.id.clone())));
+            .on_press_maybe(
+                (!hub.busy)
+                    .then(|| Message::for_avd(&p.id, Message::Select))
+                    .flatten(),
+            );
             let menu_open = hub.device_menu.as_ref() == Some(&p.id);
             let mut item = column![
                 row![
@@ -219,7 +224,8 @@ pub fn view(hub: &Hub) -> Element<'_, Message> {
                                 .width(Length::Fill)
                                 .on_press_maybe(
                                     (available && stopped)
-                                        .then(|| Message::AskDelete(p.id.clone()))
+                                        .then(|| Message::for_avd(&p.id, Message::AskDelete))
+                                        .flatten()
                                 ),
                         ]
                         .push_maybe((!stopped).then(|| muted(lang.tr("Dừng máy trước khi xóa"))))
@@ -265,7 +271,7 @@ pub fn view(hub: &Hub) -> Element<'_, Message> {
                 .padding([9, 12])
                 .size(BODY),
             muted(lang.tr("THIẾT BỊ")),
-            scroll::vertical(devices).height(Length::Fill),
+            scroll::vertical(devices.push(physical::sidebar(hub))).height(Length::Fill),
             button(
                 row![
                     icon(Icon::Settings),
@@ -292,9 +298,10 @@ pub fn view(hub: &Hub) -> Element<'_, Message> {
         .and_then(|s| {
             s.profiles
                 .iter()
-                .find(|p| Some(&p.id) == hub.selected.as_ref())
+                .find(|p| Some(p.id.as_str()) == hub.selected_avd_id())
         })
         .map(|p| p.name.as_str())
+        .or_else(|| hub.selected_phone().map(physical::name))
         .unwrap_or(lang.tr("Thiết bị của bạn"));
     let toolbar = container(
         row![
@@ -309,9 +316,20 @@ pub fn view(hub: &Hub) -> Element<'_, Message> {
             ),
             column![
                 text(title).size(20),
-                text(compact_device_version(hub, hub.selected.as_deref()))
-                    .size(CAPTION)
-                    .style(secondary_text)
+                text(
+                    hub.selected_phone()
+                        .map(|phone| {
+                            phone
+                                .metadata
+                                .as_ref()
+                                .and_then(|m| m.as_ref().ok())
+                                .map(|m| format!("Android {} · USB", m.android))
+                                .unwrap_or_else(|| hub.language.tr("Thiết bị kết nối").into())
+                        })
+                        .unwrap_or_else(|| compact_device_version(hub, hub.selected_avd_id()))
+                )
+                .size(CAPTION)
+                .style(secondary_text)
             ]
             .spacing(4)
             .width(Length::Fill),
@@ -345,11 +363,13 @@ pub fn view(hub: &Hub) -> Element<'_, Message> {
                 )
             ]
             .spacing(3),
-            tool(lang.tr("Cấu hình"), Message::ToggleSettings).style(if hub.settings_open {
-                primary
-            } else {
-                pill
-            })
+            tool(lang.tr("Cấu hình"), Message::ToggleSettings)
+                .on_press_maybe(
+                    (hub.selected.is_none()
+                        || hub.selected_allows(android_hub_domain::DeviceOperation::ConfigureAvd))
+                    .then_some(Message::ToggleSettings)
+                )
+                .style(if hub.settings_open { primary } else { pill })
         ]
         .spacing(14)
         .align_y(Alignment::Center),

@@ -9,6 +9,29 @@ use std::path::PathBuf;
 
 #[derive(Clone, Debug)]
 pub(super) enum Message {
+    StartPhysicalPreview,
+    StopPhysicalPreview,
+    PhysicalStreamFps(u32),
+    PhysicalStreamSize(u32),
+    PhysicalFrame(super::physical::FrameReport),
+    PhysicalDiscovered(
+        u64,
+        Result<
+            Vec<android_hub_infrastructure::physical::AdbDevice>,
+            android_hub_infrastructure::physical::DiscoveryError,
+        >,
+    ),
+    PhysicalMetadata(
+        android_hub_domain::PhysicalSession,
+        Result<
+            android_hub_infrastructure::physical::PhoneMetadata,
+            android_hub_infrastructure::physical::DiscoveryError,
+        >,
+    ),
+    RetryPhysical,
+    PhysicalAdbPath(String),
+    SavePhysicalAdb,
+    PhysicalAdbSaved(Result<PathBuf, String>),
     OpenUninstall,
     UninstallPrepared(Result<android_hub_infrastructure::UninstallPlan, String>),
     UninstallKeepBackups(bool),
@@ -55,7 +78,7 @@ pub(super) enum Message {
     SetSplit(bool),
     ToggleSidebar,
     PickSlot(usize, String),
-    StartDevice(String),
+    StartDevice(android_hub_domain::DeviceId),
     Search(String),
     FocusSearch,
     ToggleSettings,
@@ -114,7 +137,7 @@ pub(super) enum Message {
     SendClipboard(String),
     ClipboardRead(String, u32, u64, u64, Option<String>),
     Loaded(Result<Snapshot, String>, Work),
-    Select(String),
+    Select(android_hub_domain::DeviceId),
     Create,
     EditCreation(creation::Edit),
     RefreshCreation,
@@ -132,7 +155,7 @@ pub(super) enum Message {
     FormTab(bool),
     FocusNext(bool),
     ToggleDeviceMenu(String),
-    AskDelete(String),
+    AskDelete(android_hub_domain::DeviceId),
     DeletePrepared(u64, Result<DeletePlan, String>),
     BackupBeforeDelete,
     DeleteBackupFinished(u64, Result<PathBuf, String>),
@@ -180,4 +203,15 @@ pub(super) enum Message {
     Fps(u32),
     Resolution(Resolution),
     Orientation(Orientation),
+}
+
+impl Message {
+    pub(super) fn for_avd(
+        id: &str,
+        event: fn(android_hub_domain::DeviceId) -> Self,
+    ) -> Option<Self> {
+        android_hub_domain::EmulatorId::new(id)
+            .ok()
+            .map(|id| event(android_hub_domain::DeviceId::Emulator(id)))
+    }
 }

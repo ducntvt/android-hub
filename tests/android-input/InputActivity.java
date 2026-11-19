@@ -26,6 +26,9 @@ public final class InputActivity extends Activity {
         boolean held = false;
         String clipboard = "pending";
         String touchEvent = "NONE";
+        final boolean benchmark = getIntent().getBooleanExtra("benchmark", false);
+        final long benchmarkStart = android.os.SystemClock.uptimeMillis();
+        int renderedFrames = 0;
         Surface() {
             super(InputActivity.this);
             setBackgroundColor(Color.WHITE);
@@ -62,6 +65,17 @@ public final class InputActivity extends Activity {
                         top + 120 + row * 45 + vertical[i] * 15, 22);
                 }
                 canvas.restore();
+            }
+            if (benchmark) {
+                long elapsed = android.os.SystemClock.uptimeMillis() - benchmarkStart;
+                renderedFrames++;
+                float x = (elapsed % 2000) / 2000f * Math.max(0, getWidth() - 80);
+                paint.setColor(held ? Color.GREEN : Color.MAGENTA);
+                canvas.drawRect(x, getHeight() - 100, x + 80, getHeight(), paint);
+                label(canvas, "QA frames " + renderedFrames + " elapsed " + elapsed + "ms",
+                    20, getHeight() - 110, 22);
+                // Opt-in, bounded workload; default input QA remains event-driven.
+                if (elapsed < 130000) postInvalidateOnAnimation();
             }
         }
         @Override public boolean onGenericMotionEvent(MotionEvent e) {

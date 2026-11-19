@@ -154,3 +154,26 @@ có thể đã bị xóa. App được xóa sau cùng nhưng lỗi ở bước n
 bundle dở. Nếu crash để lại `uninstall-pending.json`, các thao tác ghi bị chặn để
 kiểm tra; không chạy lại helper hoặc xóa thư mục khác một cách tùy tiện. Kéo app
 vào Trash không kích hoạt luồng này và vẫn để lại dữ liệu.
+
+## Điện thoại USB (nhánh feature, US-058–059)
+
+Có trong source nhánh `feature/physical-devices`, chưa phát hành. Chỉ cần Platform-Tools; không bắt cài Java/Emulator/system image.
+
+1. Tải và giải nén [Platform-Tools chính thức](https://developer.android.com/tools/releases/platform-tools), tự xem và chấp nhận license.
+2. Trong **Cài đặt Hub → Điện thoại qua USB**, nhập đường dẫn tuyệt đối đến file `platform-tools/adb`, bấm **Kiểm tra và lưu ADB**.
+3. Nếu server chưa chạy, chạy lệnh `'<đường dẫn adb>' start-server` được hiển thị trong Terminal. Hub đọc server loopback mặc định cổng 5037, không tự dừng/thay server dùng chung và chưa hỗ trợ endpoint tùy biến.
+4. Cắm cáp USB có truyền dữ liệu, mở khóa điện thoại, bật **Tùy chọn nhà phát triển → USB debugging**, tự chấp nhận hộp thoại RSA.
+5. Chọn điện thoại trong **THIẾT BỊ KẾT NỐI**. Hub hiện model/Android và trạng thái cấp quyền/kết nối. Cắm/rút tự cập nhật; **Kiểm tra lại USB** thử lại khi đọc thông tin hoặc kết nối lỗi.
+
+Transport mạng/chưa xác định có nhãn riêng; emulator ngoài Hub không được nhập như
+điện thoại. Nhận diện không tự mở stream hay đổi settings. Chọn 30/60 FPS và cạnh
+dài tối đa 720/1280/1920px rồi bấm **Xem màn hình**. Dừng xem trước khi đổi giới hạn.
+Vừa khung/zoom và xoay giữ đúng tỉ lệ. Đây là giới hạn yêu cầu, không cam kết FPS
+thực hoặc thay độ phân giải hệ thống điện thoại.
+
+Server scrcpy 5.0.1 đi kèm được đưa vào đường dẫn tạm riêng trên điện thoại và dọn
+khi dừng/thoát. Cần giải mã H.264 phần cứng VideoToolbox. Nội dung khóa/bảo vệ có
+thể trống; Hub không vượt bảo vệ. Chưa có điều khiển, âm thanh, cài APK hay clipboard
+cho điện thoại. Sau lỗi kết nối cần chủ động mở lại stream.
+Chỉ lưu đường dẫn ADB, metadata điện thoại ở bộ nhớ. Khi xung đột phiên bản,
+đồng bộ Platform-Tools với các app ADB khác; Hub không tự kill-server.

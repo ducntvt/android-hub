@@ -23,7 +23,7 @@ pub(super) enum Stage {
 pub(super) struct Request {
     pub token: u64,
     pub epoch: u64,
-    pub selection: Option<String>,
+    pub selection: Option<DeviceId>,
     pub stage: Stage,
 }
 
@@ -262,13 +262,13 @@ mod tests {
             android_versions: BTreeMap::new(),
             runtime: BTreeMap::new(),
             profiles: vec![
-                Profile::standard("a".into(), "QA A".into(), 5584),
-                Profile::standard("b".into(), "QA B".into(), 5586),
+                Profile::standard("hub-a".into(), "QA A".into(), 5584),
+                Profile::standard("hub-b".into(), "QA B".into(), 5586),
             ],
         };
         let _ = hub.update(Message::Loaded(Ok(state), Work::Initialize));
         // Observations only: never launch an engine or native picker in unit tests.
-        for (id, pid) in [("a", 41), ("b", 42)] {
+        for (id, pid) in [("hub-a", 41), ("hub-b", 42)] {
             hub.state.as_mut().unwrap().runtime.insert(
                 id.into(),
                 android_hub_domain::Runtime {
@@ -299,10 +299,16 @@ mod tests {
         let token = hub.apk_request.as_ref().unwrap().token;
         let _ = hub.update(Message::DropApk(PathBuf::from("/tmp/other.apk")));
         assert_eq!(hub.apk_request.as_ref().unwrap().token, token);
-        let _ = hub.update(Message::ChooseApkTarget("b".into()));
+        let _ = hub.update(Message::ChooseApkTarget("hub-b".into()));
         let pending = hub.pending_apk.as_ref().unwrap();
-        assert_eq!((&*pending.id, pending.pid, pending.bytes), ("b", 42, 1234));
-        assert_eq!(pending.selection.as_deref(), Some("a"));
+        assert_eq!(
+            (&*pending.id, pending.pid, pending.bytes),
+            ("hub-b", 42, 1234)
+        );
+        assert_eq!(
+            pending.selection,
+            Some(DeviceId::Emulator(EmulatorId::new("hub-a").unwrap()))
+        );
         let _ = hub.update(Message::DropApk(PathBuf::from("/tmp/other.apk")));
         assert_eq!(hub.pending_apk.as_ref().unwrap().path, file().path);
         let _ = hub.update(Message::ConfirmApk); // task is not polled; no install runs
@@ -320,7 +326,7 @@ mod tests {
         let _ = hub.update(Message::ApkInspected(token, Ok(file())));
         assert!(!hub.modal_open() && !hub.busy);
         drop_inspected(&mut hub);
-        let _ = hub.update(Message::ChooseApkTarget("b".into()));
+        let _ = hub.update(Message::ChooseApkTarget("hub-b".into()));
         let _ = hub.update(Message::CancelModal);
         let _ = hub.update(Message::ConfirmApk);
         assert!(!hub.modal_open() && !hub.busy);
@@ -330,18 +336,22 @@ mod tests {
         for change in 0..3 {
             let mut hub = hub();
             drop_inspected(&mut hub);
-            let _ = hub.update(Message::ChooseApkTarget("b".into()));
+            let _ = hub.update(Message::ChooseApkTarget("hub-b".into()));
             match change {
                 0 => {
                     hub.state
                         .as_mut()
                         .unwrap()
                         .runtime
-                        .get_mut("b")
+                        .get_mut("hub-b")
                         .unwrap()
                         .pid = Some(43)
                 }
-                1 => hub.selected = Some("b".into()),
+                1 => {
+                    hub.selected = Some(DeviceId::Physical(
+                        android_hub_domain::PhysicalId::new("hub-b").unwrap(),
+                    ))
+                }
                 _ => hub.command_epoch += 1,
             }
             let _ = hub.update(Message::ConfirmApk);
@@ -386,7 +396,7 @@ mod tests {
         let _ = hub.update(Message::ModalBackTab);
         assert_eq!(hub.modal_focus, 2);
         let _ = hub.update(Message::ModalKey(Named::Enter));
-        assert_eq!(hub.pending_apk.as_ref().unwrap().id, "b");
+        assert_eq!(hub.pending_apk.as_ref().unwrap().id, "hub-b");
         assert_eq!(hub.modal_focus, 0); // confirmation defaults to Cancel again
         let _ = hub.update(Message::ModalKey(Named::Enter));
         assert!(!hub.modal_open() && !hub.busy);

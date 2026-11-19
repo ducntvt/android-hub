@@ -238,7 +238,7 @@ impl Backend {
         }
         Ok(())
     }
-    pub fn restore(
+    pub(crate) fn restore(
         &self,
         id: &str,
         backup: &Path,

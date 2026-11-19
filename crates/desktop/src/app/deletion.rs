@@ -14,7 +14,11 @@ impl Hub {
         })
     }
 
-    pub(super) fn ask_delete(&mut self, id: String) -> Task<Message> {
+    pub(super) fn ask_delete(&mut self, target: DeviceId) -> Task<Message> {
+        let Some(id) = target.as_emulator() else {
+            return Task::none();
+        };
+        let id = id.as_str().to_owned();
         let Some(profile) = self
             .state
             .as_ref()
@@ -42,9 +46,11 @@ impl Hub {
         let backend = self.backend.clone();
         Task::perform(
             async move {
-                tokio::task::spawn_blocking(move || backend.prepare_delete(&profile))
-                    .await
-                    .unwrap_or_else(|e| Err(e.to_string()))
+                tokio::task::spawn_blocking(move || {
+                    backend.emulator(&profile.id)?.prepare_delete(&profile)
+                })
+                .await
+                .unwrap_or_else(|e| Err(e.to_string()))
             },
             move |result| Message::DeletePrepared(epoch, result),
         )
@@ -112,9 +118,13 @@ impl Hub {
         let backend = self.backend.clone();
         Task::perform(
             async move {
-                tokio::task::spawn_blocking(move || backend.backup_before_delete(&plan))
-                    .await
-                    .unwrap_or_else(|e| Err(e.to_string()))
+                tokio::task::spawn_blocking(move || {
+                    backend
+                        .emulator(&plan.profile.id)?
+                        .backup_before_delete(&plan)
+                })
+                .await
+                .unwrap_or_else(|e| Err(e.to_string()))
             },
             move |result| Message::DeleteBackupFinished(epoch, result),
         )

@@ -44,3 +44,13 @@ The snapshot is for the current private binary release; it is not a blanket audi
 for future dependencies, modified assets or additional platforms. Packages without
 a standalone license file are identified in the snapshot and retain their declared
 license text or source notice.
+
+## Embedded scrcpy server (physical-display feature branch)
+
+The unmodified scrcpy Android server v5.0.1 is embedded for user-started USB
+viewing. Copyright Genymobile and scrcpy contributors, Apache License 2.0.
+[License](crates/infrastructure/assets/scrcpy/LICENSE) and
+[download/checksum provenance](crates/infrastructure/assets/scrcpy/README.md)
+are retained in source and copied into release/QA bundle Resources. The desktop
+client is Android Hub's Rust adapter with an in-process VideoToolbox bridge; it
+does not bundle the scrcpy desktop application, FFmpeg or SDL.

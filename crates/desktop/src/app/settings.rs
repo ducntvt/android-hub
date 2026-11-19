@@ -3,10 +3,10 @@ use super::*;
 
 #[derive(Clone, Debug, PartialEq)]
 pub(super) enum Navigation {
-    Select(String),
+    Select(DeviceId),
     Slot(usize, String),
     Activate(String),
-    Start(String),
+    Start(DeviceId),
     Create,
     CloseSettings,
     Removed,
@@ -27,7 +27,8 @@ impl Hub {
         })
     }
     pub(super) fn can_save_settings(&self) -> bool {
-        !self.busy
+        self.selected_allows(DeviceOperation::ConfigureAvd)
+            && !self.busy
             && !self.stale
             && !self.running()
             && self.has_unsaved_settings()
@@ -41,7 +42,7 @@ impl Hub {
             .and_then(|s| {
                 s.profiles
                     .iter()
-                    .find(|p| Some(&p.id) == self.selected.as_ref())
+                    .find(|p| Some(p.id.as_str()) == self.selected_avd_id())
             })
             .cloned();
         self.draft_base = self.draft.clone();
@@ -53,18 +54,24 @@ impl Hub {
     }
     pub(super) fn navigation_for(&self, message: &Message) -> Option<Navigation> {
         let other = |id: &String| {
-            self.selected.as_ref() != Some(id)
+            self.selected_avd_id() != Some(id.as_str())
                 && self
                     .state
                     .as_ref()
                     .is_some_and(|s| s.profiles.iter().any(|p| &p.id == id))
         };
         match message {
-            Message::Select(id) if other(id) => Some(Navigation::Select(id.clone())),
+            Message::Select(id) if self.selected.as_ref() != Some(id) => {
+                Some(Navigation::Select(id.clone()))
+            }
             Message::PickSlot(slot, id) if *slot < 2 && other(id) => {
                 Some(Navigation::Slot(*slot, id.clone()))
             }
-            Message::StartDevice(id) => Some(Navigation::Start(id.clone())),
+            Message::StartDevice(id)
+                if id.capabilities().allows(DeviceOperation::StartEmulator) =>
+            {
+                Some(Navigation::Start(id.clone()))
+            }
             Message::DeviceInput(id, epoch, Some(generation), Input::Mouse { down: true, .. })
                 if other(id)
                     && *epoch == self.input_epoch
@@ -89,17 +96,17 @@ impl Hub {
     }
     pub(super) fn execute_navigation(&mut self, navigation: Navigation) -> Task<Message> {
         let target = match &navigation {
-            Navigation::Select(id)
-            | Navigation::Slot(_, id)
-            | Navigation::Activate(id)
-            | Navigation::Start(id) => Some(id),
+            Navigation::Slot(_, id) | Navigation::Activate(id) => Some(id.as_str()),
+            Navigation::Select(id) | Navigation::Start(id) => {
+                id.as_emulator().map(EmulatorId::as_str)
+            }
             _ => None,
         };
         if target.is_some_and(|id| {
             !self
                 .state
                 .as_ref()
-                .is_some_and(|s| s.profiles.iter().any(|p| &p.id == id))
+                .is_some_and(|s| s.profiles.iter().any(|p| p.id == id))
         }) {
             self.notify(
                 feedback::Kind::Error,

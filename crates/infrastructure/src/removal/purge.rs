@@ -80,14 +80,14 @@ impl Backend {
         Ok(())
     }
 
-    pub fn prepare_delete(&self, profile: &Profile) -> Result<DeletePlan, String> {
+    pub(crate) fn prepare_delete(&self, profile: &Profile) -> Result<DeletePlan, String> {
         profile.validate()?;
         let _guard = self.lock()?;
         self.ensure_stopped(profile)?;
         self.prepare_delete_offline(profile)
     }
 
-    pub fn backup_before_delete(&self, plan: &DeletePlan) -> Result<PathBuf, String> {
+    pub(crate) fn backup_before_delete(&self, plan: &DeletePlan) -> Result<PathBuf, String> {
         plan.profile.validate()?;
         let _guard = self.lock()?;
         self.ensure_stopped(&plan.profile)?;
@@ -95,7 +95,7 @@ impl Backend {
         self.backup_locked(plan.profile.clone())
     }
 
-    pub fn delete_device(&self, plan: &DeletePlan) -> Result<Snapshot, String> {
+    pub(crate) fn delete_device(&self, plan: &DeletePlan) -> Result<Snapshot, String> {
         plan.profile.validate()?;
         let _guard = self.lock()?;
         self.ensure_stopped(&plan.profile)?;
@@ -174,7 +174,7 @@ impl Backend {
         Ok(journal)
     }
 
-    pub fn prepare_purge(&self, info: &RemovedDevice) -> Result<PurgePlan, String> {
+    pub(crate) fn prepare_purge(&self, info: &RemovedDevice) -> Result<PurgePlan, String> {
         info.profile.validate()?;
         let _guard = self.lock()?;
         self.ensure_stopped(&info.profile)?;
@@ -190,7 +190,7 @@ impl Backend {
         })
     }
 
-    pub fn purge_device(&self, plan: &PurgePlan) -> Result<Snapshot, String> {
+    pub(crate) fn purge_device(&self, plan: &PurgePlan) -> Result<Snapshot, String> {
         plan.device.profile.validate()?;
         let _guard = self.lock()?;
         self.ensure_stopped(&plan.device.profile)?;
@@ -255,6 +255,69 @@ impl Backend {
 mod tests {
     use super::*;
     use std::os::unix::fs::symlink;
+
+    #[test]
+    fn physical_target_rejects_valid_avd_delete_and_purge_plans_without_touching_data() {
+        use android_hub_domain::{DeviceId, PhysicalId};
+        let (b, profile) = super::super::tests::fixture();
+        let plan = b.prepare_delete_offline(&profile).unwrap();
+        let phone = DeviceId::Physical(PhysicalId::new(profile.id.clone()).unwrap());
+        let facade = b.device(phone);
+        let registry = fs::read(b.registry()).unwrap();
+        let bytes = fs::read(b.data(&profile).join("userdata.img")).unwrap();
+        assert!(
+            facade
+                .delete(&plan)
+                .unwrap_err()
+                .contains("unavailable for Physical")
+        );
+        assert!(
+            facade
+                .backup_before_delete(&plan)
+                .unwrap_err()
+                .contains("unavailable for Physical")
+        );
+        let archived = RemovedDevice {
+            profile: profile.clone(),
+            archive: b.root.join("not-an-archive"),
+            unavailable: None,
+        };
+        let purge = PurgePlan {
+            device: archived.clone(),
+            allocated_bytes: 1,
+            identity: Value::Null,
+        };
+        assert!(
+            facade
+                .purge(&purge)
+                .unwrap_err()
+                .contains("unavailable for Physical")
+        );
+        assert!(
+            facade
+                .prepare_purge(&archived)
+                .unwrap_err()
+                .contains("unavailable for Physical")
+        );
+        assert!(
+            facade
+                .undo_archive(&archived)
+                .unwrap_err()
+                .contains("unavailable for Physical")
+        );
+        assert!(
+            facade
+                .stop_current()
+                .unwrap_err()
+                .contains("unavailable for Physical")
+        );
+        assert_eq!(fs::read(b.registry()).unwrap(), registry);
+        assert_eq!(
+            fs::read(b.data(&profile).join("userdata.img")).unwrap(),
+            bytes
+        );
+        fs::remove_dir_all(b.root).unwrap();
+    }
 
     #[test]
     fn direct_delete_preparation_is_read_only_and_confirmation_removes_registry_and_data() {

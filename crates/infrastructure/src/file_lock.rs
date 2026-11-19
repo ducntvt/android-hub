@@ -4,6 +4,17 @@ use std::{fs::File, ops::Deref};
 
 pub(crate) struct FileLock(File);
 impl FileLock {
+    pub(crate) fn shared(file: File, busy: &str) -> Result<Self, String> {
+        FileExt::try_lock_shared(&file).map_err(|e| {
+            if e.kind() == std::io::ErrorKind::WouldBlock {
+                busy.to_owned()
+            } else {
+                format!("Không khóa được file: {e}")
+            }
+        })?;
+        Ok(Self(file))
+    }
+
     pub(crate) fn acquire(file: File, busy: &str) -> Result<Self, String> {
         file.try_lock_exclusive().map_err(|e| {
             if e.kind() == std::io::ErrorKind::WouldBlock {
@@ -71,6 +82,14 @@ mod tests {
         assert!(FileLock::acquire(open(), "busy").is_err());
         drop(next);
         FileLock::acquire(open(), "busy").unwrap();
+        let shared = FileLock::shared(open(), "busy").unwrap();
+        let inherited = shared.try_clone().unwrap();
+        assert!(FileLock::acquire(open(), "busy").is_err());
+        drop(shared);
+        let exclusive = FileLock::acquire(open(), "busy").unwrap();
+        drop(inherited);
+        assert!(FileLock::shared(open(), "busy").is_err());
+        drop(exclusive);
         fs::remove_file(path).unwrap();
     }
 }

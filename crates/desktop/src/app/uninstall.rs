@@ -149,7 +149,9 @@ mod tests {
         hub.uninstall = Some(dialog());
         assert!(hub.modal_open());
         assert!(!Hub::modal_allows(&Message::SaveJava));
-        assert!(!Hub::modal_allows(&Message::StartDevice("fixture".into())));
+        assert!(!Hub::modal_allows(
+            &Message::for_avd("hub-fixture", Message::StartDevice).unwrap()
+        ));
         for lang in [Language::Vi, Language::En] {
             hub.language = lang;
             let _ = hub.view();

@@ -481,7 +481,7 @@ impl Backend {
         });
         Ok(catalog)
     }
-    pub fn undo_remove_device(
+    pub(crate) fn undo_remove_device(
         &self,
         archive: &Path,
         expected: &Profile,
@@ -503,7 +503,7 @@ impl Backend {
         self.snapshot()
             .map_err(|e| format!("Đã đưa máy trở lại nhưng chưa refresh được: {e}"))
     }
-    pub fn remove_device(&self, expected: &Profile) -> Result<RemovalOutcome, String> {
+    pub(crate) fn remove_device(&self, expected: &Profile) -> Result<RemovalOutcome, String> {
         expected.validate()?;
         let _guard = self.lock()?;
         if self.existing(&expected.id)? != *expected {

@@ -4,6 +4,11 @@ Theo [ADR 0051](decisions/0051-data-catalog-and-usage-presentation.md), catalog 
 
 ## Stack hiện tại
 
+Đang triển khai: [Epic E02 — thiết bị thật](stories/epics/E02-physical-devices/README.md)
+trên nhánh `feature/physical-devices`. [ADR 0060](decisions/0060-physical-device-sessions.md)
+đã Accepted: scrcpy v5.0.1 được chọn sau spike; chưa tích hợp vào app chính.
+Độ trễ chưa đo theo quyết định miễn camera của người dùng. Phần dưới mô tả bản đã có.
+
 Rust workspace với Iced 0.13.1 (wgpu/Metal) cho Android Hub trên macOS Apple Silicon. Android Emulator dùng chung cho Google Play ARM64 Android 12–16 (API 31/33/34/35/36); game trước đây đã chạy trên Android 16; không có dependency hoặc checkout AVO trong source đang dùng. Nghiên cứu engine trước đây chỉ còn trong báo cáo lịch sử. Không có HTTP backend riêng.
 
 ## Ranh giới
@@ -14,6 +19,43 @@ Rust workspace với Iced 0.13.1 (wgpu/Metal) cho Android Hub trên macOS Apple 
 - `tools/metrics`: sampler hiệu năng riêng, không thuộc workspace Cargo app. Dữ liệu nằm ngoài source theo ADR 0054.
 
 Đây là phạm vi manager theo [ADR 0004](decisions/0004-rust-device-hub-manager.md). Các lớp application/interface riêng chưa cần tách trong bản đầu. Các hướng engine lâu dài xem [PLAN](PLAN.md).
+
+## Ranh giới loại thiết bị (US-057)
+
+`DeviceId` có hai namespace `Emulator(EmulatorId)` và `Physical(PhysicalId)`;
+`DeviceCapabilities` quyết định thao tác theo loại, không thay thế kiểm tra readiness
+hoặc quyền ADB. Selection desktop và binding xác nhận APK giữ typed ID, nên serial
+trùng chuỗi ID AVD không chọn nhầm profile. CPU/RAM/image và start/stop, archive,
+delete, backup/restore chỉ đi qua facade `Backend::device` với kiểm tra capability
+trước I/O; `Backend::emulator` là adapter rõ ràng cho các luồng AVD cũ. Các hàm
+mutate AVD trực tiếp chỉ còn nội bộ infrastructure.
+
+`PhysicalSessions` giữ token gồm identity, transport ID và generation tăng đơn điệu;
+kết quả/disconnect phải khớp token hiện tại. Owner sống suốt vòng đời discovery,
+không tạo lại mỗi lần refresh. US-058 nối token này vào discovery/metadata; US-059 kiểm tra token trước khi nhận frame. Không chuyển serial thành đường dẫn,
+không thêm PID/port giả hoặc physical metadata vào registry Profile schema 1.
+Hiện metadata physical chỉ ở bộ nhớ, không lưu khóa pairing hay nội dung màn hình.
+
+## USB discovery (US-058, feature branch)
+
+`infrastructure::physical` dùng smart socket ADB chỉ đọc trên `127.0.0.1:5037`:
+kiểm tra server protocol 41, rồi `host:track-devices-l` trên một kết nối sống lâu.
+EOF/lỗi hủy token phiên trước khi reconnect sau 3 giây. Snapshot đầu và frame dở
+có timeout 4 giây; kết nối idle không timeout giả. Snapshot tối đa 128 thiết bị,
+frame theo length 16-bit; metadata giới hạn 4 KiB/4 giây. Không có lệnh getprop
+trên mỗi frame, không gọi kill-server hay tự thay server dùng chung.
+
+Desktop giữ trạng thái discovery riêng với registry. USB cần marker transport
+`usb:`; emulator có prefix hoặc metadata qemu bị loại, network/unknown ghi nhãn
+riêng. Chỉ USB ready có phiên mới được đọc model/Android/qemu bằng lệnh getprop
+cố định qua transport ID. Kết quả phải khớp token hiện tại. Ngắt/kết nối lại,
+đổi authorization, lỗi server và đóng Hub hủy phiên cũ. Metadata không lưu ra disk.
+
+Chọn executable ADB trong Cài đặt Hub chỉ chạy `adb version`, yêu cầu protocol
+1.0.41 rồi ghi atomic `physical-adb-path` dưới app data. Không đòi Java/SDK image.
+Server chưa chạy thì UI hướng dẫn khởi động bằng Terminal; không tự tải gói hoặc
+chấp nhận license. Setup và discovery hiện chỉ hỗ trợ server loopback mặc định,
+không nhận endpoint tùy biến từ environment. US-059 thêm video theo yêu cầu; US-060 sẽ thêm control.
 
 ## Dữ liệu và vòng đời
 
@@ -137,3 +179,14 @@ thoát rồi xóa dữ liệu đã xác nhận và app sau cùng. Marker chặn 
 tự tiếp tục xóa sau crash. Backup có thể giữ nguyên đường dẫn, SDK/Java bên ngoài
 không thuộc phạm vi xóa. Lỗi sau khi thoát mở báo cáo văn bản; dữ liệu đã xóa không
 rollback được. Không dùng trình gỡ để kiểm thử trên app/dữ liệu chính.
+
+## Physical display (US-059, feature branch)
+
+`infrastructure::physical::stream` owns pinned scrcpy video transport, bounded
+packet decoding and the in-process VideoToolbox/Accelerate shim. Desktop owns
+user start/stop, requested stream caps, Fit/zoom and epoch-validated image handles.
+Frames are copied off the UI thread; no zero-copy or latency qualification is
+claimed. See [ADR 0060](decisions/0060-physical-device-sessions.md) for resource
+ownership and limitations. The server binary under `infrastructure/assets/scrcpy`
+is a required runtime asset, not disposable build cache. Bundle scripts carry its
+license and provenance. Physical input/audio remain separate stories.

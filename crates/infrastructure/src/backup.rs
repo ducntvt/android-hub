@@ -243,7 +243,7 @@ impl Backend {
         }
         fs::File::open(root).map_err(err)?.sync_all().map_err(err)
     }
-    pub fn backup(&self, id: &str) -> Result<PathBuf, String> {
+    pub(crate) fn backup(&self, id: &str) -> Result<PathBuf, String> {
         let _guard = self.lock()?;
         let profile = self.existing(id)?;
         self.ensure_stopped(&profile)?;

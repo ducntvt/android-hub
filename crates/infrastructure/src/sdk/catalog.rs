@@ -142,8 +142,10 @@ impl Backend {
             .read(true)
             .open(lock_path)
             .map_err(err)?;
-        fs2::FileExt::try_lock_shared(&lock)
-            .map_err(|_| "SDK đang được ghép; thử làm mới sau khi hoàn tất".to_string())?;
+        let _guard = crate::file_lock::FileLock::shared(
+            lock,
+            "SDK đang được ghép; thử làm mới sau khi hoàn tất",
+        )?;
         let mut result = ManagedSdkCatalog::default();
         let mut stages = BTreeSet::new();
         for (index, item) in fs::read_dir(&directory).map_err(err)?.enumerate() {

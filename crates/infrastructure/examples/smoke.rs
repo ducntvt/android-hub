@@ -10,24 +10,25 @@ fn main() -> Result<(), String> {
     let created = backend.create()?;
     let mut p = created.profiles.last().ok_or("No new profile")?.clone();
     assert!(!before.profiles.iter().any(|old| old.id == p.id));
+    let expected = p.clone();
     p.name = "Hub smoke test".into();
     p.ram_mb = 1024;
     p.cpus = 2;
     p.width = 480;
     p.height = 854;
     p.fps = 15;
-    backend.save(p.clone())?;
+    backend.emulator(&p.id)?.save(&expected, p.clone())?;
     assert_eq!(backend.initialize()?.profiles.last(), Some(&p));
     println!("Created and persisted {} on {}", p.id, p.port);
-    let started = backend.start(&p.id)?;
+    let started = backend.emulator(&p.id)?.start()?;
     assert!(started.runtime.contains_key(&p.id));
-    assert!(backend.save(p.clone()).is_err());
-    assert!(backend.start(&p.id).is_err());
+    assert!(backend.emulator(&p.id)?.save(&p, p.clone()).is_err());
+    assert!(backend.emulator(&p.id)?.start().is_err());
     println!("Started; running config edits and duplicate start refused");
     // The engine process appears before its console accepts ADB commands.
     let deadline = std::time::Instant::now() + std::time::Duration::from_secs(120);
     let stopped = loop {
-        match backend.stop(&p.id) {
+        match backend.emulator(&p.id)?.stop_current() {
             Ok(snapshot) => break snapshot,
             Err(error) if std::time::Instant::now() >= deadline => return Err(error),
             Err(_) => std::thread::sleep(std::time::Duration::from_secs(2)),

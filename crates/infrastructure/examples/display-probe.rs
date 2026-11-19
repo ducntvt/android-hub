@@ -23,13 +23,14 @@ async fn main() -> Result<(), String> {
         (p, pid)
     } else {
         let mut p = backend.create()?.profiles.last().ok_or("profile")?.clone();
+        let expected = p.clone();
         p.name = "Embedded Test".into();
         p.ram_mb = 1024;
         p.width = 480;
         p.height = 854;
         p.fps = 30;
-        backend.save(p.clone())?;
-        let state = backend.start(&p.id)?;
+        backend.emulator(&p.id)?.save(&expected, p.clone())?;
+        let state = backend.emulator(&p.id)?.start()?;
         let pid = state.runtime[&p.id].pid.unwrap();
         (p, pid)
     };

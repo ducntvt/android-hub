@@ -1,4 +1,7 @@
 //! Android engine, SDK and persisted-device operations behind a stable facade.
+mod device;
+pub mod physical;
+pub use device::DeviceBackend;
 mod sdk;
 pub use sdk::{
     ImageInstallResult, ImageInstallSpace, ManagedSdk, ManagedSdkCatalog, ManagedSdkEntry,
@@ -275,10 +278,11 @@ impl Backend {
         .map_err(err)?;
         fs::rename(new, path).map_err(err)
     }
-    pub fn save(&self, profile: Profile) -> Result<Snapshot, String> {
+    #[cfg(test)]
+    pub(crate) fn save(&self, profile: Profile) -> Result<Snapshot, String> {
         self.save_checked(None, profile)
     }
-    pub fn save_if_unchanged(
+    pub(crate) fn save_if_unchanged(
         &self,
         expected: &Profile,
         profile: Profile,
@@ -384,7 +388,7 @@ impl Backend {
         fs::set_permissions(executable, fs::Permissions::from_mode(0o755)).map_err(err)?;
         Ok(app)
     }
-    pub fn start(&self, id: &str) -> Result<Snapshot, String> {
+    pub(crate) fn start(&self, id: &str) -> Result<Snapshot, String> {
         let _guard = self.lock()?;
         let p = self.existing(id)?;
         self.ensure_stopped(&p)?;
@@ -446,12 +450,12 @@ impl Backend {
             errors.join("\n")
         ))
     }
-    pub fn stop(&self, id: &str) -> Result<Snapshot, String> {
+    pub(crate) fn stop(&self, id: &str) -> Result<Snapshot, String> {
         self.stop_checked(id, None)
     }
     /// A UI confirmation must not stop a replacement engine that appeared while
     /// the command was queued or waiting for the Hub lock.
-    pub fn stop_session(&self, id: &str, expected_pid: u32) -> Result<Snapshot, String> {
+    pub(crate) fn stop_session(&self, id: &str, expected_pid: u32) -> Result<Snapshot, String> {
         self.stop_checked(id, Some(expected_pid))
     }
     fn stop_checked(&self, id: &str, expected_pid: Option<u32>) -> Result<Snapshot, String> {
