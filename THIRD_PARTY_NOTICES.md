@@ -17,7 +17,12 @@ The app uses Iced/wgpu, Tokio, Tonic/Prost, objc2, rfd, serialization, hashing,
 compression and other transitive libraries. Resolved versions are recorded in
 root `Cargo.lock`; metrics has a separate lockfile. Dependency source packages
 retain their own license/copyright files. This page is a provenance overview,
-not a complete generated license inventory for binary redistribution.
+not a license grant for any third-party component. Release bundles additionally
+include a [dependency notice snapshot](crates/desktop/assets/THIRD-PARTY-NOTICES.txt)
+for the resolved macOS ARM64 graph (conservatively including build/test packages).
+It retains packaged/upstream notices, authors, repository locations and embedded
+font attribution. The release packager rejects a snapshot with a different
+Cargo.lock hash. Re-review it when dependencies or embedded assets change.
 
 ## Android tools and system images
 
@@ -35,6 +40,7 @@ Do not remove SDK/license notices or include an accepted-consent state in source
 - Historical AVO research is recorded in the docs. AVO is not an active dependency
   and its engine/source checkout is not shipped in this repository.
 
-Before changing to public redistribution or shipping binaries, review the exact
-included components and their license obligations rather than treating this
-summary as a completed redistribution audit.
+The snapshot is for the current private binary release; it is not a blanket audit
+for future dependencies, modified assets or additional platforms. Packages without
+a standalone license file are identified in the snapshot and retain their declared
+license text or source notice.

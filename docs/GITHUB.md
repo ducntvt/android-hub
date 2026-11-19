@@ -82,7 +82,8 @@ No release tag is created during bootstrap. Make the first release separately us
 - Do not require another reviewer's approval for a solo-maintained repository.
 - CI is defined in `.github/workflows/ci.yml`; enable required status checks only
   after the first successful run, selecting the check actually shown on the PR.
-- Do not create signing secrets or binary-release workflows for this source-only setup.
+- Current binary releases use ad-hoc signatures; no Apple signing secrets are needed.
+  Developer ID/notarization is a separate future setup.
 
 Branch/tag ruleset availability depends on repository visibility and the account's
 plan; see [GitHub rulesets](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/about-rulesets).

@@ -143,7 +143,7 @@ If you want automation, a 10-line bash script can parse and run them — but the
 
 - [US-047 — CI and source releases](US-047-ci-and-source-releases.md) — implemented
 
-## Android 12–16 — planned
+## Android 12–16 — implemented
 
 [Epic E01: phạm vi, luồng sử dụng và thứ tự triển khai](epics/E01-multiple-android-versions/README.md).
 
@@ -153,3 +153,7 @@ If you want automation, a 10-line bash script can parse and run them — but the
 - [US-051 — Chọn phiên bản Android khi tạo máy mới](epics/E01-multiple-android-versions/US-051-choose-android-version-at-creation.md) — implemented
 - [US-052 — Quản lý các phiên bản Android đã cài](epics/E01-multiple-android-versions/US-052-manage-installed-android-images.md) — implemented
 - [US-053 — Hoàn thiện tương thích và nghiệm thu Android 12–16](epics/E01-multiple-android-versions/US-053-qualify-five-android-versions.md) — implemented
+
+## Distribution
+
+- [US-054 — App ZIP and DMG releases](US-054-app-and-dmg-release.md) — in_progress

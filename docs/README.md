@@ -9,7 +9,7 @@ Current user/developer instructions take precedence over historical reports.
 | [Development](DEVELOPMENT.md) | Toolchain, commands, source map, QA isolation and cleanup |
 | [Contributing](../CONTRIBUTING.md) | Branch/PR conventions, verification and commit rules |
 | [GitHub](GITHUB.md) | Private repository access and initial owner setup |
-| [Releasing](RELEASING.md) | CI and source version/tag/release workflow |
+| [Releasing](RELEASING.md) | CI, app packaging and version/tag/release workflow |
 | [Changelog](../CHANGELOG.md) | User-facing changes; not a list of internal tasks |
 | [Architecture](ARCHITECTURE.md) | Current component and data boundaries; Vietnamese |
 | [UI style](UI-STYLE.md) | Shared UI patterns |

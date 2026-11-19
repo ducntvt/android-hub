@@ -10,8 +10,8 @@ Android screens and controls live inside one Hub window, powered by Android Emul
 **English** · [Tiếng Việt](README.vi.md)
 
 Private repository: **[ducntvt/android-hub](https://github.com/ducntvt/android-hub)**.
-Repository access is required to clone. Releases provide source tags and notes;
-there are no prebuilt app downloads. Contributors and invited users build locally.
+Repository access is required to clone or download private releases. Releases provide
+source plus an Apple Silicon app ZIP and DMG (macOS 15+), signed ad-hoc and not notarized.
 
 ## What it does
 
@@ -28,6 +28,14 @@ there are no prebuilt app downloads. Contributors and invited users build locall
 Closing Hub normally stops its registered Android engines before exiting. Force
 Quit/crashes cannot perform that cleanup. Apps and sign-ins belong to each Android
 device; they are not included in this repository.
+
+## Download the app
+
+Open [Releases](https://github.com/ducntvt/android-hub/releases), download the DMG
+or `.app.zip`, then copy **Android Hub.app** to Applications. The ZIP contains the
+same app as the DMG. `SHA256SUMS` and `INSTALL.txt` accompany each release.
+Gatekeeper may block these personal, non-notarized builds; building from source
+remains available. SDK/Java/images must be configured separately (see First launch).
 
 ## Requirements
 
@@ -63,8 +71,9 @@ Authenticate Git for the private repository first; see [repository access](docs/
 To reproduce a source release, run `git switch --detach v0.1.0` before building
 **only after that tag has been published**. Use `main` until then.
 
-The packaging script currently builds an optimized **development profile** and
-signs the local `.app` ad-hoc. It does not produce a notarized distribution build.
+The default build script uses an optimized **development profile**. Use
+`bash scripts/package-release.sh` for a release-profile app, ZIP and DMG under
+`dist/v<version>-macos-arm64/`. Both paths sign ad-hoc without notarization.
 Checks do not boot Android or install SDK packages. Build caches can be removed
 after packaging; keep the generated app if you use it.
 
@@ -106,19 +115,19 @@ or build problems. Deleting a device requires confirmation and is permanent;
 - A single APK is supported; XAPK/split APK and an app-update workflow are not.
 - Long two-game benchmarks and native accessibility coverage remain incomplete.
 
-## CI and source releases
+## CI and releases
 
 PRs and pushes to `main`/`develop` run the shared checks and app packaging on
 macOS ARM64. Rust is pinned in `rust-toolchain.toml`. Pushing a prepared `v*` tag
 validates its version, main ancestry and changelog, reruns CI, then publishes a
-source-only release. See [release preparation](docs/RELEASING.md) before tagging.
+release with verified app ZIP, DMG, install notes and checksums. See [release preparation](docs/RELEASING.md) before tagging.
 
 ## Documentation
 
 - [Setup and troubleshooting](docs/SETUP.md) · [Thiết lập tiếng Việt](docs/SETUP.vi.md)
 - [Development and source map](docs/DEVELOPMENT.md)
 - [Contribution workflow](CONTRIBUTING.md)
-- [Versions, tags and source releases](docs/RELEASING.md)
+- [Versions, tags and releases](docs/RELEASING.md)
 - [Changelog](CHANGELOG.md)
 - [Architecture](docs/ARCHITECTURE.md) · [Roadmap](docs/PLAN.md)
 - [Third-party notices](THIRD_PARTY_NOTICES.md) · [Security reporting](SECURITY.md)

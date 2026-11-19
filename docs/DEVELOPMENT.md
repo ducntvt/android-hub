@@ -96,10 +96,14 @@ Default data lives directly in `~/Library/Application Support/Android Hub`. `AND
 
 Display name and project directory: **Android Hub**. Cargo packages: `android-hub`, `android-hub-domain`, `android-hub-infrastructure`; the excluded metrics package is `android-hub-metrics`. Main app bundle ID: `local.androidhub.desktop`.
 
-Local packaging currently uses the optimized development profile, not `--release`.
+Local packaging defaults to the optimized development profile.
+`bash scripts/build-android-hub.sh --release` selects the release profile;
+`bash scripts/package-release.sh` builds and verifies app ZIP/DMG under `dist/`.
+Release binaries target macOS 15+ ARM64; proc-macro stripping is explicitly disabled
+to avoid Rust 1.96/macOS 27 LINKEDIT alignment failures.
 Both bundle version fields derive from the numeric Cargo product version via
 `scripts/release.py`. [Releasing](RELEASING.md) describes PR/branch CI and automatic
-source releases from verified version tags.
+app/source releases from verified version tags.
 
 Product commands are `scripts/build-android-hub.sh`, `scripts/build-android-hub-qa.py` and `scripts/collect-android-hub-metrics.py`. Historical reports retain the command names used at the time. P0 research paths in old reports describe historical runs, not the current data layout.
 

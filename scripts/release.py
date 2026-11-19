@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Read product metadata and validate source releases; never publish or modify Git."""
+"""Read product metadata and validate releases; never publish or modify Git."""
 import argparse
 import datetime
 import plistlib
@@ -67,6 +67,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(dest='command', required=True)
     commands.add_parser('bundle-version')
+    commands.add_parser('product-version')
     validate = commands.add_parser('validate')
     validate.add_argument('tag')
     validate.add_argument('--notes', type=Path)
@@ -74,7 +75,9 @@ def main():
     verify.add_argument('plist', type=Path)
     args = parser.parse_args()
     try:
-        if args.command == 'bundle-version':
+        if args.command == 'product-version':
+            print(product_version())
+        elif args.command == 'bundle-version':
             print(bundle_version(product_version()))
         elif args.command == 'verify-bundle':
             with args.plist.open('rb') as source:

@@ -11,8 +11,8 @@ Android Emulator làm engine.
 [English](README.md) · **Tiếng Việt**
 
 Repository private: **[ducntvt/android-hub](https://github.com/ducntvt/android-hub)**.
-Bạn cần được cấp quyền để clone. Release cung cấp tag source và ghi chú thay đổi;
-không có bản app đóng gói sẵn. Người dùng được mời sẽ tự build trên máy của mình.
+Bạn cần được cấp quyền để clone hoặc tải release private. Release gồm source,
+app ZIP và DMG cho Apple Silicon (macOS 15+), ký ad-hoc và chưa notarize.
 
 ## Tính năng
 
@@ -29,6 +29,13 @@ không có bản app đóng gói sẵn. Người dùng được mời sẽ tự 
 Đóng Hub bình thường sẽ dừng các engine Android đã đăng ký trước khi thoát.
 Force Quit/crash không chạy được luồng này. App và tài khoản đăng nhập thuộc từng
 máy Android; chúng không nằm trong repository.
+
+## Tải app
+
+Vào [Releases](https://github.com/ducntvt/android-hub/releases), tải DMG hoặc
+`.app.zip`, rồi chép **Android Hub.app** vào Applications. ZIP và DMG chứa cùng
+một app; có `SHA256SUMS` và `INSTALL.txt` đi kèm. Gatekeeper có thể chặn bản tải
+về chưa notarize; bạn vẫn có thể tự build source. SDK/Java/image thiết lập riêng.
 
 ## Yêu cầu
 
@@ -64,8 +71,9 @@ open 'Android Hub.app'
 Muốn build đúng một bản phát hành, chạy `git switch --detach v0.1.0` trước khi build,
 **chỉ khi tag đó đã được phát hành**. Trước đó dùng `main`.
 
-Script đóng gói hiện build **development profile có tối ưu** và ký ad-hoc cho bản
-`.app` local; chưa tạo bản phân phối notarized. Bộ kiểm tra không boot Android hay
+Script mặc định build **development profile có tối ưu**. Chạy
+`bash scripts/package-release.sh` để tạo app, ZIP và DMG bằng release profile tại
+`dist/v<version>-macos-arm64/`. Cả hai cách đều ký ad-hoc, chưa notarize. Bộ kiểm tra không boot Android hay
 cài SDK. Sau khi đóng gói có thể dọn target; giữ app nếu đang sử dụng.
 
 ## Lần mở đầu tiên
@@ -109,7 +117,7 @@ và không thể hoàn tác; **Sao lưu trước** không tự chuyển sang bư
 PR và push vào `main`/`develop` chạy bộ kiểm tra chung và đóng gói app trên
 macOS ARM64. Rust được cố định trong `rust-toolchain.toml`. Khi push tag `v*`,
 workflow kiểm tra version, commit thuộc lịch sử `main` và changelog, chạy lại CI
-rồi tạo release chỉ chứa source. Xem [cách chuẩn bị release](docs/RELEASING.md)
+rồi tạo release có app ZIP, DMG, ghi chú cài đặt và checksum. Xem [cách chuẩn bị release](docs/RELEASING.md)
 trước khi tạo tag.
 
 ## Tài liệu

@@ -33,3 +33,14 @@ read back as the H logo. Dock was restarted once to clear its stale presentation
 User confirmed the Dock icon displayed correctly after the refresh. The build
 script passed shell syntax validation and the existing app retained a valid strict
 deep code signature. Temporary diagnostic images and Swift cache were removed.
+
+## Binary dependency notices
+
+`THIRD-PARTY-NOTICES.txt` is a release resource, not cache. It records the resolved
+macOS ARM64 Cargo graph and license/copyright texts from crate archives or the
+upstream URLs recorded alongside them, plus font/protocol/runtime attribution.
+The first lines bind the snapshot to Cargo.lock. When dependencies change,
+regenerate metadata with `cargo metadata --locked --format-version 1
+--filter-platform aarch64-apple-darwin`, inspect the resolved packages and
+packaged/upstream notices, and update the snapshot and lock hash together.
+Do not merely replace the hash without reviewing changed components.

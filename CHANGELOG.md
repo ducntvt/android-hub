@@ -1,12 +1,15 @@
 # Changelog
 
-User-facing changes for source releases of Android Hub. Tags use `vMAJOR.MINOR.PATCH`;
-see [Releasing](docs/RELEASING.md). The current source version is `0.1.0`, but no
-publication date or release tag is claimed by this file.
+User-facing changes for Android Hub. Tags use `vMAJOR.MINOR.PATCH`;
+see [Releasing](docs/RELEASING.md).
 
 ## Unreleased
 
+## [0.1.0] - 2026-11-19
+
 ### Added
+
+- Apple Silicon release app ZIP and drag-to-Applications DMG, with SHA-256 checksums.
 
 - Choose Android 12–16 at device creation, with immutable image identity and optional image downloads.
 - Installed-image inventory and guarded removal of unused Hub-managed images.
@@ -35,5 +38,7 @@ publication date or release tag is claimed by this file.
   this is not an automatic data migration available to other users.
 - Current target: macOS Apple Silicon with Android Emulator Google Play ARM64 Android 12–16.
   Qualification and game limitations are recorded in the E01 reports.
-- Local builds are ad-hoc signed; no prebuilt/notarized binary release is provided.
+- Prebuilt app ZIP/DMG target macOS 15+ on Apple Silicon. They are ad-hoc signed,
+  not Developer ID signed or notarized; Gatekeeper may block downloaded copies.
+- Packages contain only Hub; SDK, Java, Android images and device data are separate.
 - Clean-machine managed SDK validation, long two-game benchmarks and native accessibility remain incomplete.
