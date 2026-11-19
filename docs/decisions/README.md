@@ -142,3 +142,5 @@ Skip an ADR for: bug fixes, refactors that preserve behavior, dependency bumps w
 - [0057 — Ad-hoc app ZIP and DMG distribution](0057-ad-hoc-app-distribution.md) — Accepted
 
 - [0058 — Optional AVD target with verified image identity](0058-optional-avd-target.md) — Accepted
+
+- [0059 — Confirmed app uninstall](0059-confirmed-app-uninstall.md) — Accepted

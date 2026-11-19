@@ -191,3 +191,29 @@ It uses `data/` beside the QA bundle, clears inherited SDK/Java overrides and do
 not use personal Application Support data. Packaging does not launch Hub or boot
 Android. Do not relocate a populated QA directory: Android metadata includes
 absolute paths. Close test apps/guests and remove only disposable QA data afterward.
+
+## Uninstall (v0.2.0 and later)
+
+Open **Hub settings → Environment and data → Uninstall Android Hub…** before
+deleting the app in Finder. Wait for any active write/download to finish or cancel
+it first. Review the exact paths and allocated sizes. Optionally select **Keep
+backups**, then type `DELETE` and confirm. Changing the backup option clears the
+confirmation. Devices are stopped before a helper is prepared; Hub then closes
+before deletion begins. Other Hub/Android processes block uninstall.
+
+Only the running app in `/Applications/Android Hub.app` or
+`~/Applications/Android Hub.app` and the default Application Support data root
+are eligible. Development checkouts, arbitrary data overrides and translocated
+app copies are refused. Isolated temporary QA bundles support this flow for tests.
+External SDKs/Java, Android Studio, source, downloaded DMGs and other app copies
+are retained. Keeping backups leaves only `backups/` at its original location;
+restoring still requires compatible SDK/images. Allocated size is an estimate,
+not guaranteed reclaimed space on APFS.
+
+No administrator elevation or automatic retry is performed. If cleanup fails
+after Hub exits, a text report opens and remains in the helper's private temporary
+directory; some confirmed data may already have been deleted. The app is removed
+last, but a failure during that step can also leave a partial bundle. If a crash
+leaves `uninstall-pending.json`, normal mutations remain blocked for inspection;
+do not delete unrelated paths or restart the helper blindly. Deleting the app in
+Finder does not trigger this workflow and leaves its data behind.

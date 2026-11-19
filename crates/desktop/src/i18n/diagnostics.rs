@@ -29,6 +29,18 @@ impl Language {
         }
         for (prefix, suffix, english_prefix, english_suffix) in [
             (
+                "Không có quyền gỡ cài đặt tại: ",
+                "",
+                "No permission to uninstall at: ",
+                "",
+            ),
+            (
+                "Không khởi động được bộ gỡ cài đặt: ",
+                "",
+                "Cannot start the uninstaller: ",
+                "",
+            ),
+            (
                 "Image vẫn đang được tham chiếu: ",
                 "",
                 "Image is still referenced: ",

@@ -157,3 +157,5 @@ If you want automation, a 10-line bash script can parse and run them — but the
 ## Distribution
 
 - [US-054 — App ZIP and DMG releases](US-054-app-and-dmg-release.md) — implemented
+
+- [US-055 — Uninstall Android Hub and owned data](US-055-uninstall-android-hub.md) — implemented

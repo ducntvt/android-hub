@@ -5,6 +5,23 @@ see [Releasing](docs/RELEASING.md).
 
 ## Unreleased
 
+## [0.2.0] - 2026-11-19
+
+### Added
+
+- Explicit uninstall from Hub settings with path/size review, DELETE confirmation,
+  optional backup retention and after-exit cleanup of the installed app and owned
+  data. External SDKs/Java and source checkouts are preserved.
+
+### Compatibility and limits
+
+- Existing devices, SDK settings and backups are retained when updating; no data
+  migration is required. Uninstall only deletes data after explicit confirmation.
+- Uninstall supports the app in `/Applications` or `~/Applications` with the
+  default Hub data directory. Other Hub/Android processes must be closed first.
+- Apple Silicon builds remain ad-hoc signed, not Developer ID signed or notarized.
+  Android SDKs, Java and system images are downloaded or selected separately.
+
 ## [0.1.1] - 2026-11-19
 
 ### Fixed

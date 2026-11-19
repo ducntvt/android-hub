@@ -30,6 +30,70 @@ impl Language {
             return value;
         }
         match value {
+            "Đang chuẩn bị gỡ cài đặt Android Hub…" => {
+                "Preparing to uninstall Android Hub…"
+            }
+            "Đang chờ" => "Waiting",
+            "Đang dừng…" => "Stopping…",
+            "File khóa Hub không hợp lệ; không gỡ cài đặt" => {
+                "Invalid Hub lock file; uninstall blocked"
+            }
+            "Gỡ cài đặt Android Hub…" => "Uninstall Android Hub…",
+            "Gỡ cài đặt Android Hub" => "Uninstall Android Hub",
+            "Xóa vĩnh viễn máy Android, game, tài khoản, SDK do Hub quản lý, cấu hình và cache. Không thể hoàn tác." => {
+                "Permanently deletes Android devices, games, accounts, Hub-managed SDKs, settings and cache. This cannot be undone."
+            }
+            "SDK/Java bên ngoài, source và các bản app khác được giữ nguyên." => {
+                "External SDKs/Java, source code and other app copies are kept."
+            }
+            "Ứng dụng và dữ liệu sẽ xóa" => "App and data to remove",
+            "Giữ lại backup" => "Keep backups",
+            "Giữ tại" => "Keep at",
+            "Khôi phục backup sau này vẫn cần SDK/image tương thích." => {
+                "Restoring backups later still requires compatible SDKs/images."
+            }
+            "Nhập DELETE để xác nhận" => "Type DELETE to confirm",
+            "Đang dừng máy và chuẩn bị gỡ. Hub sẽ tự đóng trước khi xóa." => {
+                "Stopping devices and preparing uninstall. Hub will close before deletion starts."
+            }
+            "Gỡ cài đặt và xóa dữ liệu" => "Uninstall and delete data",
+            "Chỉ gỡ bản Hub trong Applications với dữ liệu mặc định, hoặc bản QA riêng" => {
+                "Uninstall requires Hub in Applications with default data, or an isolated QA bundle"
+            }
+            "Đường dẫn gỡ cài đặt chứa liên kết; không xóa" => {
+                "Uninstall paths contain aliases; deletion blocked"
+            }
+            "Đường dẫn gỡ cài đặt không phải thư mục thật" => {
+                "Uninstall path is not a real directory"
+            }
+            "Không xác minh được ứng dụng Android Hub" => {
+                "Cannot verify the Android Hub app"
+            }
+            "Không xác minh được ứng dụng đang chạy" => {
+                "Cannot verify the running app"
+            }
+            "Quét dữ liệu gỡ cài đặt vượt giới hạn; chưa xóa" => {
+                "Uninstall scan exceeded its limit; nothing deleted"
+            }
+            "Dữ liệu chứa mount hoặc loại file không hỗ trợ; chưa xóa" => {
+                "Data contains mounted volumes or unsupported files; nothing deleted"
+            }
+            "Dữ liệu chứa mount; chưa xóa" => {
+                "Data contains a mounted volume; nothing deleted"
+            }
+            "Dữ liệu gỡ cài đặt đã thay đổi; đóng hộp thoại và xác nhận lại" => {
+                "Uninstall data changed; close this dialog and review again"
+            }
+            "Cấu hình đã đổi; xác nhận lại" => "Configuration changed; review again",
+            "Còn Hub hoặc máy Android khác đang chạy; đóng chúng trước khi gỡ" => {
+                "Another Hub or Android engine is running; close it before uninstalling"
+            }
+            "Không kiểm tra được tiến trình trước khi gỡ" => {
+                "Cannot inspect processes before uninstalling"
+            }
+            "Hub đang gỡ cài đặt hoặc lần gỡ trước bị gián đoạn; không tự tiếp tục xóa" => {
+                "Uninstall is running or was interrupted; deletion will not resume automatically"
+            }
             "Image đã cài tách biệt với cache tải. Hub không tự gỡ image khi xóa máy." => {
                 "Installed images are separate from download cache. Deleting a device does not remove its image."
             }
