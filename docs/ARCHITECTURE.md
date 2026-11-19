@@ -125,3 +125,15 @@ Theo [ADR 0054](decisions/0054-app-owned-data-root.md), data root không còn ph
 source checkout. `ANDROID_HUB_ROOT` được hiểu là thư mục dữ liệu trực tiếp, dùng
 cho QA. Backend và UI preferences dùng chung root; initialize tạo registry rỗng,
 không tự nhập máy P0. Runtime cũ được reset theo yêu cầu, không migrate AVD/backup.
+
+## Gỡ cài đặt
+
+Theo [ADR 0059](decisions/0059-confirmed-app-uninstall.md), Settings có luồng gỡ
+cài đặt với preview đường dẫn/dung lượng và xác nhận DELETE. Chỉ chấp nhận app
+đang chạy trong Applications với data root mặc định, hoặc bundle QA trong thư mục
+tạm và `data/` kế bên. Desktop dùng shutdown hiện có rồi chuyển plan sang helper
+Rust sao chép tạm qua pipe. Helper giữ lock, kiểm tra tiến trình/identity, đợi parent
+thoát rồi xóa dữ liệu đã xác nhận và app sau cùng. Marker chặn mutation; không
+tự tiếp tục xóa sau crash. Backup có thể giữ nguyên đường dẫn, SDK/Java bên ngoài
+không thuộc phạm vi xóa. Lỗi sau khi thoát mở báo cáo văn bản; dữ liệu đã xóa không
+rollback được. Không dùng trình gỡ để kiểm thử trên app/dữ liệu chính.

@@ -26,7 +26,7 @@ impl Hub {
         }
         match message {
             Message::RequestQuit => {
-                if self.quitting {
+                if self.quitting || self.uninstall.as_ref().is_some_and(|u| u.confirmed) {
                     return Task::none();
                 }
                 self.quit_requested = true;
@@ -50,6 +50,15 @@ impl Hub {
             }
             Message::ShutdownFinished(result) if self.quitting => {
                 self.quitting = false;
+                if self.uninstall.as_ref().is_some_and(|u| u.confirmed) {
+                    return match result {
+                        Ok(()) => self.handoff_uninstall(),
+                        Err(error) => {
+                            self.uninstall_failed(error);
+                            Task::none()
+                        }
+                    };
+                }
                 match result {
                     Ok(()) => return iced::exit(),
                     Err(error) => self.quit_error = Some(error),
@@ -65,6 +74,15 @@ impl Hub {
                 }
                 return Task::none();
             }
+            Message::UninstallHandoff(result)
+                if self.quitting && self.uninstall.as_ref().is_some_and(|u| u.confirmed) =>
+            {
+                match result {
+                    Ok(()) => return iced::exit(),
+                    Err(error) => self.uninstall_failed(error),
+                }
+                return Task::none();
+            }
             _ if self.quitting => return Task::none(),
             _ => {
                 // Finish existing work, but do not accept new operations while closing.
@@ -72,6 +90,7 @@ impl Hub {
                     && !matches!(
                         message,
                         Message::Loaded(..)
+                            | Message::UninstallPrepared(..)
                             | Message::DeletePrepared(..)
                             | Message::DeleteBackupFinished(..)
                             | Message::Created(..)
@@ -145,6 +164,31 @@ impl Hub {
         }
 
         match message {
+            Message::OpenUninstall if !self.busy && !self.stale => return self.open_uninstall(),
+            Message::UninstallPrepared(result) => {
+                self.busy = false;
+                if let Some(dialog) = &mut self.uninstall {
+                    match result {
+                        Ok(plan) => dialog.plan = Some(plan),
+                        Err(error) => dialog.error = Some(error),
+                    }
+                }
+            }
+            Message::UninstallKeepBackups(keep) if !self.busy => {
+                if let Some(dialog) = &mut self.uninstall {
+                    dialog.keep_backups = keep;
+                    dialog.confirmation.clear();
+                }
+            }
+            Message::UninstallText(text) if !self.busy => {
+                if let Some(dialog) = &mut self.uninstall {
+                    dialog.confirmation = text;
+                }
+            }
+            Message::ConfirmUninstall => return self.confirm_uninstall(),
+            Message::FormTab(backwards) if self.uninstall.is_some() => {
+                return shortcuts::focus(backwards, true);
+            }
             Message::CheckConnectivity => self.start_connectivity(),
             Message::CancelConnectivity => self.connectivity = None,
             Message::ToggleConnectivityDetails => {

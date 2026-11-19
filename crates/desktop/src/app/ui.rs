@@ -17,6 +17,7 @@ mod sdk;
 use panels::{close_button, panel_header, path_field, section, side_panel};
 mod settings;
 mod style;
+mod uninstall;
 mod workspace;
 use icons::{Icon, icon};
 use style::*;
@@ -96,7 +97,10 @@ fn logo() -> iced::widget::Image {
 pub fn view(hub: &Hub) -> Element<'_, Message> {
     let lang = hub.language;
     if hub.quit_requested {
-        let title = if hub.quit_error.is_some() {
+        let uninstalling = hub.uninstall.as_ref().is_some_and(|u| u.confirmed);
+        let title = if uninstalling {
+            "Đang chuẩn bị gỡ cài đặt Android Hub…"
+        } else if hub.quit_error.is_some() {
             "Chưa thể đóng Hub"
         } else if hub.busy {
             "Đang chờ thao tác hiện tại hoàn tất…"
@@ -105,7 +109,11 @@ pub fn view(hub: &Hub) -> Element<'_, Message> {
         };
         let mut content = column![
             text(lang.tr(title)).size(24),
-            muted(lang.tr("Hub sẽ đóng sau khi các máy đã dừng.")),
+            muted(lang.tr(if uninstalling {
+                "Đang dừng máy và chuẩn bị gỡ. Hub sẽ tự đóng trước khi xóa."
+            } else {
+                "Hub sẽ đóng sau khi các máy đã dừng."
+            })),
         ]
         .spacing(18)
         .max_width(640);

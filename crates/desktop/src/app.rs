@@ -18,6 +18,7 @@ mod shortcuts;
 #[cfg(test)]
 mod tests;
 mod ui;
+mod uninstall;
 mod update;
 mod workspace;
 
@@ -109,6 +110,7 @@ struct DisplayState {
     input_generation: Option<u64>,
 }
 struct Hub {
+    uninstall: Option<uninstall::Dialog>,
     connectivity: Option<connectivity::Check>,
     connectivity_epoch: u64,
     quit_requested: bool,
@@ -229,6 +231,7 @@ impl Hub {
         let task = Self::task(backend.clone(), Work::Initialize);
         (
             Self {
+                uninstall: None,
                 connectivity: None,
                 connectivity_epoch: 0,
                 quit_requested: false,

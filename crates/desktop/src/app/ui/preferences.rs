@@ -37,6 +37,9 @@ pub(super) fn view(hub: &Hub) -> Element<'_, Message> {
                 .on_press_maybe((!hub.busy && !hub.stale && !hub.storage_loading).then_some(Message::MeasureStorage)),
             tool(lang.tr("Máy đã lưu trữ"), Message::OpenRemoved).width(Length::Fill)
                 .on_press_maybe((!hub.busy && !hub.stale).then_some(Message::OpenRemoved)),
+            tool(lang.tr("Gỡ cài đặt Android Hub…"), Message::OpenUninstall).width(Length::Fill)
+                .style(danger)
+                .on_press_maybe((!hub.busy && !hub.stale).then_some(Message::OpenUninstall)),
         ].spacing(8)),
         section(lang.tr("Phím tắt Hub"), column![
             text(lang.tr("⌘, Cài đặt Hub · ⌘F Tìm máy

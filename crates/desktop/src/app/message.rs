@@ -9,6 +9,12 @@ use std::path::PathBuf;
 
 #[derive(Clone, Debug)]
 pub(super) enum Message {
+    OpenUninstall,
+    UninstallPrepared(Result<android_hub_infrastructure::UninstallPlan, String>),
+    UninstallKeepBackups(bool),
+    UninstallText(String),
+    ConfirmUninstall,
+    UninstallHandoff(Result<(), String>),
     CheckConnectivity,
     CancelConnectivity,
     ToggleConnectivityDetails,

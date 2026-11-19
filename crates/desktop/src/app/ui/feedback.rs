@@ -48,7 +48,7 @@ pub(super) fn layers<'a>(hub: &'a Hub, base: Element<'a, Message>) -> Element<'a
                 .center_y(Length::Fill)
                 .style(|theme| surface(theme, Surface::Scrim, 0.))
                 .into(),
-            hub.creation.is_some(),
+            hub.creation.is_some() || hub.uninstall.is_some(),
         ));
     }
     stack(layers).into()
@@ -134,6 +134,9 @@ fn notification<'a>(hub: &'a Hub, n: &'a Notification, count: usize) -> Element<
 }
 
 fn dialog(hub: &Hub) -> Option<Element<'_, Message>> {
+    if hub.uninstall.is_some() {
+        return Some(super::uninstall::dialog(hub));
+    }
     if let Some(profile) = &hub.pending_delete {
         return Some(delete_dialog(hub, profile));
     }

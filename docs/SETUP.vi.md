@@ -130,3 +130,27 @@ Mở `Android Hub QA.app` trong thư mục đó bằng Finder. Launcher dùng th
 - **Một app báo lỗi HTTP**: dùng kiểm tra kết nối trong cấu hình thiết bị; kết quả endpoint kiểm tra không bảo đảm mọi dịch vụ/game đều hoạt động.
 - **Icon Dock mặc định**: chạy lại script build để cập nhật bundle/đăng ký icon, rồi mở lại app khi thuận tiện. Không cần xóa dữ liệu Android.
 - **Cần báo lỗi**: ghi tag/commit, macOS/chip, phiên bản SDK/image, bước tái hiện và lỗi đã che thông tin riêng; không gửi mật khẩu, token hay userdata.
+
+## Gỡ cài đặt (từ v0.2.0)
+
+Vào **Cài đặt Hub → Môi trường và dữ liệu → Gỡ cài đặt Android Hub…** trước khi
+xóa app trong Finder. Chờ thao tác ghi/tải hoàn tất hoặc hủy nó trước. Xem danh
+sách đường dẫn và dung lượng, chọn **Giữ lại backup** nếu cần, nhập đúng `DELETE`
+rồi xác nhận. Đổi tùy chọn backup sẽ xóa nội dung xác nhận. Hub dừng máy Android,
+chuẩn bị helper rồi thoát trước khi xóa. Nếu còn Hub/engine khác đang chạy, việc
+gỡ bị chặn.
+
+Chỉ gỡ app đang chạy trong `/Applications/Android Hub.app` hoặc
+`~/Applications/Android Hub.app` với data root mặc định. Bản chạy từ source,
+đường dẫn dữ liệu tùy ý và app bị translocation bị từ chối. Bundle QA riêng trong
+thư mục tạm cũng được hỗ trợ. SDK/Java bên ngoài, Android Studio, source, DMG đã
+tải và các bản app khác vẫn được giữ. Nếu giữ backup, `backups/` còn ở vị trí cũ;
+khôi phục về sau vẫn cần SDK/image tương thích. Dung lượng đã cấp phát không bảo
+đảm số dung lượng thực tế thu hồi trên APFS.
+
+Không xin quyền quản trị và không tự tiếp tục xóa. Lỗi sau khi Hub thoát sẽ mở
+báo cáo văn bản trong thư mục tạm riêng của helper; một phần dữ liệu đã xác nhận
+có thể đã bị xóa. App được xóa sau cùng nhưng lỗi ở bước này cũng có thể để lại
+bundle dở. Nếu crash để lại `uninstall-pending.json`, các thao tác ghi bị chặn để
+kiểm tra; không chạy lại helper hoặc xóa thư mục khác một cách tùy tiện. Kéo app
+vào Trash không kích hoạt luồng này và vẫn để lại dữ liệu.

@@ -206,7 +206,8 @@ impl Hub {
             .map(|p| p.name.clone())
     }
     pub(super) fn modal_open(&self) -> bool {
-        self.image_removal.is_some()
+        self.uninstall.is_some()
+            || self.image_removal.is_some()
             || self.creation.is_some()
             || self.apk_request.is_some()
             || self.pending_stop.is_some()
@@ -219,6 +220,10 @@ impl Hub {
             || self.pending_navigation.is_some()
     }
     pub(super) fn cancel_modal(&mut self) {
+        if self.uninstall.as_ref().is_some_and(|u| u.confirmed) {
+            return;
+        }
+        self.uninstall = None;
         if self.creation.is_some() && self.busy && !self.quit_requested {
             return;
         }
@@ -307,6 +312,10 @@ impl Hub {
         matches!(
             message,
             Message::ApkPicked(..)
+                | Message::UninstallPrepared(..)
+                | Message::UninstallKeepBackups(..)
+                | Message::UninstallText(..)
+                | Message::ConfirmUninstall
                 | Message::ApkInspected(..)
                 | Message::ChooseApkTarget(..)
                 | Message::EditCreation(..)

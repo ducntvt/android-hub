@@ -38,8 +38,10 @@ use shutdown::stop_registered_progress;
 pub use shutdown::{ShutdownProgress, ShutdownStatus};
 pub use snapshot::Snapshot;
 use snapshot::{android_image_version, parse_processes};
+mod uninstall;
 mod usage;
 pub use restore::RestoreOutcome;
+pub use uninstall::{UninstallPlan, run_uninstall_helper};
 pub use usage::{DiskUsage, UsageCategory};
 pub mod display;
 use android_hub_domain::Profile;
@@ -106,6 +108,16 @@ impl Backend {
         Ok(guard)
     }
     fn lock_raw(&self) -> Result<FileLock, String> {
+        if self
+            .root
+            .join(uninstall::PENDING)
+            .try_exists()
+            .map_err(err)?
+        {
+            return Err(
+                "Hub đang gỡ cài đặt hoặc lần gỡ trước bị gián đoạn; không tự tiếp tục xóa".into(),
+            );
+        }
         fs::create_dir_all(self.runtime()).map_err(err)?;
         let f = OpenOptions::new()
             .create(true)
