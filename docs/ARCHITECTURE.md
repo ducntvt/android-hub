@@ -27,6 +27,9 @@ Theo [ADR 0056](decisions/0056-immutable-android-image-per-device.md), catalog c
 Android 12–16 và mỗi máy giữ package/revision/fingerprint đã xác minh. Tải image
 là plan riêng trên SDK dùng chung; consent gắn với nội dung license của plan.
 Creation recheck identity dưới lock trước khi tạo AVD. Không nâng/hạ image tại chỗ.
+Theo [ADR 0058](decisions/0058-optional-avd-target.md), AVD có thể thiếu `target`;
+`image.sysdir.1` vẫn bắt buộc thuộc catalog, `target` nếu có phải khớp API.
+Các kiểm tra SDK/revision/fingerprint và ABI/flavor vẫn giữ nguyên.
 Gỡ image chỉ dành cho SDK do Hub quản lý, kiểm tra registry/AVD/backup/archive và
 journal; SDK bên ngoài chỉ đọc. Lock theo thứ tự SDK-image rồi Hub, publish/remove
 có journal và kiểm tra lại identity. Bảng kết quả từng phiên bản và giới hạn xem

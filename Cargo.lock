@@ -79,7 +79,7 @@ dependencies = [
 
 [[package]]
 name = "android-hub"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "android-hub-domain",
  "android-hub-infrastructure",
@@ -95,14 +95,14 @@ dependencies = [
 
 [[package]]
 name = "android-hub-domain"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "serde",
 ]
 
 [[package]]
 name = "android-hub-infrastructure"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "android-hub-domain",
  "flate2",

@@ -1,6 +1,6 @@
 # US-054 — Publish app ZIP and DMG releases
 
-- **Status**: in_progress
+- **Status**: implemented
 - **Owner**: Android Hub maintainer
 - **Created**: 2026-11-19
 - **Risk lane**: normal
@@ -15,10 +15,10 @@ must correspond to the version tag and contain no personal data or Android SDKs.
 
 - [x] Build a release-profile ARM64 app with matching version and explicit macOS target.
 - [x] Produce verified app ZIP, DMG with Applications shortcut, install notes and SHA-256 checksums.
-- [ ] Preserve the main app/data; close any QA and remove disposable packaging/build outputs.
-- [ ] Tag workflow checks source first, packages the tag, uploads assets to a draft and publishes only after upload success.
+- [x] Preserve the main app/data; close any QA and remove disposable packaging/build outputs.
+- [x] Tag workflow checks source first, packages the tag, uploads assets to a draft and publishes only after upload success.
 - [x] Document ad-hoc/non-notarized status, external SDK requirements and dependency notices.
-- [ ] Publish v0.1.0 from main and verify its tag, assets and release visibility.
+- [x] Publish v0.1.0 from main and verify its tag, assets and release visibility.
 
 ## Out of scope
 
@@ -49,6 +49,28 @@ checksums after publication. No guest matrix is required for a packaging change.
 Local ARM64 release build passed on macOS 27 after disabling build-time macro
 stripping for Rust issue #157750. Verified bundle version/signature and system-only
 dylibs; ZIP extraction, DMG integrity/mount/Applications link and SHA-256 checks
-passed. No Hub window or guest was launched. 32 Python tests, shell syntax,
+passed. A QA wrapper using the release executable opened the empty workspace
+and exited normally; process/app inventory confirmed shutdown. No guest was
+created or started, and the main app stayed open. 32 Python tests, shell syntax,
 documentation and whitespace checks passed. Final assets remain under `dist/`.
-PR/tag CI and publication confirmation are pending.
+
+[PR #3](https://github.com/ducntvt/android-hub/pull/3) passed shared CI and merged.
+Annotated tag `v0.1.0` points to main commit
+`1746eb59df15f8bb37b0b88e058ea43f60d61fda`.
+[Release workflow](https://github.com/ducntvt/android-hub/actions/runs/44455312356)
+passed validation, macOS checks/build, Android helper reproducibility and release
+packaging/publishing. [v0.1.0](https://github.com/ducntvt/android-hub/releases/tag/v0.1.0)
+was published on 2026-11-19 (not a draft or prerelease) with all four assets uploaded.
+
+Downloaded assets were checked against SHA256SUMS. Extracted app signature, ARM64
+architecture, version 0.1.0, macOS 15.0 target and dependency notices matched;
+`hdiutil verify` also passed on the downloaded DMG. Published asset SHA-256:
+
+- ZIP: `3a4adfb7bb1f0536fb3bd48d6449a020a497346ebfbcea20405b0b24b66e5bf7`.
+- DMG: `da38059be4ea3af5c78fcec6df89f425a664c835431dda6e99f9737cc52c6a31`.
+
+Local `dist/v0.1.0-macos-arm64/` now holds these published assets and the extracted
+app. Disposable target, QA wrapper/data, license-fetch cache and task files were
+removed; the main app and personal SDK/device data were preserved. The release
+runner cleaned its own staging/build outputs. Main was synchronized into develop.
+The post-publication evidence update lives on develop; the published tag is unchanged.

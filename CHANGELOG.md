@@ -5,6 +5,20 @@ see [Releasing](docs/RELEASING.md).
 
 ## Unreleased
 
+## [0.1.1] - 2026-11-19
+
+### Fixed
+
+- Accept AVD configurations that omit the redundant `target` field when the
+  Android image identity is verified; conflicting values remain rejected.
+
+### Updating from 0.1.0
+
+- Quit Android Hub, replace the app in Applications, then reopen it and create
+  a new Android device. Existing SDKs, images and registered devices are retained.
+- Files from failed creation attempts remain preserved for inspection; this patch
+  does not automatically register or delete them.
+
 ## [0.1.0] - 2026-11-19
 
 ### Added

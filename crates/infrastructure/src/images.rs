@@ -157,7 +157,11 @@ impl Backend {
             .into_iter()
             .find(|v| relative.trim_end_matches('/') == v.directory())
             .ok_or("Image AVD không thuộc Android 12–16 Google Play ARM64")?;
-        if props.get("target") != Some(&format!("android-{}", version.api()))
+        // Some AVD configs omit this redundant field. The package path remains
+        // mandatory; an explicit target must still agree with its API.
+        if props
+            .get("target")
+            .is_some_and(|target| target != &format!("android-{}", version.api()))
             || props.get("abi.type").is_some_and(|abi| abi != "arm64-v8a")
             || props
                 .get("tag.id")
@@ -439,6 +443,57 @@ pub(crate) mod tests {
                 .unwrap_err()
                 .contains("không tự nâng cấp")
         );
+    }
+
+    #[test]
+    fn missing_avd_target_preserves_verified_image_binding_and_backup() {
+        for version in AndroidVersion::ALL {
+            let fixture = Fixture::new();
+            let b = &fixture.0;
+            fixture.image(version);
+            let mut profile = fixture.device(version, "hub-no-target", 5664);
+            profile.image = Some(b.installed_image_identity(version).unwrap());
+            let path = b.data(&profile).join("config.ini");
+            let config = format!(
+                "image.sysdir.1={}/\nabi.type=arm64-v8a\ntag.id=google_apis_playstore\n",
+                version.directory()
+            );
+            fs::write(&path, &config).unwrap();
+            b.verify_profile_image(&profile).unwrap();
+            b.write_profiles(&[profile.clone()]).unwrap();
+            let backup = b.backup_locked(profile.clone()).unwrap();
+            assert_eq!(
+                b.verify_restore_backup(&profile.id, &backup).unwrap(),
+                profile
+            );
+            assert_eq!(fs::read_to_string(&path).unwrap(), config);
+
+            for wrong in [
+                format!("{config}target=android-99\n"),
+                format!("{config}target=\n"),
+                config.replace("abi.type=arm64-v8a", "abi.type=x86_64"),
+                config.replace("tag.id=google_apis_playstore", "tag.id=google_apis"),
+                config.replace(
+                    version.directory(),
+                    "system-images/android-99/google_apis_playstore/arm64-v8a",
+                ),
+                config
+                    .lines()
+                    .filter(|line| !line.starts_with("image.sysdir.1="))
+                    .collect::<Vec<_>>()
+                    .join("\n"),
+            ] {
+                fs::write(&path, wrong).unwrap();
+                assert!(b.verify_profile_image(&profile).is_err());
+            }
+            fs::write(&path, &config).unwrap();
+            fs::write(
+                b.sdk.join(version.directory()).join("system.img"),
+                b"changed payload",
+            )
+            .unwrap();
+            assert!(b.verify_profile_image(&profile).is_err());
+        }
     }
 
     #[test]

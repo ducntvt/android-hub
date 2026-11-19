@@ -156,4 +156,4 @@ If you want automation, a 10-line bash script can parse and run them — but the
 
 ## Distribution
 
-- [US-054 — App ZIP and DMG releases](US-054-app-and-dmg-release.md) — in_progress
+- [US-054 — App ZIP and DMG releases](US-054-app-and-dmg-release.md) — implemented
