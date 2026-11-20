@@ -38,6 +38,14 @@ planned  →  in_progress  →  implemented
 
 Update the `Status:` field at the top of the story file as work moves.
 
+Before reporting a user-facing story complete, build and update the local
+`~/Applications/Android Hub Preview.app` from the verified working tree. Preserve
+its `local.androidhub.preview` bundle identifier and separate Preview data root;
+leave Latest unchanged. Verify the installed bundle signature and executable
+against the build, and report its path/build identifier. A disposable QA build
+alone is not the Preview handoff. Close test instances and clean temporary build
+artifacts after the installed Preview has been verified.
+
 ## Verify-all convention
 
 Every story has a `## Verify` section containing a numbered list of shell commands. To "verify-all", run each command in order; all must exit 0.
@@ -170,7 +178,7 @@ Nhánh `feature/physical-devices`; US-056 đã chốt scrcpy v5.0.1; US-057 đã
 - [US-058 — Nhận diện USB và thiết lập ADB tối thiểu](epics/E02-physical-devices/US-058-usb-discovery-and-adb-setup.md) — implemented; USB discovery + standalone ADB setup
 - [US-059 — Nhúng màn hình điện thoại vào Hub](epics/E02-physical-devices/US-059-embedded-physical-display.md) — implemented; embedded hardware-decoded video, view-only
 - [US-060 — Điều khiển điện thoại và navigation](epics/E02-physical-devices/US-060-physical-input-and-navigation.md) — planned; MVP USB
-- [US-061 — Cài APK và clipboard đúng điện thoại](epics/E02-physical-devices/US-061-physical-apk-and-clipboard.md) — planned; MVP USB
+- [US-061 — Cài APK và clipboard đúng điện thoại](epics/E02-physical-devices/US-061-physical-apk-and-clipboard.md) — implemented; MVP USB
 - [US-062 — Workspace chung cho điện thoại và máy ảo](epics/E02-physical-devices/US-062-mixed-device-workspace.md) — planned; MVP USB
 - [US-063 — Vòng đời kết nối, cleanup và đóng gói](epics/E02-physical-devices/US-063-physical-session-lifecycle-and-packaging.md) — planned; MVP USB
 - [US-064 — Nghiệm thu USB và hiệu năng workspace hỗn hợp](epics/E02-physical-devices/US-064-physical-device-qualification.md) — planned; MVP USB

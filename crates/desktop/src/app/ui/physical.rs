@@ -148,10 +148,15 @@ fn phone_workspace(hub: &Hub, size: iced::Size) -> Element<'_, Message> {
                 .as_ref()
                 .is_none_or(|p| p.image.is_none())
         {
-            body = body.push(tool(
-                lang.tr("Cài APK"),
-                Message::PickApk(DeviceId::Physical(phone.device.id.clone())),
-            ));
+            body = body.push(
+                button(text(lang.tr("Cài APK")))
+                    .style(pill)
+                    .padding([8, 12])
+                    .on_press_maybe(
+                        (!hub.busy && !hub.quit_requested)
+                            .then(|| Message::PickApk(DeviceId::Physical(phone.device.id.clone()))),
+                    ),
+            );
         }
         if let Some(preview) = &hub.physical.preview {
             if let Some(handle) = &preview.image {

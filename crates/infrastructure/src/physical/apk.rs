@@ -84,7 +84,9 @@ fn parse_result(raw: &[u8]) -> Result<(), InstallError> {
 fn command(bytes: u64) -> String {
     // Generated numeric size only. -R explicitly disables Android's default
     // replacement behavior; no downgrade, permission grant, user path or serial.
-    format!("exec:cmd package install -R --user current -S {bytes} -")
+    // No path argument means stdin. A trailing dash is parsed as an unknown
+    // option by some Android/OEM versions (observed on Samsung Android 15).
+    format!("exec:cmd package install -R --user current -S {bytes}")
 }
 pub async fn install(
     token: &PhysicalSession,
@@ -150,7 +152,7 @@ mod tests {
     fn command_is_streamed_and_disallows_replacement() {
         assert_eq!(
             command(123),
-            "exec:cmd package install -R --user current -S 123 -"
+            "exec:cmd package install -R --user current -S 123"
         );
     }
     #[test]

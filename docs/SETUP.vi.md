@@ -155,7 +155,7 @@ bundle dở. Nếu crash để lại `uninstall-pending.json`, các thao tác gh
 kiểm tra; không chạy lại helper hoặc xóa thư mục khác một cách tùy tiện. Kéo app
 vào Trash không kích hoạt luồng này và vẫn để lại dữ liệu.
 
-## Điện thoại USB (nhánh feature, US-058–059)
+## Điện thoại USB (nhánh feature, US-058–061)
 
 Có trong source nhánh `feature/physical-devices`, chưa phát hành. Chỉ cần Platform-Tools; không bắt cài Java/Emulator/system image.
 
@@ -179,8 +179,22 @@ Chưa hỗ trợ IME/Unicode hoặc giữ phím chơi game. Mở cài đặt Hub
 Trong chế độ hai máy, bấm đúng màn hình trước khi gõ; điện thoại có thể hiển thị
 cạnh emulator. Chưa có nút đổi rotation hệ thống điện thoại; xoay điện thoại khi
 ứng dụng hỗ trợ. Nếu xem được nhưng không điều khiển được, kiểm tra hướng dẫn
-quyền điều khiển USB của hãng. Âm thanh, cài APK và clipboard cho điện thoại vẫn
-là phần việc tương lai. Sau lỗi kết nối cần chủ động mở lại stream; input cũ không
+quyền điều khiển USB của hãng. Âm thanh vẫn là phần việc tương lai. APK và clipboard
+(US-061) đã qua kiểm thử Samsung Android 15 và đích emulator, gồm reconnect
+và ngắt kết nối trong lúc cài.
+
+Bấm **Cài APK** trên điện thoại USB sẵn sàng, hoặc kéo một APK vào Hub rồi chọn
+đích. Kiểm tra model và file trước khi xác nhận. Hub gắn tác vụ với phiên USB đó,
+không ghi đè app đang có, tự cấp quyền runtime hay mở app sau cài đặt. Nếu cài đặt
+bị gián đoạn, kiểm tra điện thoại trước khi thử lại; kết quả chưa rõ không đồng
+nghĩa cài đặt thất bại.
+
+Khi đang xem màn hình điện thoại, bấm icon clipboard để gửi văn bản từ macOS
+(tối đa 64 KiB). Hub chờ xác nhận và đọc lại để so khớp; không tự dán vào app hoặc
+đồng bộ nền. Có thể gửi Unicode bằng cách này dù bàn phím trực tiếp chỉ hỗ trợ ASCII.
+Đổi đích hoặc reconnect làm tác vụ chờ hết hiệu lực; cần chủ động gửi lại nếu muốn.
+
+Sau lỗi kết nối cần chủ động mở lại stream; input cũ không
 được phát lại vào kết nối mới.
 Chỉ lưu đường dẫn ADB, metadata điện thoại ở bộ nhớ. Khi xung đột phiên bản,
 đồng bộ Platform-Tools với các app ADB khác; Hub không tự kill-server.

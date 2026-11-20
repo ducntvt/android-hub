@@ -11,6 +11,10 @@ see [Releasing](docs/RELEASING.md).
 - Phone touch, swipe, two-axis wheel, navigation and ASCII keyboard control,
   with separate focus beside an emulator and cancellation on capture/session changes. IME/Unicode, audio and game key mapping are not supported.
 
+- USB phone APK picker/confirmation and explicit clipboard transfer.
+  Installation refuses to replace existing apps; clipboard success requires read-back.
+  Reconnect, interrupted installation and emulator/phone destination checks passed (US-061).
+
 ## [0.2.0] - 2026-11-19
 
 ### Added

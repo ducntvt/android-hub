@@ -1,4 +1,4 @@
-//! Ordered scrcpy 5.0.1 control. No CLI per input and no clipboard side effects.
+//! Ordered scrcpy 5.0.1 control. Clipboard transfers require an explicit request.
 use super::clipboard;
 use crate::display::Input;
 use std::{

@@ -104,6 +104,29 @@ mod tests {
         }
     }
     #[tokio::test]
+    async fn disconnect_or_invalid_readback_never_confirms_clipboard() {
+        for response in [
+            vec![],                    // USB disconnected after ACK, before read-back.
+            vec![0, 0, 1, 0, 1],       // length exceeds the limit; do not allocate it.
+            vec![0, 0, 0, 0, 2, b'x'], // truncated payload.
+            vec![2],                   // unexpected message type.
+        ] {
+            let (mut client, mut server) = tokio::io::duplex(4096);
+            let worker = tokio::spawn(async move {
+                let mut request = [0; 15];
+                server.read_exact(&mut request).await.unwrap();
+                server.write_u8(1).await.unwrap();
+                server.write_all(&request[1..9]).await.unwrap();
+                let mut get = [0; 2];
+                server.read_exact(&mut get).await.unwrap();
+                assert_eq!(get, [8, 0]);
+                server.write_all(&response).await.unwrap();
+            });
+            assert_eq!(transfer(&mut client, 7, "x").await, Err(Error::Unconfirmed));
+            worker.await.unwrap();
+        }
+    }
+    #[tokio::test]
     async fn rejects_wrong_ack_and_oversized_text() {
         let (mut client, mut server) = tokio::io::duplex(4096);
         let worker = tokio::spawn(async move {

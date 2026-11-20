@@ -55,8 +55,13 @@ impl Hub {
                         None,
                     ),
                     Err(error) => {
+                        let kind = if error == android_hub_infrastructure::physical::apk::InstallError::UnknownOutcome {
+                            Kind::Unknown
+                        } else {
+                            Kind::Error
+                        };
                         self.feedback
-                            .push(Kind::Unknown, error.message(), Some(target.name), None)
+                            .push(kind, error.message(), Some(target.name), None)
                     }
                 };
                 self.notice = "Sẵn sàng".into();
@@ -771,7 +776,7 @@ impl Hub {
             Message::ChooseApkTarget(id) if !self.busy && !self.quit_requested => {
                 self.choose_apk_target(id)
             }
-            Message::ConfirmApk if !self.busy && !self.stale => return self.confirm_apk(),
+            Message::ConfirmApk if !self.busy && !self.quit_requested => return self.confirm_apk(),
 
             message @ (Message::OpenSdk
             | Message::StartSdkSetup

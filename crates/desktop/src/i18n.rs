@@ -1030,6 +1030,34 @@ pub(crate) use localized_format;
 mod tests {
     use super::*;
     #[test]
+    fn physical_apk_and_clipboard_errors_have_both_languages() {
+        use android_hub_infrastructure::physical::{apk::InstallError, stream::clipboard};
+        for error in [
+            InstallError::File,
+            InstallError::SessionChanged,
+            InstallError::UnknownOutcome,
+            InstallError::Signature,
+            InstallError::Version,
+            InstallError::Abi,
+            InstallError::Permission,
+            InstallError::Storage,
+            InstallError::AlreadyInstalled,
+            InstallError::InvalidApk,
+            InstallError::Rejected,
+        ] {
+            assert_eq!(Language::Vi.tr(error.message()), error.message());
+            assert_ne!(Language::En.tr(error.message()), error.message());
+        }
+        for error in [
+            clipboard::Error::TooLarge,
+            clipboard::Error::SessionChanged,
+            clipboard::Error::Unconfirmed,
+        ] {
+            assert_eq!(Language::Vi.tr(error.message()), error.message());
+            assert_ne!(Language::En.tr(error.message()), error.message());
+        }
+    }
+    #[test]
     fn language_roundtrip_preserves_other_settings_and_unknown_text() {
         let root = std::env::temp_dir().join(format!(
             "hub-language-test-{}-{}",

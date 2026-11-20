@@ -57,6 +57,26 @@ Server chưa chạy thì UI hướng dẫn khởi động bằng Terminal; khôn
 chấp nhận license. Setup và discovery hiện chỉ hỗ trợ server loopback mặc định,
 không nhận endpoint tùy biến từ environment. US-059 thêm video theo yêu cầu; US-060 thêm kênh control scrcpy có hàng đợi giới hạn, capture/input epoch và hủy gesture khi mất focus.
 
+## APK và clipboard điện thoại (US-061)
+
+Đích APK giữ `DeviceId` và phiên theo loại: PID cho AVD, `PhysicalSession` cho USB.
+AVD phải có boot observation hoàn tất khớp PID; điện thoại phải có metadata USB
+ready. Trạng thái AVD stale không chặn điện thoại độc lập. Xác nhận kiểm tra lại
+đích, selection và command epoch; kết quả cũ sau reconnect không thành success.
+
+APK đi qua smart socket gắn transport, truyền stdin vào `cmd package install -R
+--user current -S SIZE`. Không thêm đường dẫn hoặc serial vào shell; `-R` chặn
+ghi đè ứng dụng có sẵn. Không dùng dấu `-` cuối lệnh do parser Samsung Android 15
+từ chối; khi thiếu đường dẫn Android tự đọc stdin. Lỗi transport sau gửi có thể đã cài xong
+nên được báo chưa rõ kết quả, không tự retry/uninstall.
+
+Clipboard chỉ đọc khi người dùng bấm nút, gắn token/stream/input/capture/selection.
+Control actor gửi scrcpy SET không paste, chờ ACK đúng sequence rồi GET và so khớp
+trong bộ nhớ; ACK riêng lẻ không chứng minh Android đã ghi clipboard. Giới hạn
+64 KiB và timeout hữu hạn, không autosync hoặc log nội dung; Debug che text.
+Thay capture/đóng session hủy tác vụ còn trong hàng đợi. Phản hồi lỗi đóng control
+để không dùng tiếp stream có thể lệch giao thức.
+
 ## Dữ liệu và vòng đời
 
 Registry `~/Library/Application Support/Android Hub/hub-profiles.json` lưu cấu hình mong muốn, kiểm tra ID/port duy nhất và ghi qua rename. Schema 1 bọc `profiles` và lưu image identity bất biến theo [ADR 0056](decisions/0056-immutable-android-image-per-device.md). Registry array cũ được sao lưu trước migration metadata; máy chưa xác định được image giữ trạng thái chưa xác định, không tự gán Android 16. `hub.lock` khóa các thao tác thay đổi giữa những process Hub. Mỗi AVD có dữ liệu riêng trong `emulator-avds`; không sao chép tài khoản.

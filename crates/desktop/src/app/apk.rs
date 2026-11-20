@@ -64,10 +64,21 @@ impl Hub {
             && let Some(state) = &self.state
         {
             targets.extend(state.profiles.iter().filter_map(|p| {
+                let pid = state.runtime.get(&p.id)?.pid?;
+                let check = self.boot_checks.get(&p.id)?;
+                if check.pid != pid
+                    || !check.result.as_ref().is_some_and(|result| {
+                        result
+                            .as_ref()
+                            .is_ok_and(|observation| observation.completed)
+                    })
+                {
+                    return None;
+                }
                 Some(Target {
                     id: DeviceId::Emulator(EmulatorId::new(p.id.clone()).ok()?),
                     name: p.name.clone(),
-                    session: Session::Emulator(state.runtime.get(&p.id)?.pid?),
+                    session: Session::Emulator(pid),
                 })
             }));
         }
@@ -317,7 +328,113 @@ mod tests {
                 },
             );
         }
+        hub.reconcile_boot_checks();
+        for check in hub.boot_checks.values_mut() {
+            check.result = Some(Ok(android_hub_infrastructure::BootObservation {
+                boot_id: "qa-boot".into(),
+                completed: true,
+            }));
+        }
         hub
+    }
+    fn connect_phone(hub: &mut Hub) -> Target {
+        use android_hub_infrastructure::physical::{PhoneMetadata, parse_devices};
+        // Deliberately collide with an AVD's raw ID: destination kinds must stay distinct.
+        let tokens = hub.physical.apply(Ok(
+            parse_devices("hub-b device usb:1 transport_id:7").unwrap()
+        ));
+        let token = tokens.into_iter().next().unwrap();
+        hub.physical.metadata(
+            &token,
+            Ok(PhoneMetadata {
+                model: "QA Phone".into(),
+                android: "15".into(),
+                emulator: false,
+            }),
+        );
+        hub.apk_targets()
+            .into_iter()
+            .find(|t| matches!(t.session, Session::Physical(_)))
+            .unwrap()
+    }
+    #[test]
+    fn apk_targets_require_verified_boot_and_keep_device_namespaces_separate() {
+        let mut hub = hub();
+        let phone = connect_phone(&mut hub);
+        assert_eq!(hub.apk_targets().len(), 3);
+        assert_eq!(phone.name, "QA Phone · USB");
+        hub.boot_checks.get_mut("hub-b").unwrap().result = None;
+        assert_eq!(hub.apk_targets().len(), 2);
+        hub.stale = true;
+        let targets = hub.apk_targets();
+        assert_eq!(targets.len(), 1);
+        assert_eq!(targets[0].id, phone.id);
+    }
+    #[test]
+    fn phone_confirmation_works_without_avd_state_but_cancel_never_installs() {
+        for cancel in [false, true] {
+            let mut hub = hub();
+            let phone = connect_phone(&mut hub);
+            hub.stale = true;
+            drop_inspected(&mut hub);
+            let _ = hub.update(Message::ChooseApkTarget(phone.id.clone()));
+            assert_eq!(hub.pending_apk.as_ref().unwrap().target.id, phone.id);
+            if cancel {
+                let _ = hub.update(Message::CancelModal);
+            }
+            // Drop the task without polling: these tests never send an APK.
+            let _ = hub.update(Message::ConfirmApk);
+            assert_eq!(hub.busy, !cancel);
+            assert!(hub.pending_apk.is_none());
+        }
+    }
+    #[test]
+    fn phone_reconnect_before_confirmation_cannot_retarget_or_reuse_session() {
+        let mut hub = hub();
+        let phone = connect_phone(&mut hub);
+        drop_inspected(&mut hub);
+        let _ = hub.update(Message::ChooseApkTarget(phone.id.clone()));
+        hub.physical.apply(Ok(vec![]));
+        let new_phone = connect_phone(&mut hub);
+        assert_eq!(phone.id, new_phone.id);
+        assert_ne!(phone.session, new_phone.session);
+        let _ = hub.update(Message::ConfirmApk);
+        assert!(!hub.busy && hub.pending_apk.is_none());
+        assert_eq!(hub.feedback.persistent.back().unwrap().kind, Kind::Error);
+    }
+    #[test]
+    fn phone_install_result_after_reconnect_is_unknown_even_if_success_arrives() {
+        let mut hub = hub();
+        let phone = connect_phone(&mut hub);
+        drop_inspected(&mut hub);
+        let _ = hub.update(Message::ChooseApkTarget(phone.id.clone()));
+        let _ = hub.update(Message::ConfirmApk);
+        assert!(hub.busy);
+        let epoch = hub.command_epoch;
+        hub.physical.apply(Ok(vec![]));
+        connect_phone(&mut hub);
+        let _ = hub.update(Message::PhysicalApkFinished(epoch, phone, Ok(())));
+        assert!(!hub.busy);
+        assert_eq!(hub.feedback.persistent.back().unwrap().kind, Kind::Unknown);
+        assert!(
+            hub.feedback
+                .toast
+                .as_ref()
+                .is_none_or(|n| n.kind != Kind::Success)
+        );
+    }
+    #[test]
+    fn known_phone_install_rejection_is_not_reported_as_unknown() {
+        let mut hub = hub();
+        let phone = connect_phone(&mut hub);
+        hub.busy = true;
+        let _ = hub.update(Message::PhysicalApkFinished(
+            hub.command_epoch,
+            phone,
+            Err(android_hub_infrastructure::physical::apk::InstallError::Permission),
+        ));
+        assert!(!hub.busy);
+        assert_eq!(hub.feedback.persistent.back().unwrap().kind, Kind::Error);
     }
     fn file() -> File {
         File {

@@ -106,5 +106,7 @@ US-058 implemented: nhận diện USB/model/Android, theo dõi cắm/rút, hư�
 EN/VI và thiết lập ADB riêng. Đã thử cắm/rút Samsung trên QA. US-059 implemented: video nhúng dùng VideoToolbox trực tiếp, Start/Stop,
 30/60 FPS, ba mức stream, Fit/zoom/rotation và ca nội dung bảo vệ đã kiểm tra.
 US-060 implemented: touch/scroll/navigation/ASCII, focus riêng và hủy gesture;
-đã kiểm thử native Samsung Android 15. US-061–068 vẫn planned; MVP và nghiệm thu
-hiệu năng chưa hoàn tất. Bước tiếp theo: US-061 (chưa bắt đầu).
+đã kiểm thử native Samsung Android 15. US-061 implemented: picker/drop APK đúng đích,
+chặn ghi đè ứng dụng điện thoại, clipboard ACK/read-back, EN/VI, reconnect và
+ngắt kết nối trong lúc cài đã qua kiểm thử Samsung Android 15 và emulator QA.
+US-062–068 vẫn planned; MVP và nghiệm thu hiệu năng chưa hoàn tất.

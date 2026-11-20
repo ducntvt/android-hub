@@ -218,7 +218,7 @@ leaves `uninstall-pending.json`, normal mutations remain blocked for inspection;
 do not delete unrelated paths or restart the helper blindly. Deleting the app in
 Finder does not trigger this workflow and leaves its data behind.
 
-## USB phones (feature branch, US-058–059)
+## USB phones (feature branch, US-058–061)
 
 Available in source on `feature/physical-devices`; not yet released.
 USB discovery needs an existing Android SDK Platform-Tools installation, not Java,
@@ -247,7 +247,20 @@ phone input. In two-device mode, click the intended display before typing; the
 phone can remain visible beside an emulator. System rotation controls are not
 exposed for phones; rotate the phone itself when its app supports it. If video
 works but control does not, check the manufacturer's USB input permission guidance.
-Audio, APK installation and clipboard control for phones remain future work.
+Audio remains future work. APK and clipboard support (US-061) has passed native Samsung Android 15 and
+emulator destination checks, including reconnect and interrupted installation.
+
+Choose **Install APK** on a ready USB phone, or drop a single APK and choose its
+destination. Review the model and file before confirming. Hub binds the action to
+that USB session, does not replace existing apps, grant runtime permissions or
+launch the installed app. After an interrupted installation, check the phone
+before trying again: an unknown result does not mean installation failed.
+
+With the phone display open, the clipboard icon sends macOS text only when clicked
+(up to 64 KiB). It verifies the phone clipboard by acknowledgment and read-back;
+it does not paste into an app or synchronize automatically. Unicode text can be
+sent this way even though direct keyboard input is ASCII-only. Reconnecting or
+switching the target invalidates the pending action; send again explicitly if needed.
 Viewing must be restarted explicitly after a connection failure; queued input is
 never replayed into a new connection.
 Only the ADB executable path is saved; phone metadata stays in memory. On version
