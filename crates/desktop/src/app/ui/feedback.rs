@@ -233,9 +233,15 @@ fn dialog(hub: &Hub) -> Option<Element<'_, Message>> {
         )
     } else if let Some(p) = &hub.pending_apk {
         (
-            localized_format!(lang, "Cài APK vào {}?", "Install APK on {}?", p.name),
-            lang.tr("Hub sẽ cài file đã chọn và không tự mở ứng dụng.")
-                .to_owned(),
+            localized_format!(lang, "Cài APK vào {}?", "Install APK on {}?", p.target.name),
+            lang.tr(
+                if matches!(p.target.session, crate::app::apk::Session::Physical(_)) {
+                    "Hub không ghi đè ứng dụng đang có, không tự cấp quyền và không tự mở ứng dụng."
+                } else {
+                    "Hub sẽ cài file đã chọn và không tự mở ứng dụng."
+                },
+            )
+            .to_owned(),
             Some(super::apk::description(
                 &crate::app::apk::File {
                     path: p.path.clone(),

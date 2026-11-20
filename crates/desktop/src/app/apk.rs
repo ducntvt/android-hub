@@ -1,12 +1,20 @@
 //! APK selection is read-only until an explicit, session-bound confirmation.
 use super::*;
+use android_hub_domain::PhysicalSession;
+use android_hub_infrastructure::physical::{ConnectionState, TransportKind};
 use feedback::Kind;
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub(super) enum Session {
+    Emulator(u32),
+    Physical(PhysicalSession),
+}
 
 #[derive(Clone, Debug)]
 pub(super) struct Target {
-    pub id: String,
+    pub id: DeviceId,
     pub name: String,
-    pub pid: u32,
+    pub session: Session,
 }
 #[derive(Clone, Debug)]
 pub(super) struct File {
@@ -51,33 +59,44 @@ pub(super) fn inspect(path: PathBuf) -> Result<File, String> {
 
 impl Hub {
     pub(super) fn apk_targets(&self) -> Vec<Target> {
-        if self.stale {
-            return vec![];
+        let mut targets = Vec::new();
+        if !self.stale
+            && let Some(state) = &self.state
+        {
+            targets.extend(state.profiles.iter().filter_map(|p| {
+                Some(Target {
+                    id: DeviceId::Emulator(EmulatorId::new(p.id.clone()).ok()?),
+                    name: p.name.clone(),
+                    session: Session::Emulator(state.runtime.get(&p.id)?.pid?),
+                })
+            }));
         }
-        self.state
-            .as_ref()
-            .map(|s| {
-                s.profiles
-                    .iter()
-                    .filter_map(|p| {
-                        Some(Target {
-                            id: p.id.clone(),
-                            name: p.name.clone(),
-                            pid: s.runtime.get(&p.id)?.pid?,
-                        })
-                    })
-                    .collect()
+        targets.extend(self.physical.phones.values().filter_map(|phone| {
+            if phone.device.state != ConnectionState::Ready
+                || phone.device.kind != TransportKind::Usb
+            {
+                return None;
+            }
+            let metadata = phone.metadata.as_ref()?.as_ref().ok()?;
+            if metadata.emulator {
+                return None;
+            }
+            Some(Target {
+                id: DeviceId::Physical(phone.device.id.clone()),
+                name: format!("{} · USB", metadata.model),
+                session: Session::Physical(phone.session.clone()?),
             })
-            .unwrap_or_default()
+        }));
+        targets
     }
     fn apk_target_current(&self, target: &Target) -> bool {
         self.apk_targets()
             .iter()
-            .any(|t| t.id == target.id && t.pid == target.pid)
+            .any(|t| t.id == target.id && t.session == target.session)
     }
     fn apk_request_current(&self, request: &Request) -> bool {
         !self.busy
-            && !self.stale
+            && !self.quit_requested
             && request.epoch == self.command_epoch
             && request.selection == self.selected
     }
@@ -93,7 +112,7 @@ impl Hub {
         });
         self.apk_epoch
     }
-    pub(super) fn pick_apk(&mut self, id: String) -> Task<Message> {
+    pub(super) fn pick_apk(&mut self, id: DeviceId) -> Task<Message> {
         let Some(target) = self.apk_targets().into_iter().find(|t| t.id == id) else {
             return Task::none();
         };
@@ -121,7 +140,11 @@ impl Hub {
     pub(super) fn dropped_apk(&mut self, path: PathBuf) -> Task<Message> {
         self.apk_hover = false;
         if self.apk_targets().is_empty() {
-            self.notify(Kind::Error, "Khởi động một máy trước khi cài APK", None);
+            self.notify(
+                Kind::Error,
+                "Kết nối điện thoại hoặc khởi động máy Android trước khi cài APK",
+                None,
+            );
             return Task::none();
         }
         let token = self.begin_apk(Stage::Inspecting(None));
@@ -193,7 +216,7 @@ impl Hub {
             }
         }
     }
-    pub(super) fn choose_apk_target(&mut self, id: String) {
+    pub(super) fn choose_apk_target(&mut self, id: DeviceId) {
         let Some(request) = self.apk_request.as_ref() else {
             return;
         };
@@ -207,9 +230,7 @@ impl Hub {
             return;
         };
         self.pending_apk = Some(PendingApk {
-            id: target.id,
-            name: target.name,
-            pid: target.pid,
+            target,
             path: file.path.clone(),
             bytes: file.bytes,
             epoch: request.epoch,
@@ -222,11 +243,29 @@ impl Hub {
         if let Some(p) = self.pending_apk.take() {
             if p.epoch == self.command_epoch
                 && p.selection == self.selected
-                && self
-                    .apk_targets()
-                    .iter()
-                    .any(|t| t.id == p.id && t.pid == p.pid)
+                && self.apk_target_current(&p.target)
+                && !self.busy
+                && !self.quit_requested
             {
+                if let Session::Physical(token) = p.target.session.clone() {
+                    self.command_epoch = self.command_epoch.wrapping_add(1);
+                    let epoch = self.command_epoch;
+                    self.busy = true;
+                    self.release_inputs();
+                    self.notice = "Đang cài APK…".into();
+                    return Task::perform(
+                        async move {
+                            let result = android_hub_infrastructure::physical::apk::install(
+                                &token, &p.path, p.bytes,
+                            )
+                            .await;
+                            (epoch, p.target, result)
+                        },
+                        |(epoch, target, result)| {
+                            Message::PhysicalApkFinished(epoch, target, result)
+                        },
+                    );
+                }
                 return self.launch(Work::InstallApk(p));
             }
             self.notify(
@@ -299,11 +338,17 @@ mod tests {
         let token = hub.apk_request.as_ref().unwrap().token;
         let _ = hub.update(Message::DropApk(PathBuf::from("/tmp/other.apk")));
         assert_eq!(hub.apk_request.as_ref().unwrap().token, token);
-        let _ = hub.update(Message::ChooseApkTarget("hub-b".into()));
+        let _ = hub.update(Message::ChooseApkTarget(DeviceId::Emulator(
+            EmulatorId::new("hub-b").unwrap(),
+        )));
         let pending = hub.pending_apk.as_ref().unwrap();
         assert_eq!(
-            (&*pending.id, pending.pid, pending.bytes),
-            ("hub-b", 42, 1234)
+            (&pending.target.id, &pending.target.session, pending.bytes),
+            (
+                &DeviceId::Emulator(EmulatorId::new("hub-b").unwrap()),
+                &Session::Emulator(42),
+                1234
+            )
         );
         assert_eq!(
             pending.selection,
@@ -326,7 +371,9 @@ mod tests {
         let _ = hub.update(Message::ApkInspected(token, Ok(file())));
         assert!(!hub.modal_open() && !hub.busy);
         drop_inspected(&mut hub);
-        let _ = hub.update(Message::ChooseApkTarget("hub-b".into()));
+        let _ = hub.update(Message::ChooseApkTarget(DeviceId::Emulator(
+            EmulatorId::new("hub-b").unwrap(),
+        )));
         let _ = hub.update(Message::CancelModal);
         let _ = hub.update(Message::ConfirmApk);
         assert!(!hub.modal_open() && !hub.busy);
@@ -336,7 +383,9 @@ mod tests {
         for change in 0..3 {
             let mut hub = hub();
             drop_inspected(&mut hub);
-            let _ = hub.update(Message::ChooseApkTarget("hub-b".into()));
+            let _ = hub.update(Message::ChooseApkTarget(DeviceId::Emulator(
+                EmulatorId::new("hub-b").unwrap(),
+            )));
             match change {
                 0 => {
                     hub.state
@@ -376,7 +425,7 @@ mod tests {
             .as_mut()
             .unwrap()
             .runtime
-            .get_mut(&target.id)
+            .get_mut("hub-b")
             .unwrap()
             .pid = Some(101);
         let _ = hub.update(Message::ApkPicked(next, Some(file().path)));
@@ -396,7 +445,10 @@ mod tests {
         let _ = hub.update(Message::ModalBackTab);
         assert_eq!(hub.modal_focus, 2);
         let _ = hub.update(Message::ModalKey(Named::Enter));
-        assert_eq!(hub.pending_apk.as_ref().unwrap().id, "hub-b");
+        assert_eq!(
+            hub.pending_apk.as_ref().unwrap().target.id,
+            DeviceId::Emulator(EmulatorId::new("hub-b").unwrap())
+        );
         assert_eq!(hub.modal_focus, 0); // confirmation defaults to Cancel again
         let _ = hub.update(Message::ModalKey(Named::Enter));
         assert!(!hub.modal_open() && !hub.busy);

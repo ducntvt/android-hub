@@ -1,5 +1,6 @@
 //! USB discovery uses the shared loopback ADB server without restarting it.
 //! No AVD, SDK image, Java, shell interpolation or serial-derived paths.
+pub mod apk;
 mod setup;
 #[cfg(target_os = "macos")]
 pub mod stream;

@@ -1,4 +1,5 @@
 //! User-started scrcpy v5.0.1 video/control session. No audio or automatic reconnect.
+pub mod clipboard;
 mod control;
 mod decoder;
 mod protocol;
@@ -155,6 +156,14 @@ impl Session {
     }
     pub fn send(&self, capture: u64, input: Input) -> Result<(), String> {
         self.control.send(capture, input)
+    }
+    pub fn send_clipboard(
+        &self,
+        capture: u64,
+        text: String,
+    ) -> impl std::future::Future<Output = Result<(), clipboard::Error>> + Send + 'static {
+        let control = self.control.clone();
+        async move { control.clipboard(capture, text).await }
     }
     pub fn release_inputs(&self) {
         self.control.reset();

@@ -1,4 +1,5 @@
 //! Ordered scrcpy 5.0.1 control. No CLI per input and no clipboard side effects.
+use super::clipboard;
 use crate::display::Input;
 use std::{
     collections::VecDeque,
@@ -6,14 +7,21 @@ use std::{
     time::Duration,
 };
 use tokio::{
-    io::{AsyncWrite, AsyncWriteExt},
-    sync::Notify,
+    io::{AsyncRead, AsyncWrite, AsyncWriteExt},
+    sync::{Notify, oneshot},
 };
 
 const CAPACITY: usize = 64;
+enum Operation {
+    Input(Input),
+    Clipboard {
+        text: String,
+        reply: oneshot::Sender<Result<(), clipboard::Error>>,
+    },
+}
 #[derive(Default)]
 struct State {
-    queue: VecDeque<Input>,
+    queue: VecDeque<Operation>,
     capture: u64,
     size: (u16, u16),
     release: bool,
@@ -75,26 +83,51 @@ impl Control {
             self.wake.notify_one();
             return Err("Physical input queue full; gesture canceled".into());
         }
-        s.queue.push_back(input);
+        s.queue.push_back(Operation::Input(input));
         self.wake.notify_one();
         Ok(())
     }
+    pub async fn clipboard(&self, capture: u64, text: String) -> Result<(), clipboard::Error> {
+        if text.len() > clipboard::MAX_BYTES {
+            return Err(clipboard::Error::TooLarge);
+        }
+        let (reply, result) = oneshot::channel();
+        {
+            let mut s = self.state.lock().unwrap();
+            if s.closed || capture == 0 || capture != s.capture || s.queue.len() == CAPACITY {
+                return Err(clipboard::Error::SessionChanged);
+            }
+            s.queue.push_back(Operation::Clipboard { text, reply });
+            self.wake.notify_one();
+        }
+        tokio::time::timeout(Duration::from_secs(5), result)
+            .await
+            .map_err(|_| clipboard::Error::Unconfirmed)?
+            .map_err(|_| clipboard::Error::SessionChanged)?
+    }
     pub async fn wait_closed(&self) {
-        let _ = tokio::time::timeout(Duration::from_millis(1100), async {
+        let _ = tokio::time::timeout(Duration::from_millis(3500), async {
             while self.state.lock().unwrap().running {
                 tokio::time::sleep(Duration::from_millis(10)).await;
             }
         })
         .await;
     }
-    pub async fn run(&self, writer: &mut (impl AsyncWrite + Unpin)) -> Result<(), String> {
+    pub async fn run(
+        &self,
+        writer: &mut (impl AsyncRead + AsyncWrite + Unpin),
+    ) -> Result<(), String> {
         self.state.lock().unwrap().running = true;
         let result = self.run_inner(writer).await;
         self.state.lock().unwrap().running = false;
         result
     }
-    async fn run_inner(&self, writer: &mut (impl AsyncWrite + Unpin)) -> Result<(), String> {
+    async fn run_inner(
+        &self,
+        writer: &mut (impl AsyncRead + AsyncWrite + Unpin),
+    ) -> Result<(), String> {
         let mut touch: Option<(i32, i32, u16, u16)> = None;
+        let mut sequence = 0u64;
         loop {
             let (release, closed, size, input) = {
                 let mut s = self.state.lock().unwrap();
@@ -117,6 +150,25 @@ impl Control {
             let Some(input) = input else {
                 self.wake.notified().await;
                 continue;
+            };
+            let input = match input {
+                Operation::Input(input) => input,
+                Operation::Clipboard { text, reply } => {
+                    if reply.is_closed() {
+                        continue;
+                    }
+                    sequence = sequence
+                        .checked_add(1)
+                        .ok_or("Clipboard sequence exhausted")?;
+                    let result = clipboard::transfer(writer, sequence, &text).await;
+                    let failed = result.is_err();
+                    let _ = reply.send(result);
+                    // A partial response would desynchronize the control protocol.
+                    if failed {
+                        return Err("Phone clipboard response unconfirmed".into());
+                    }
+                    continue;
+                }
             };
             match input {
                 Input::Mouse { x, y, down } => {
@@ -223,6 +275,32 @@ fn wheel_packet(x: i32, y: i32, size: (u16, u16), dx: i32, dy: i32) -> [u8; 21] 
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[tokio::test]
+    async fn queued_clipboard_is_discarded_on_capture_change_and_close() {
+        for close in [false, true] {
+            let control = Control::default();
+            control.capture(1, 100, 200);
+            let sender = control.clone();
+            let pending = tokio::spawn(async move { sender.clipboard(1, "test".into()).await });
+            tokio::time::timeout(Duration::from_secs(1), async {
+                while control.state.lock().unwrap().queue.is_empty() {
+                    tokio::task::yield_now().await;
+                }
+            })
+            .await
+            .unwrap();
+            if close {
+                control.close();
+            } else {
+                control.capture(2, 200, 100);
+            }
+            assert_eq!(
+                pending.await.unwrap(),
+                Err(clipboard::Error::SessionChanged)
+            );
+            assert!(control.state.lock().unwrap().queue.is_empty());
+        }
+    }
     use tokio::io::AsyncReadExt;
     #[test]
     fn wire_packets_match_v5_and_keyboard_is_bounded() {

@@ -16,7 +16,7 @@ zip.workspace = true
 flate2.workspace = true
 tonic.workspace = true
 prost.workspace = true
-tokio = { workspace = true, features = ["rt-multi-thread", "sync", "time", "macros", "process", "io-util"] }
+tokio = { workspace = true, features = ["rt-multi-thread", "sync", "time", "macros", "process", "io-util", "fs"] }
 
 [build-dependencies]
 tonic-build.workspace = true

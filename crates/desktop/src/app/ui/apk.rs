@@ -51,7 +51,9 @@ pub(super) fn dialog(hub: &Hub) -> Element<'_, Message> {
                 );
             }
             if hub.apk_targets().is_empty() {
-                fields = fields.push(text(lang.tr("Khởi động một máy trước khi cài APK")));
+                fields = fields.push(text(
+                    lang.tr("Kết nối điện thoại hoặc khởi động máy Android trước khi cài APK"),
+                ));
             }
             fields = fields.push(container(scroll::vertical(targets)).max_height(280));
         }

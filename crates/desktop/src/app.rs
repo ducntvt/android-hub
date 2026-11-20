@@ -7,6 +7,7 @@ mod feedback;
 mod lifecycle;
 mod message;
 mod physical;
+mod physical_clipboard;
 mod physical_screen;
 mod runtime;
 mod sdk;
@@ -85,9 +86,7 @@ enum Work {
 }
 #[derive(Clone, Debug)]
 struct PendingApk {
-    id: String,
-    name: String,
-    pid: u32,
+    target: apk::Target,
     path: PathBuf,
     bytes: u64,
     epoch: u64,
@@ -362,7 +361,12 @@ impl Hub {
                     Work::Start(id) => backend.emulator(&id)?.start(),
                     Work::Stop(id, pid) => backend.emulator(&id)?.stop(pid),
                     Work::Save(p, expected) => backend.emulator(&expected.id)?.save(&expected, p),
-                    Work::InstallApk(p) => backend.install_apk(&p.id, p.pid, &p.path),
+                    Work::InstallApk(p) => match (&p.target.id, &p.target.session) {
+                        (DeviceId::Emulator(id), apk::Session::Emulator(pid)) => {
+                            backend.install_apk(id.as_str(), *pid, &p.path)
+                        }
+                        _ => Err("APK target kind mismatch".into()),
+                    },
                     Work::Delete(plan) => backend.emulator(&plan.profile.id)?.delete(&plan),
                     Work::Purge(plan) => backend.emulator(&plan.device.profile.id)?.purge(&plan),
                     Work::UndoRemove(info) => {

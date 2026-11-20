@@ -255,7 +255,7 @@ pub(super) fn card<'a>(
         .filter(|d| d.image.is_some() && d.error.is_none())
         .filter(|_| !hub.modal_open())
         .and_then(|d| d.session.input_generation());
-    let can_install = available && hub.apk_targets().iter().any(|target| target.id == p.id);
+    let can_install = available && hub.apk_targets().iter().any(|target| matches!(&target.id, android_hub_domain::DeviceId::Emulator(id) if id.as_str() == p.id));
     let horizontal_padding = navigation_padding(size.width);
     let action = |symbol, label: &'static str, message: Message, enabled: bool| {
         hint(
@@ -302,7 +302,10 @@ pub(super) fn card<'a>(
                 action(
                     Icon::InstallApk,
                     "Cài APK…",
-                    Message::PickApk(p.id.clone()),
+                    Message::PickApk(android_hub_domain::DeviceId::Emulator(
+                        android_hub_domain::EmulatorId::new(p.id.clone())
+                            .expect("validated profile")
+                    )),
                     can_install
                 ),
             ]

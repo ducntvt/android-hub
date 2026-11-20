@@ -160,7 +160,7 @@ impl Hub {
             Work::InstallApk(p) => (
                 "Đã cài APK. Hub không tự mở ứng dụng.",
                 "Chưa xác nhận cài APK thành công",
-                Some(p.name.clone()),
+                Some(p.target.name.clone()),
             ),
             Work::Delete(p) => (
                 "Đã xóa vĩnh viễn máy",

@@ -9,6 +9,20 @@ use std::path::PathBuf;
 
 #[derive(Clone, Debug)]
 pub(super) enum Message {
+    SendPhysicalClipboard,
+    PhysicalClipboardRead(
+        super::physical_clipboard::Binding,
+        Option<super::physical_clipboard::Text>,
+    ),
+    PhysicalClipboardFinished(
+        super::physical_clipboard::Binding,
+        Result<(), android_hub_infrastructure::physical::stream::clipboard::Error>,
+    ),
+    PhysicalApkFinished(
+        u64,
+        apk::Target,
+        Result<(), android_hub_infrastructure::physical::apk::InstallError>,
+    ),
     PhysicalStopped,
     PhysicalInput(u64, u64, u64, Input),
     StartPhysicalPreview,
@@ -194,10 +208,10 @@ pub(super) enum Message {
     DismissReceipts,
     DropApk(PathBuf),
     ApkHover(bool),
-    PickApk(String),
+    PickApk(android_hub_domain::DeviceId),
     ApkPicked(u64, Option<PathBuf>),
     ApkInspected(u64, Result<apk::File, String>),
-    ChooseApkTarget(String),
+    ChooseApkTarget(android_hub_domain::DeviceId),
     ConfirmApk,
     Name(String),
     Ram(u32),

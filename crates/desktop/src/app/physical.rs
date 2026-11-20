@@ -15,6 +15,7 @@ pub(super) struct Phone {
 }
 #[derive(Default)]
 pub(super) struct Discovery {
+    pub clipboard_pending: bool,
     pub focused: bool,
     pub input_epoch: u64,
     pub stopping: bool,

@@ -25,6 +25,43 @@ impl Hub {
             return Task::none();
         }
         match message {
+            Message::SendPhysicalClipboard => return self.read_physical_clipboard(),
+            Message::PhysicalClipboardRead(binding, text) => {
+                return self.physical_clipboard_read(binding, text);
+            }
+            Message::PhysicalClipboardFinished(binding, result) => {
+                self.physical_clipboard_finished(binding, result);
+                return Task::none();
+            }
+            Message::PhysicalApkFinished(epoch, target, result) => {
+                if epoch != self.command_epoch {
+                    return Task::none();
+                }
+                self.busy = false;
+                let current = self
+                    .apk_targets()
+                    .iter()
+                    .any(|t| t.id == target.id && t.session == target.session);
+                let result = if current {
+                    result
+                } else {
+                    Err(android_hub_infrastructure::physical::apk::InstallError::UnknownOutcome)
+                };
+                match result {
+                    Ok(()) => self.feedback.push(
+                        Kind::Success,
+                        "Đã cài APK. Hub không tự mở ứng dụng.",
+                        Some(target.name),
+                        None,
+                    ),
+                    Err(error) => {
+                        self.feedback
+                            .push(Kind::Unknown, error.message(), Some(target.name), None)
+                    }
+                };
+                self.notice = "Sẵn sàng".into();
+                return self.begin_shutdown_if_ready();
+            }
             Message::PhysicalStopped => {
                 self.physical.stopping = false;
                 return self.begin_shutdown_if_ready();
@@ -727,11 +764,13 @@ impl Hub {
             }
 
             Message::ApkHover(hover) => self.apk_hover = hover && !self.busy,
-            Message::PickApk(id) if !self.busy && !self.stale => return self.pick_apk(id),
+            Message::PickApk(id) if !self.busy && !self.quit_requested => return self.pick_apk(id),
             Message::DropApk(path) if !self.busy => return self.dropped_apk(path),
             Message::ApkPicked(token, path) => return self.picked_apk(token, path),
             Message::ApkInspected(token, result) => self.inspected_apk(token, result),
-            Message::ChooseApkTarget(id) if !self.busy && !self.stale => self.choose_apk_target(id),
+            Message::ChooseApkTarget(id) if !self.busy && !self.quit_requested => {
+                self.choose_apk_target(id)
+            }
             Message::ConfirmApk if !self.busy && !self.stale => return self.confirm_apk(),
 
             message @ (Message::OpenSdk

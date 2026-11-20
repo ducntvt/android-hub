@@ -30,6 +30,53 @@ impl Language {
             return value;
         }
         match value {
+            "Kết nối điện thoại hoặc khởi động máy Android trước khi cài APK" => {
+                "Connect a phone or start an Android device before installing an APK"
+            }
+            "APK không đọc được hoặc đã thay đổi; chọn lại file" => {
+                "The APK cannot be read or has changed; select it again"
+            }
+            "Phiên USB đã thay đổi; chọn lại thiết bị để cài APK" => {
+                "The USB session changed; select the device again to install the APK"
+            }
+            "Chưa xác định kết quả cài APK; kiểm tra trên điện thoại trước khi thử lại" => {
+                "The installation outcome is unknown; check the phone before trying again"
+            }
+            "Chữ ký APK không tương thích; Hub không tự gỡ ứng dụng hiện có" => {
+                "The APK signature is incompatible; Hub will not uninstall the existing app"
+            }
+            "Phiên bản APK không tương thích hoặc thấp hơn bản đã cài" => {
+                "The APK version is incompatible or older than the installed version"
+            }
+            "APK không hỗ trợ kiến trúc CPU của thiết bị" => {
+                "The APK does not support this device CPU architecture"
+            }
+            "Điện thoại hoặc chính sách của hãng đã từ chối cài APK; kiểm tra quyền cài qua USB" => {
+                "The phone or manufacturer policy blocked installation; check USB installation permissions"
+            }
+            "Điện thoại không đủ dung lượng để cài APK" => {
+                "The phone does not have enough storage to install the APK"
+            }
+            "Ứng dụng đã tồn tại; Hub không tự ghi đè hoặc gỡ ứng dụng" => {
+                "The app already exists; Hub will not overwrite or uninstall it"
+            }
+            "APK không hợp lệ hoặc thiếu thành phần; chỉ hỗ trợ APK đơn" => {
+                "The APK is invalid or incomplete; only single APK files are supported"
+            }
+            "Android từ chối cài APK; không tự thử lại hoặc gỡ ứng dụng" => {
+                "Android rejected the APK; no automatic retry or uninstall was performed"
+            }
+            "Phiên điện thoại đã thay đổi; bấm gửi clipboard lại nếu cần" => {
+                "The phone session changed; click send clipboard again if needed"
+            }
+            "Chưa xác nhận clipboard trên điện thoại; kiểm tra thiết bị trước khi thử lại" => {
+                "The phone clipboard could not be confirmed; check the device before trying again"
+            }
+            "Đã xác nhận clipboard trên điện thoại" => "Phone clipboard confirmed",
+            "Gửi clipboard tới điện thoại" => "Send clipboard to phone",
+            "Hub không ghi đè ứng dụng đang có, không tự cấp quyền và không tự mở ứng dụng." => {
+                "Hub will not overwrite existing apps, grant permissions or launch the app."
+            }
             "Bấm vào màn hình để điều khiển. Bàn phím hỗ trợ ASCII; chưa hỗ trợ IME/Unicode. Nội dung được bảo vệ có thể trống." => {
                 "Click the display to control. Keyboard supports ASCII; IME/Unicode is not supported. Protected content may be blank."
             }

@@ -141,6 +141,18 @@ fn phone_workspace(hub: &Hub, size: iced::Size) -> Element<'_, Message> {
                 .metadata
                 .as_ref()
                 .is_some_and(|m| m.as_ref().is_ok_and(|m| !m.emulator));
+        if ready
+            && hub
+                .physical
+                .preview
+                .as_ref()
+                .is_none_or(|p| p.image.is_none())
+        {
+            body = body.push(tool(
+                lang.tr("Cài APK"),
+                Message::PickApk(DeviceId::Physical(phone.device.id.clone())),
+            ));
+        }
         if let Some(preview) = &hub.physical.preview {
             if let Some(handle) = &preview.image {
                 let (width, height) = preview.size;
@@ -192,6 +204,34 @@ fn phone_workspace(hub: &Hub, size: iced::Size) -> Element<'_, Message> {
                         tooltip::Position::Top,
                     ));
                 }
+                let clipboard_enabled = enabled && !hub.physical.clipboard_pending;
+                navigation = navigation.push(hint(
+                    button(
+                        container(icons::enabled_icon(Icon::Clipboard, clipboard_enabled))
+                            .center_x(20)
+                            .center_y(20),
+                    )
+                    .padding([8, 12])
+                    .style(quiet)
+                    .on_press_maybe(clipboard_enabled.then_some(Message::SendPhysicalClipboard)),
+                    lang.tr("Gửi clipboard tới điện thoại"),
+                    tooltip::Position::Top,
+                ));
+                navigation = navigation.push(hint(
+                    button(
+                        container(icons::enabled_icon(Icon::InstallApk, enabled))
+                            .center_x(20)
+                            .center_y(20),
+                    )
+                    .padding([8, 12])
+                    .style(quiet)
+                    .on_press_maybe(
+                        enabled
+                            .then(|| Message::PickApk(DeviceId::Physical(phone.device.id.clone()))),
+                    ),
+                    lang.tr("Cài APK"),
+                    tooltip::Position::Top,
+                ));
                 body = body.push(
                     container(navigation)
                         .padding(4)

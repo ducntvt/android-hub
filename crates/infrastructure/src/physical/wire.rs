@@ -1,5 +1,6 @@
-//! Small read-only subset of ADB's smart socket protocol. Never sends host:kill.
-use super::{DiscoveryError, PhoneMetadata};
+//! Bounded subset of ADB's smart socket protocol. Never sends host:kill.
+use super::{ConnectionState, DiscoveryError, PhoneMetadata, TransportKind, parse_devices};
+use android_hub_domain::PhysicalSession;
 use std::{num::NonZeroU64, time::Duration};
 use tokio::{
     io::{AsyncReadExt, AsyncWriteExt},
@@ -192,4 +193,41 @@ mod socket_tests {
             Err(DiscoveryError::Timeout)
         );
     }
+}
+
+pub(super) async fn service(token: &PhysicalSession, name: &str) -> Result<TcpStream, String> {
+    let mut stream = connect().await.map_err(|e| e.to_string())?;
+    request(
+        &mut stream,
+        &format!("host:transport-id:{}", token.transport()),
+    )
+    .await
+    .map_err(|e| e.to_string())?;
+    request(&mut stream, name)
+        .await
+        .map_err(|e| e.to_string())?;
+    Ok(stream)
+}
+pub(super) async fn validate(token: &PhysicalSession) -> Result<(), String> {
+    check_version().await.map_err(|e| e.to_string())?;
+    let mut stream = connect().await.map_err(|e| e.to_string())?;
+    request(&mut stream, "host:devices-l")
+        .await
+        .map_err(|e| e.to_string())?;
+    let raw = tracked_frame(&mut stream)
+        .await
+        .map_err(|e| e.to_string())?;
+    if !parse_devices(&raw)
+        .map_err(|e| e.to_string())?
+        .iter()
+        .any(|d| {
+            d.id == *token.device()
+                && d.transport == token.transport()
+                && d.kind == TransportKind::Usb
+                && d.state == ConnectionState::Ready
+        })
+    {
+        return Err("USB session is no longer authorized/current".into());
+    }
+    Ok(())
 }

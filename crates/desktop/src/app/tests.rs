@@ -150,9 +150,11 @@ fn open_toast_details_survive_new_feedback_and_late_expiry() {
 fn uncertain_apk_result_stays_visible_and_copied_error_excludes_guest_data() {
     let (mut hub, _) = Hub::new();
     let apk = PendingApk {
-        id: "hub-test".into(),
-        name: "private-device-name".into(),
-        pid: 42,
+        target: apk::Target {
+            id: DeviceId::Emulator(EmulatorId::new("hub-test").unwrap()),
+            name: "private-device-name".into(),
+            session: apk::Session::Emulator(42),
+        },
         path: PathBuf::from("/private/user/downloads/secret.apk"),
         bytes: 123,
         epoch: 0,
