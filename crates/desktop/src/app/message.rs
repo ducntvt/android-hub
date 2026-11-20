@@ -9,6 +9,8 @@ use std::path::PathBuf;
 
 #[derive(Clone, Debug)]
 pub(super) enum Message {
+    PhysicalStopped,
+    PhysicalInput(u64, u64, u64, Input),
     StartPhysicalPreview,
     StopPhysicalPreview,
     PhysicalStreamFps(u32),

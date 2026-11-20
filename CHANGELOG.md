@@ -5,6 +5,12 @@ see [Releasing](docs/RELEASING.md).
 
 ## Unreleased
 
+### In development — physical device feature branch
+
+- USB phone discovery and embedded VideoToolbox video with explicit start/stop.
+- Phone touch, swipe, two-axis wheel, navigation and ASCII keyboard control,
+  with separate focus beside an emulator and cancellation on capture/session changes. IME/Unicode, audio and game key mapping are not supported.
+
 ## [0.2.0] - 2026-11-19
 
 ### Added

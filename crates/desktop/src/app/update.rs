@@ -25,9 +25,19 @@ impl Hub {
             return Task::none();
         }
         match message {
+            Message::PhysicalStopped => {
+                self.physical.stopping = false;
+                return self.begin_shutdown_if_ready();
+            }
+            Message::PhysicalInput(stream, epoch, capture, input) => {
+                self.physical_input(stream, epoch, capture, input);
+                return Task::none();
+            }
             Message::StartPhysicalPreview => return self.start_physical_preview(),
             Message::StopPhysicalPreview => {
+                self.release_inputs();
                 self.physical.preview = None;
+                self.sync_displays();
                 return Task::none();
             }
             Message::PhysicalStreamFps(fps) => {
@@ -107,7 +117,7 @@ impl Hub {
                     return Task::none();
                 }
                 self.quit_requested = true;
-                self.physical.invalidate();
+                let physical_stop = self.stop_physical_sessions();
                 self.connectivity = None;
                 self.cancel_modal();
                 self.modal_return_focus = None;
@@ -116,6 +126,9 @@ impl Hub {
                 self.displays.clear();
                 if let Some(control) = &self.sdk_setup {
                     control.cancel();
+                }
+                if self.physical.stopping {
+                    return physical_stop;
                 }
             }
             Message::CancelQuit if !self.quitting => {
@@ -225,6 +238,7 @@ impl Hub {
         if !self.quit_requested
             || self.busy
             || self.physical.configuring
+            || self.physical.stopping
             || self.quitting
             || self.quit_error.is_some()
         {
@@ -999,6 +1013,14 @@ impl Hub {
                     let pressed = matches!(input, Input::Mouse { down: true, .. });
                     match d.session.send_in_generation(input, generation) {
                         Ok(()) if pressed => {
+                            if self.physical.focused {
+                                self.physical.focused = false;
+                                self.physical.input_epoch =
+                                    self.physical.input_epoch.wrapping_add(1);
+                                if let Some(preview) = &self.physical.preview {
+                                    preview.session.release_inputs();
+                                }
+                            }
                             self.input_focus = Some(id.clone());
                             if !self.busy && self.selected_avd_id() != Some(id.as_str()) {
                                 self.activate_visible(id);

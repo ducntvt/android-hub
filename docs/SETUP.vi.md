@@ -173,7 +173,14 @@ thực hoặc thay độ phân giải hệ thống điện thoại.
 
 Server scrcpy 5.0.1 đi kèm được đưa vào đường dẫn tạm riêng trên điện thoại và dọn
 khi dừng/thoát. Cần giải mã H.264 phần cứng VideoToolbox. Nội dung khóa/bảo vệ có
-thể trống; Hub không vượt bảo vệ. Chưa có điều khiển, âm thanh, cài APK hay clipboard
-cho điện thoại. Sau lỗi kết nối cần chủ động mở lại stream.
+thể trống; Hub không vượt bảo vệ. Bấm màn hình để chọn đích điều khiển: click/kéo,
+cuộn hai trục, Back/Home/Recent và ký tự ASCII dùng kênh control của phiên.
+Chưa hỗ trợ IME/Unicode hoặc giữ phím chơi game. Mở cài đặt Hub tạm chặn input.
+Trong chế độ hai máy, bấm đúng màn hình trước khi gõ; điện thoại có thể hiển thị
+cạnh emulator. Chưa có nút đổi rotation hệ thống điện thoại; xoay điện thoại khi
+ứng dụng hỗ trợ. Nếu xem được nhưng không điều khiển được, kiểm tra hướng dẫn
+quyền điều khiển USB của hãng. Âm thanh, cài APK và clipboard cho điện thoại vẫn
+là phần việc tương lai. Sau lỗi kết nối cần chủ động mở lại stream; input cũ không
+được phát lại vào kết nối mới.
 Chỉ lưu đường dẫn ADB, metadata điện thoại ở bộ nhớ. Khi xung đột phiên bản,
 đồng bộ Platform-Tools với các app ADB khác; Hub không tự kill-server.

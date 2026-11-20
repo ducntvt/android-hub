@@ -1,4 +1,4 @@
-//! scrcpy v5.0.1 video protocol; H.264 only. No control channel is opened.
+//! scrcpy v5.0.1 video protocol; H.264 only. Control framing lives in the separate control module.
 use tokio::io::{AsyncRead, AsyncReadExt};
 #[derive(Debug, PartialEq, Eq)]
 pub(super) enum Packet {

@@ -112,10 +112,10 @@ pub(super) async fn launch(
     options: Options,
 ) -> Result<TcpStream, String> {
     let scid = owner.socket.strip_prefix("scrcpy_").unwrap();
-    // Only constants/generated identifiers enter this command. No touch, audio,
+    // Only constants/generated identifiers enter this command. No audio,
     // clipboard, wake lock, display power or resolution setting is requested.
     let command = format!(
-        "shell:CLASSPATH={} app_process / com.genymobile.scrcpy.Server 5.0.1 scid={scid} log_level=warn audio=false control=false tunnel_forward=true video_codec=h264 max_size={} max_fps={} video_bit_rate=8000000 clipboard_autosync=false power_on=false cleanup=true",
+        "shell:CLASSPATH={} app_process / com.genymobile.scrcpy.Server 5.0.1 scid={scid} log_level=warn audio=false control=true tunnel_forward=true video_codec=h264 max_size={} max_fps={} video_bit_rate=8000000 clipboard_autosync=false power_on=false cleanup=true",
         owner.path, options.max_size, options.fps
     );
     service(token, &command).await

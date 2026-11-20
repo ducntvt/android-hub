@@ -1,8 +1,9 @@
-//! User-started scrcpy v5.0.1 video session. No input/audio or automatic reconnect.
+//! User-started scrcpy v5.0.1 video/control session. No audio or automatic reconnect.
+mod control;
 mod decoder;
 mod protocol;
 mod server;
-use crate::display::Frame;
+use crate::display::{Frame, Input};
 use android_hub_domain::PhysicalSession;
 use std::{
     sync::{Arc, Mutex},
@@ -83,23 +84,47 @@ impl Frames {
         }
     }
 }
+#[derive(Clone)]
+pub struct Completion(watch::Receiver<bool>);
+impl Completion {
+    pub fn finished(&self) -> bool {
+        *self.0.borrow()
+    }
+    pub async fn wait(mut self) {
+        while !*self.0.borrow_and_update() {
+            if self.0.changed().await.is_err() {
+                break;
+            }
+        }
+    }
+}
 pub struct Session {
+    completion: Completion,
     frames: Frames,
     cancel: watch::Sender<bool>,
+    control: control::Control,
 }
 impl Session {
     pub fn open(token: PhysicalSession, options: Options) -> Self {
         let shared = Arc::new(Mutex::new(Shared::default()));
         let (cancel, mut canceled) = watch::channel(false);
+        let (done, completed) = watch::channel(false);
         let output = shared.clone();
+        let control = control::Control::default();
+        let controller = control.clone();
         runtime().spawn(async move {
             let result = async {
                 options.validate()?;
                 let owner = server::Owner::new()?;
+                let capture = capture(&token, &owner, options, output.clone(), controller.clone());
+                tokio::pin!(capture);
                 let result = tokio::select! {
                     _=canceled.changed()=>Ok(()),
-                    result=capture(&token,&owner,options,output.clone())=>result,
+                    result=&mut capture=>result,
                 };
+                // Keep video/server alive until the control worker releases touch.
+                controller.close();
+                controller.wait_closed().await;
                 {
                     let mut state = output.lock().unwrap();
                     state.stopped = true;
@@ -116,13 +141,26 @@ impl Session {
             if let Err(error) = result {
                 state.error = Some(error);
             }
+            let _ = done.send(true);
         });
         Self {
+            completion: Completion(completed),
             frames: Frames(shared),
             cancel,
+            control,
         }
     }
+    pub fn completion(&self) -> Completion {
+        self.completion.clone()
+    }
+    pub fn send(&self, capture: u64, input: Input) -> Result<(), String> {
+        self.control.send(capture, input)
+    }
+    pub fn release_inputs(&self) {
+        self.control.reset();
+    }
     pub fn stop(&self) {
+        self.control.close();
         {
             let mut state = self.frames.0.lock().unwrap();
             state.stopped = true;
@@ -149,6 +187,7 @@ async fn capture(
     owner: &server::Owner,
     options: Options,
     shared: Arc<Mutex<Shared>>,
+    control: control::Control,
 ) -> Result<(), String> {
     tokio::time::timeout(Duration::from_secs(8), async {
         server::validate(token).await?;
@@ -165,6 +204,16 @@ async fn capture(
     .map_err(|_| "USB stream setup timed out")??;
     let shell = server::launch(token, owner, options).await?;
     let mut video = server::video(token, owner).await?;
+    let mut socket = server::video(token, owner).await?;
+    let controller = control.clone();
+    let error_state = shared.clone();
+    let mut control_worker = tokio::spawn(async move {
+        let result = controller.run(&mut socket).await;
+        if let Err(error) = &result {
+            error_state.lock().unwrap().error = Some(format!("Phone control failed: {error}"));
+        }
+        result
+    });
     tokio::time::timeout(Duration::from_secs(8), protocol::handshake(&mut video))
         .await
         .map_err(|_| "scrcpy handshake timed out; check version or OEM capture support")??;
@@ -195,11 +244,12 @@ async fn capture(
                 break;
             }
             match packet {
-                protocol::Packet::Session { .. } => {
+                protocol::Packet::Session { width, height } => {
                     decoder = decoder::Decoder::default();
                     let mut state = output.lock().unwrap();
                     state.reader = None;
                     state.capture += 1;
+                    control.capture(state.capture, width, height);
                 }
                 protocol::Packet::Media { pts, bytes } => {
                     if let Some(reader) = decoder.push(&bytes, pts)? {
@@ -216,6 +266,7 @@ async fn capture(
     let mut decoder = decoder;
     loop {
         tokio::select! {
+            result=&mut control_worker=>return result.map_err(|e|e.to_string())?.and(Err("Phone control stopped".into())),
             result=&mut decoder=>return result.map_err(|e|e.to_string())?.and(Err("Video decoder stopped".into())),
             packet=protocol::packet(&mut video)=>{
                 send.send(packet?).await.map_err(|_|"Video decoder stopped")?;

@@ -105,5 +105,6 @@ capabilities, session tokens và facade chặn AVD operations trên physical.
 US-058 implemented: nhận diện USB/model/Android, theo dõi cắm/rút, hướng dẫn
 EN/VI và thiết lập ADB riêng. Đã thử cắm/rút Samsung trên QA. US-059 implemented: video nhúng dùng VideoToolbox trực tiếp, Start/Stop,
 30/60 FPS, ba mức stream, Fit/zoom/rotation và ca nội dung bảo vệ đã kiểm tra.
-US-060–068 vẫn planned; chưa có control, MVP và nghiệm thu hiệu năng chưa hoàn tất.
-Bước tiếp theo: US-060.
+US-060 implemented: touch/scroll/navigation/ASCII, focus riêng và hủy gesture;
+đã kiểm thử native Samsung Android 15. US-061–068 vẫn planned; MVP và nghiệm thu
+hiệu năng chưa hoàn tất. Bước tiếp theo: US-061 (chưa bắt đầu).

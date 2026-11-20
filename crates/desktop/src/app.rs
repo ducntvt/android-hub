@@ -7,6 +7,7 @@ mod feedback;
 mod lifecycle;
 mod message;
 mod physical;
+mod physical_screen;
 mod runtime;
 mod sdk;
 use message::Message;
@@ -497,6 +498,11 @@ impl Hub {
         self.select_metadata(id);
     }
     fn release_inputs(&mut self) {
+        self.physical.focused = false;
+        self.physical.input_epoch = self.physical.input_epoch.wrapping_add(1);
+        if let Some(preview) = &self.physical.preview {
+            preview.session.release_inputs();
+        }
         self.input_focus = None;
         self.input_epoch = self.input_epoch.wrapping_add(1);
         for d in self.displays.values() {
@@ -547,7 +553,12 @@ impl Hub {
         if let Some(state) = &self.state {
             self.slots.retain(&state.profiles);
         }
-        let visible = if self.split {
+        let visible = if self.split && self.physical.preview.is_some() {
+            self.slots.ids[self.slots.active]
+                .iter()
+                .cloned()
+                .collect::<Vec<_>>()
+        } else if self.split {
             self.slots.ids.iter().flatten().cloned().collect::<Vec<_>>()
         } else {
             self.selected_avd_id()

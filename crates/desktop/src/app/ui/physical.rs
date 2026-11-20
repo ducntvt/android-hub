@@ -1,6 +1,7 @@
 use super::*;
 use crate::app::physical::Phone;
 use android_hub_domain::DeviceId;
+use android_hub_infrastructure::display::Input;
 use android_hub_infrastructure::physical::{ConnectionState, DiscoveryError, TransportKind};
 use iced::widget::column;
 fn status(phone: &Phone) -> &'static str {
@@ -94,49 +95,184 @@ pub(super) fn sidebar(hub: &Hub) -> Element<'_, Message> {
         .into()
 }
 pub(super) fn workspace(hub: &Hub) -> Element<'_, Message> {
-    use android_hub_infrastructure::physical::stream::Options;
-    use iced::widget::{image, responsive};
-    responsive(move |size| {
-        let lang=hub.language;
-        let mut body=column![].spacing(12).align_x(Alignment::Center);
-        if let Some(phone)=hub.selected_phone(){
-            body=body.push(text(name(phone)).size(20)).push(muted(lang.tr(status(phone))));
-            let ready=phone.device.state==ConnectionState::Ready && phone.device.kind==TransportKind::Usb
-                && phone.metadata.as_ref().is_some_and(|m|m.as_ref().is_ok_and(|m|!m.emulator));
-            if let Some(preview)=&hub.physical.preview {
-                if let Some(handle)=&preview.image {
-                    let (width,height)=preview.size;
-                    let scale=((size.width-48.).max(1.)/width as f32).min((size.height-240.).max(1.)/height as f32)*hub.zoom;
-                    body=body.push(image(handle.clone()).width(width as f32*scale).height(height as f32*scale));
-                } else if preview.error.is_none(){body=body.push(text(lang.tr("Đang mở màn hình điện thoại…")));}
-                if let Some(error)=&preview.error {
-                    body=body.push(text(lang.tr("Không mở được màn hình. Kiểm tra kết nối, mở khóa điện thoại và thử lại.")))
-                        .push(text(error).size(CAPTION));
-                }
-                if preview.hardware{body=body.push(muted(lang.tr("VideoToolbox · H.264 · Phần cứng")));}
-                body=body.push(tool(lang.tr("Dừng xem màn hình"),Message::StopPhysicalPreview));
-            } else {
-                let mut fps=row![muted("FPS")].spacing(6).align_y(Alignment::Center);
-                for value in Options::FPS{fps=fps.push(tool(value.to_string(),Message::PhysicalStreamFps(value)).style(if hub.physical.stream_options.fps==value{primary}else{pill}));}
-                let mut sizes=row![muted(lang.tr("Cạnh dài"))].spacing(6).align_y(Alignment::Center);
-                for value in Options::SIZES{sizes=sizes.push(tool(format!("{value}px"),Message::PhysicalStreamSize(value)).style(if hub.physical.stream_options.max_size==value{primary}else{pill}));}
-                body=body.push(fps).push(sizes)
-                    .push(muted(lang.tr("Giới hạn stream yêu cầu; không đổi độ phân giải điện thoại hay cam kết FPS thực.")))
-                    .push(tool(lang.tr("Xem màn hình"),Message::StartPhysicalPreview).style(primary).on_press_maybe(ready.then_some(Message::StartPhysicalPreview)));
-            }
-            if phone.device.state==ConnectionState::Unauthorized {body=body.push(text(lang.tr("Mở khóa điện thoại, bật USB debugging trong Tùy chọn nhà phát triển và tự chấp nhận hộp thoại RSA trên điện thoại.")));}
+    iced::widget::responsive(move |size| {
+        if !hub.split {
+            return phone_workspace(hub, size);
         }
-        body=body.push(text(lang.tr("Chỉ xem màn hình. Màn hình khóa hoặc nội dung được bảo vệ có thể trống; Hub không vượt bảo vệ."))
-            .size(CAPTION).style(secondary_text));
-        if let Some(err)=&hub.physical.error{body=body.push(text(lang.tr(error(err))));}
-        let content_width = hub.physical.preview.as_ref().filter(|p| p.image.is_some()).map(|p| {
-            let (w, h) = p.size;
-            let scale = ((size.width - 48.).max(1.) / w as f32).min((size.height - 240.).max(1.) / h as f32) * hub.zoom;
-            (w as f32 * scale + 40.).max(size.width)
-        }).unwrap_or(size.width);
-        scroll::both(container(body).padding(20).center_x(Length::Fixed(content_width))).into()
-    }).into()
+        let slot = iced::Size::new(((size.width - 16.) / 2.).max(1.), size.height);
+        let avd = hub.slots.ids[hub.slots.active].as_deref();
+        row![
+            container(phone_workspace(hub, slot))
+                .width(slot.width)
+                .height(slot.height),
+            container(scroll::both(super::workspace::card(
+                hub,
+                hub.slots.active,
+                avd,
+                slot
+            )))
+            .width(slot.width)
+            .height(slot.height),
+        ]
+        .spacing(16)
+        .into()
+    })
+    .into()
 }
+
+fn phone_workspace(hub: &Hub, size: iced::Size) -> Element<'_, Message> {
+    use crate::app::{physical_screen::PhysicalScreen, screen::Screen};
+    use android_hub_infrastructure::physical::stream::Options;
+    use iced::widget::{canvas, tooltip};
+    let lang = hub.language;
+    let mut body = column![].spacing(12).align_x(Alignment::Center);
+    let mut content_width = size.width;
+    if let Some(phone) = hub.displayed_phone() {
+        body =
+            body.push(text(name(phone)).size(20))
+                .push(muted(lang.tr(if hub.physical.focused {
+                    "Đang điều khiển"
+                } else {
+                    status(phone)
+                })));
+        let ready = phone.device.state == ConnectionState::Ready
+            && phone.device.kind == TransportKind::Usb
+            && phone
+                .metadata
+                .as_ref()
+                .is_some_and(|m| m.as_ref().is_ok_and(|m| !m.emulator));
+        if let Some(preview) = &hub.physical.preview {
+            if let Some(handle) = &preview.image {
+                let (width, height) = preview.size;
+                let scale = ((size.width - 48.).max(1.) / width as f32)
+                    .min((size.height - 300.).max(1.) / height as f32)
+                    * hub.zoom;
+                content_width = (width as f32 * scale + 40.).max(size.width);
+                let enabled = !hub.modal_open() && !hub.busy;
+                body = body.push(
+                    canvas(PhysicalScreen {
+                        screen: Screen {
+                            focused: hub.physical.focused && enabled,
+                            epoch: hub.physical.input_epoch,
+                            generation: enabled.then_some(preview.capture),
+                            id: "physical-preview",
+                            image: handle,
+                            width,
+                            height,
+                            rotation: 0,
+                        },
+                        stream_epoch: preview.epoch,
+                    })
+                    .width(width as f32 * scale)
+                    .height(height as f32 * scale),
+                );
+                let mut navigation = row![].spacing(8);
+                for (symbol, label, key) in [
+                    (Icon::Back, "Quay lại", "GoBack"),
+                    (Icon::Home, "Màn hình chính", "GoHome"),
+                    (Icon::Recent, "Ứng dụng gần đây", "AppSwitch"),
+                ] {
+                    navigation = navigation.push(hint(
+                        button(
+                            container(icons::enabled_icon(symbol, enabled))
+                                .center_x(20)
+                                .center_y(20),
+                        )
+                        .padding([8, 12])
+                        .style(quiet)
+                        .on_press_maybe(enabled.then(|| {
+                            Message::PhysicalInput(
+                                preview.epoch,
+                                hub.physical.input_epoch,
+                                preview.capture,
+                                Input::Key(key.into()),
+                            )
+                        })),
+                        lang.tr(label),
+                        tooltip::Position::Top,
+                    ));
+                }
+                body = body.push(
+                    container(navigation)
+                        .padding(4)
+                        .style(|theme| surface(theme, Surface::Panel, 16.)),
+                );
+            } else if preview.error.is_none() {
+                body = body.push(text(lang.tr("Đang mở màn hình điện thoại…")));
+            }
+            if let Some(error) = &preview.error {
+                body = body
+                    .push(text(lang.tr(
+                        "Không mở được màn hình. Kiểm tra kết nối, mở khóa điện thoại và thử lại.",
+                    )))
+                    .push(text(error).size(CAPTION));
+            }
+            if preview.hardware {
+                body = body.push(muted(lang.tr("VideoToolbox · H.264 · Phần cứng")));
+            }
+            body = body.push(tool(
+                lang.tr("Dừng xem màn hình"),
+                Message::StopPhysicalPreview,
+            ));
+        } else {
+            let mut fps = row![muted("FPS")].spacing(6).align_y(Alignment::Center);
+            for value in Options::FPS {
+                fps = fps.push(
+                    tool(value.to_string(), Message::PhysicalStreamFps(value)).style(
+                        if hub.physical.stream_options.fps == value {
+                            primary
+                        } else {
+                            pill
+                        },
+                    ),
+                );
+            }
+            let mut sizes = row![muted(lang.tr("Cạnh dài"))]
+                .spacing(6)
+                .align_y(Alignment::Center);
+            for value in Options::SIZES {
+                sizes = sizes.push(
+                    tool(format!("{value}px"), Message::PhysicalStreamSize(value)).style(
+                        if hub.physical.stream_options.max_size == value {
+                            primary
+                        } else {
+                            pill
+                        },
+                    ),
+                );
+            }
+            body = body.push(fps).push(sizes)
+                .push(muted(lang.tr("Giới hạn stream yêu cầu; không đổi độ phân giải điện thoại hay cam kết FPS thực.")))
+                .push(tool(lang.tr("Xem màn hình"), Message::StartPhysicalPreview).style(primary)
+                    .on_press_maybe(ready.then_some(Message::StartPhysicalPreview)));
+        }
+        if phone.device.state == ConnectionState::Unauthorized {
+            body = body.push(text(lang.tr("Mở khóa điện thoại, bật USB debugging trong Tùy chọn nhà phát triển và tự chấp nhận hộp thoại RSA trên điện thoại.")));
+        }
+    }
+    for label in [
+        "Bấm vào màn hình để điều khiển. Bàn phím hỗ trợ ASCII; chưa hỗ trợ IME/Unicode. Nội dung được bảo vệ có thể trống.",
+        "Nếu xem được nhưng không điều khiển được, kiểm tra quyền điều khiển USB theo hướng dẫn của hãng. Hub không vượt chính sách thiết bị.",
+    ] {
+        body = body.push(
+            text(lang.tr(label))
+                .size(CAPTION)
+                .style(secondary_text)
+                .width((size.width - 48.).max(1.))
+                .align_x(Alignment::Center),
+        );
+    }
+    if let Some(err) = &hub.physical.error {
+        body = body.push(text(lang.tr(error(err))));
+    }
+    scroll::both(
+        container(body)
+            .padding(20)
+            .center_x(Length::Fixed(content_width)),
+    )
+    .into()
+}
+
 pub(super) fn setup(hub: &Hub) -> Element<'_, Message> {
     let lang = hub.language;
     let mut body=column![

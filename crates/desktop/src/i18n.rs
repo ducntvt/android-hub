@@ -30,6 +30,13 @@ impl Language {
             return value;
         }
         match value {
+            "Bấm vào màn hình để điều khiển. Bàn phím hỗ trợ ASCII; chưa hỗ trợ IME/Unicode. Nội dung được bảo vệ có thể trống." => {
+                "Click the display to control. Keyboard supports ASCII; IME/Unicode is not supported. Protected content may be blank."
+            }
+            "Nếu xem được nhưng không điều khiển được, kiểm tra quyền điều khiển USB theo hướng dẫn của hãng. Hub không vượt chính sách thiết bị." => {
+                "If video works but control does not, check the manufacturer's USB control permissions. Hub does not bypass device policies."
+            }
+            "Đang điều khiển" => "Input focused",
             "VideoToolbox · H.264 · Phần cứng" => "VideoToolbox · H.264 · Hardware",
             "Đang mở màn hình điện thoại…" => "Opening phone display…",
             "Không mở được màn hình. Kiểm tra kết nối, mở khóa điện thoại và thử lại." => {
@@ -41,10 +48,6 @@ impl Language {
                 "Requested stream limits; does not change phone resolution or guarantee actual FPS."
             }
             "Xem màn hình" => "View display",
-            "Chỉ xem màn hình. Màn hình khóa hoặc nội dung được bảo vệ có thể trống; Hub không vượt bảo vệ." => {
-                "View only. Locked screens or protected content may be blank; Hub does not bypass protection."
-            }
-
             "Thiết bị kết nối" => "Connected device",
             "Đang đọc thông tin…" => "Reading device information…",
             "Chưa đọc được thông tin" => "Could not read device information",

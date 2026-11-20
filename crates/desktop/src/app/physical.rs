@@ -15,6 +15,10 @@ pub(super) struct Phone {
 }
 #[derive(Default)]
 pub(super) struct Discovery {
+    pub focused: bool,
+    pub input_epoch: u64,
+    pub stopping: bool,
+    pub completions: Vec<android_hub_infrastructure::physical::stream::Completion>,
     pub preview: Option<Preview>,
     pub preview_epoch: u64,
     pub stream_options: android_hub_infrastructure::physical::stream::Options,
@@ -34,6 +38,7 @@ impl Discovery {
         }
     }
     pub(super) fn invalidate(&mut self) {
+        self.focused = false;
         self.preview = None;
         for phone in self.phones.values_mut() {
             if let Some(token) = phone.session.take() {
@@ -176,6 +181,13 @@ impl Hub {
             )
         }))
     }
+    pub(super) fn displayed_phone(&self) -> Option<&Phone> {
+        self.physical
+            .preview
+            .as_ref()
+            .and_then(|p| self.physical.phones.get(p.token.device()))
+            .or_else(|| self.selected_phone())
+    }
     pub(super) fn selected_phone(&self) -> Option<&Phone> {
         let DeviceId::Physical(id) = self.selected.as_ref()? else {
             return None;
@@ -203,6 +215,46 @@ pub(super) struct FrameReport {
     pub error: Option<String>,
 }
 impl Hub {
+    pub(super) fn physical_input(&mut self, stream: u64, epoch: u64, capture: u64, input: Input) {
+        if self.quit_requested
+            || self.modal_open()
+            || self.busy
+            || epoch != self.physical.input_epoch
+        {
+            return;
+        }
+        self.reconcile_physical_preview();
+        let Some(preview) = &self.physical.preview else {
+            return;
+        };
+        if preview.epoch != stream
+            || preview.capture != capture
+            || preview.image.is_none()
+            || preview.error.is_some()
+        {
+            return;
+        }
+        let pressed = matches!(input, Input::Mouse { down: true, .. });
+        if let Err(error) = preview.session.send(capture, input) {
+            self.release_inputs();
+            self.error("Thao tác chưa hoàn tất", error);
+        } else if pressed {
+            let target = DeviceId::Physical(preview.token.device().clone());
+            if self.selected.as_ref() != Some(&target) {
+                self.input_focus = None;
+                self.input_epoch = self.input_epoch.wrapping_add(1);
+                for display in self.displays.values() {
+                    let _ = display.session.send(Input::Mouse {
+                        x: 0,
+                        y: 0,
+                        down: false,
+                    });
+                }
+                self.select_device_metadata(target);
+            }
+            self.physical.focused = true;
+        }
+    }
     pub(super) fn start_physical_preview(&mut self) -> Task<Message> {
         if self.quit_requested || self.busy || self.modal_open() || self.physical.preview.is_some()
         {
@@ -226,6 +278,7 @@ impl Hub {
         if !self.physical.sessions.is_current(&token) {
             return Task::none();
         }
+        self.physical.focused = false;
         self.physical.preview_epoch += 1;
         self.physical.preview = Some(Preview {
             session: android_hub_infrastructure::physical::stream::Session::open(
@@ -240,14 +293,38 @@ impl Hub {
             hardware: false,
             error: None,
         });
+        self.physical.completions.retain(|c| !c.finished());
+        self.physical
+            .completions
+            .push(self.physical.preview.as_ref().unwrap().session.completion());
+        self.sync_displays();
         Task::none()
+    }
+    pub(super) fn stop_physical_sessions(&mut self) -> Task<Message> {
+        self.physical.invalidate();
+        let completions = std::mem::take(&mut self.physical.completions);
+        if completions.iter().all(|completion| completion.finished()) {
+            self.physical.stopping = false;
+            return Task::none();
+        }
+        self.physical.stopping = true;
+        Task::perform(
+            async move {
+                for completion in completions {
+                    completion.wait().await;
+                }
+            },
+            |_| Message::PhysicalStopped,
+        )
     }
     pub(super) fn reconcile_physical_preview(&mut self) {
         if self.physical.preview.as_ref().is_some_and(|p| {
             self.quit_requested
                 || !self.physical.sessions.is_current(&p.token)
-                || self.selected.as_ref() != Some(&DeviceId::Physical(p.token.device().clone()))
+                || (self.selected.as_ref() != Some(&DeviceId::Physical(p.token.device().clone()))
+                    && !(self.split && self.selected_avd_id().is_some()))
         }) {
+            self.physical.focused = false;
             self.physical.preview = None;
         }
     }
@@ -312,6 +389,9 @@ impl Hub {
             return;
         }
         if preview.capture != report.capture || report.error.is_some() {
+            self.physical.focused = false;
+            self.physical.input_epoch = self.physical.input_epoch.wrapping_add(1);
+            preview.session.release_inputs();
             preview.image = None;
         }
         if report.error.is_some() {
@@ -378,7 +458,19 @@ mod tests {
             error: None,
         });
         assert!(hub.physical.preview.as_ref().unwrap().image.is_none());
+        hub.split = true;
         hub.select_metadata("hub-other".into());
+        assert!(
+            hub.physical.preview.is_some(),
+            "mixed slots retain the phone session"
+        );
+        hub.physical.focused = true;
+        let previous_epoch = hub.physical.input_epoch;
+        hub.release_inputs();
+        assert!(!hub.physical.focused);
+        assert_ne!(hub.physical.input_epoch, previous_epoch);
+        hub.split = false;
+        hub.reconcile_physical_preview();
         assert!(hub.physical.preview.is_none());
         hub.physical_frame(report(7, 2));
         assert!(hub.physical.preview.is_none());

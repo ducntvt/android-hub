@@ -109,6 +109,23 @@ These are stream caps, not guaranteed delivered FPS or phone display settings.
 The native protected-content test displays black, with a permanent explanation
 of lock/protected/OEM capture limits. Control is deferred to US-060.
 
+## US-060 input boundary
+
+Add a second connection to the session's unique scrcpy socket for ordered control.
+The bounded 64-event queue discards pending input and prioritizes touch cancellation
+on overflow, capture changes, focus loss and session shutdown. Navigation key pairs
+are written together; printable ASCII uses scrcpy text injection. IME/Unicode and
+held gaming keys are outside this implementation. Desktop input binds the physical
+session, stream epoch, input epoch and capture ID before dispatch. An emulator
+beside the phone keeps its own gRPC channel and input focus.
+
+Shutdown waits for owned stream completion, with bounded control writes and
+release attempts. Cable loss cannot guarantee delivery of a final cancellation;
+old queues and tokens are discarded and never transferred to a new connection.
+Do not expose phone system rotation without a verified capability. OEM input
+restrictions receive guidance, never a security bypass. US-060 native verification
+status remains recorded in its story; these decisions do not imply every test passed.
+
 ## Consequences
 
 - Shared workspace can represent both device kinds without fake emulator fields.

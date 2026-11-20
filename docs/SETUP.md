@@ -238,10 +238,18 @@ caps. Fit/zoom and rotation preserve the image aspect ratio. The caps do not
 guarantee delivered FPS or change the phone's system resolution.
 
 The bundled scrcpy 5.0.1 server is uploaded to a unique temporary phone path for
-this view-only session and cleaned on stop/quit. VideoToolbox hardware H.264 decode
+this session and cleaned on stop/quit. VideoToolbox hardware H.264 decode
 is required. Lock/protected content may appear blank; Hub does not bypass capture
-restrictions. No input, audio, APK installation or clipboard control is available
-for phones yet. Viewing must be restarted explicitly after a connection failure.
+restrictions. Click the display to focus phone input: click/drag, two-axis scrolling,
+Back/Home/Recent and printable ASCII keyboard input use the session control channel.
+IME/Unicode and held gaming keys are not supported. Hub settings temporarily block
+phone input. In two-device mode, click the intended display before typing; the
+phone can remain visible beside an emulator. System rotation controls are not
+exposed for phones; rotate the phone itself when its app supports it. If video
+works but control does not, check the manufacturer's USB input permission guidance.
+Audio, APK installation and clipboard control for phones remain future work.
+Viewing must be restarted explicitly after a connection failure; queued input is
+never replayed into a new connection.
 Only the ADB executable path is saved; phone metadata stays in memory. On version
 conflicts, coordinate Platform-Tools versions with other ADB applications instead
 of stopping their server from Hub.

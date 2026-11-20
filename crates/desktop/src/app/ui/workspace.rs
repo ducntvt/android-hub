@@ -25,7 +25,8 @@ pub(super) fn view(hub: &Hub) -> Element<'_, Message> {
     if matches!(
         hub.selected,
         Some(android_hub_domain::DeviceId::Physical(_))
-    ) {
+    ) || (hub.split && hub.physical.preview.is_some())
+    {
         return super::physical::workspace(hub);
     }
     responsive(move |size| {
@@ -69,7 +70,12 @@ pub(super) fn view(hub: &Hub) -> Element<'_, Message> {
     .into()
 }
 
-fn card<'a>(hub: &'a Hub, slot: usize, id: Option<&str>, size: Size) -> Element<'a, Message> {
+pub(super) fn card<'a>(
+    hub: &'a Hub,
+    slot: usize,
+    id: Option<&str>,
+    size: Size,
+) -> Element<'a, Message> {
     let lang = hub.language;
     let available = !hub.busy && !hub.stale;
     let profile = hub

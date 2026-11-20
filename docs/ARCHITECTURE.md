@@ -55,7 +55,7 @@ Chọn executable ADB trong Cài đặt Hub chỉ chạy `adb version`, yêu c�
 1.0.41 rồi ghi atomic `physical-adb-path` dưới app data. Không đòi Java/SDK image.
 Server chưa chạy thì UI hướng dẫn khởi động bằng Terminal; không tự tải gói hoặc
 chấp nhận license. Setup và discovery hiện chỉ hỗ trợ server loopback mặc định,
-không nhận endpoint tùy biến từ environment. US-059 thêm video theo yêu cầu; US-060 sẽ thêm control.
+không nhận endpoint tùy biến từ environment. US-059 thêm video theo yêu cầu; US-060 thêm kênh control scrcpy có hàng đợi giới hạn, capture/input epoch và hủy gesture khi mất focus.
 
 ## Dữ liệu và vòng đời
 
